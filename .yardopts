@@ -1,0 +1,3 @@
+--title "opensecret credentials manager"
+lib/**/*.rb -
+lib/**/*.ini
