@@ -60,7 +60,7 @@ module SafeDb
     def execute
 
       return unless ops_key_exists?
-      master_db = OpenKey::KeyApi.read_master_db()
+      master_db = KeyApi.read_master_db()
       return if unopened_envelope?( master_db )
 
       # -- Get the open chapter identifier (id).
@@ -68,9 +68,9 @@ module SafeDb
       # -- Then get (or instantiate) the chapter's hash data structure
       # --
       chapter_id = ENVELOPE_KEY_PREFIX + master_db[ ENV_PATH ]
-      chapter_exists = OpenKey::KeyApi.db_envelope_exists?( master_db[ chapter_id ] )
-      chapter_data = OpenKey::KeyDb.from_json( OpenKey::KeyApi.content_unlock( master_db[ chapter_id ] ) ) if chapter_exists
-      chapter_data = OpenKey::KeyDb.new() unless chapter_exists
+      chapter_exists = KeyApi.db_envelope_exists?( master_db[ chapter_id ] )
+      chapter_data = KeyDb.from_json( KeyApi.content_unlock( master_db[ chapter_id ] ) ) if chapter_exists
+      chapter_data = KeyDb.new() unless chapter_exists
 
       content_hdr = create_header()
 
@@ -94,7 +94,7 @@ module SafeDb
       # -- the file attributes mini dictionary to facilitate
       # -- decrypting and writing out the file again.
       # --
-      OpenKey::KeyApi.content_lock( chapter_data[ verse_id ], ::File.read( @file_url ), content_hdr )
+      KeyApi.content_lock( chapter_data[ verse_id ], ::File.read( @file_url ), content_hdr )
 
       # -- Lock No.2
       # --
@@ -107,7 +107,7 @@ module SafeDb
       # -- database (content id, content iv and content key)
       # -- to facilitate decrypting the chapter's data.
       # --
-      OpenKey::KeyApi.content_lock( master_db[ chapter_id ], chapter_data.to_json, content_hdr )
+      KeyApi.content_lock( master_db[ chapter_id ], chapter_data.to_json, content_hdr )
 
       # -- Lock No.3
       # --
@@ -115,7 +115,7 @@ module SafeDb
       # -- (content id, content iv and content key) that will
       # -- (in the future) decrypt this chapter's data.
       # --
-      OpenKey::KeyApi.write_master_db( content_hdr, master_db )
+      KeyApi.write_master_db( content_hdr, master_db )
 
 
       # -- Communicate that the indicated file has just been

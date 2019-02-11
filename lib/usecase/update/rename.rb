@@ -93,12 +93,12 @@ module SafeDb
     def execute
 
       return unless ops_key_exists?
-      master_db = OpenKey::KeyApi.read_master_db()
+      master_db = KeyApi.read_master_db()
 
       return if unopened_envelope?( master_db )
 
       envelope_id = ENVELOPE_KEY_PREFIX + master_db[ ENV_PATH ]
-      has_content = OpenKey::KeyApi.db_envelope_exists?( master_db[ envelope_id ] )
+      has_content = KeyApi.db_envelope_exists?( master_db[ envelope_id ] )
 
       # --
       # -- To get hold of the content we must either
@@ -106,8 +106,8 @@ module SafeDb
       # --   a) unlock it using the breadcrumbs or
       # --   b) start afresh with a new content db
       # --
-      content_box = OpenKey::KeyDb.from_json( OpenKey::KeyApi.content_unlock( master_db[ envelope_id ] ) ) if has_content
-      content_box = OpenKey::KeyDb.new() unless has_content
+      content_box = KeyDb.from_json( KeyApi.content_unlock( master_db[ envelope_id ] ) ) if has_content
+      content_box = KeyDb.new() unless has_content
       content_hdr = create_header()
 
       # --
@@ -127,14 +127,14 @@ module SafeDb
       # --
       crumbs_dict = master_db[ envelope_id ]
       content_box.create_entry( master_db[ KEY_PATH ], @secret_id, @secret_value )
-      OpenKey::KeyApi.content_lock( crumbs_dict, content_box.to_json, content_hdr )
+      KeyApi.content_lock( crumbs_dict, content_box.to_json, content_hdr )
 
       # --
       # -- Three envelope crumbs namely the external ID, the
       # -- random iv and the crypt key are written afresh into
       # -- the master database.
       # --
-      OpenKey::KeyApi.write_master_db( content_hdr, master_db )
+      KeyApi.write_master_db( content_hdr, master_db )
       print_put_success
 
 # --->      secret_ids = @secret_id.split("/")

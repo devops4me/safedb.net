@@ -1,9 +1,9 @@
 #!/usr/bin/ruby
 # coding: utf-8
 
-module OpenKey
+module SafeDb
 
-  # The OpenKey underlying security strategy is to lock a master index file
+  # The SafeDb underlying security strategy is to lock a master index file
   # with a <b>symmetric encryption key</b> that is based on two randomly generated
   # and amalgamated <b>55 and 45 character keys</b> and then to lock that key
   # <b>(and only that key)</b> with a 256 bit symmetric encryption key derived from

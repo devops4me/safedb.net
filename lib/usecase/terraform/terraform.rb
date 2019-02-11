@@ -33,7 +33,7 @@ module SafeDb
       # Then get (or instantiate) the chapter's hash data structure
       chapter_id = ENVELOPE_KEY_PREFIX + master_db[ ENV_PATH ]
       verse_id = master_db[ KEY_PATH ]
-      chapter_exists = OpenKey::KeyApi.db_envelope_exists?( master_db[ chapter_id ] )
+      chapter_exists = KeyApi.db_envelope_exists?( master_db[ chapter_id ] )
 
 
       # -- @todo begin
@@ -46,7 +46,7 @@ module SafeDb
       # key/value mini-dictionary breadcrumbs sitting
       # within the master database at the section labelled
       # envelope@<<actual_chapter_id>>.
-      chapter_data = OpenKey::KeyDb.from_json( OpenKey::KeyApi.content_unlock( master_db[ chapter_id ] ) )
+      chapter_data = KeyDb.from_json( KeyApi.content_unlock( master_db[ chapter_id ] ) )
 
       # Now read the three AWS IAM credentials @access.key, @secret.key and region.key
       # into the 3 environment variables terraform expects to find.

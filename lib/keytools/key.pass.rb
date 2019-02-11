@@ -1,7 +1,7 @@
 #!/usr/bin/ruby
 # coding: utf-8
 
-module OpenKey
+module SafeDb
 
   class KeyPass
 

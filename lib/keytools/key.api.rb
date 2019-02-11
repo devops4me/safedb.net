@@ -1,6 +1,6 @@
 #!/usr/bin/ruby
 
-module OpenKey
+module SafeDb
 
   # Use RubyMine to understand the correlations and dependencies on
   # this now monolithic class that must be broken up before meaningful
@@ -266,7 +266,7 @@ module OpenKey
     # @param domain_name [String]
     #
     #    the (application instance) domain name chosen by the user or the
-    #    machine that is interacting with the OpenKey software.
+    #    machine that is interacting with the SafeDb software.
     #
     # @param domain_secret [String]
     #

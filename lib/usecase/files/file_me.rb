@@ -25,13 +25,13 @@ module SafeDb
     def execute
 
       return unless ops_key_exists?
-      master_db = OpenKey::KeyApi.read_master_db()
+      master_db = KeyApi.read_master_db()
       return if unopened_envelope?( master_db )
 
       chapter_id = ENVELOPE_KEY_PREFIX + master_db[ ENV_PATH ]
-      chapter_exists = OpenKey::KeyApi.db_envelope_exists?( master_db[ chapter_id ] )
-      chapter_data = OpenKey::KeyDb.from_json( OpenKey::KeyApi.content_unlock( master_db[ chapter_id ] ) ) if chapter_exists
-      chapter_data = OpenKey::KeyDb.new() unless chapter_exists
+      chapter_exists = KeyApi.db_envelope_exists?( master_db[ chapter_id ] )
+      chapter_data = KeyDb.from_json( KeyApi.content_unlock( master_db[ chapter_id ] ) ) if chapter_exists
+      chapter_data = KeyDb.new() unless chapter_exists
 
       content_hdr = create_header()
       master_db[ chapter_id ] = {} unless chapter_exists
@@ -49,8 +49,8 @@ module SafeDb
       chapter_data.create_map_entry( verse_id, "#{FILE_KEY_PREFIX}#{@file_key}", FILE_NAME_KEY, file_base_name )
       chapter_data.create_map_entry( verse_id, "#{FILE_KEY_PREFIX}#{@file_key}", FILE_CONTENT_KEY, file_content64 )
 
-      OpenKey::KeyApi.content_lock( master_db[ chapter_id ], chapter_data.to_json, content_hdr )
-      OpenKey::KeyApi.write_master_db( content_hdr, master_db )
+      KeyApi.content_lock( master_db[ chapter_id ], chapter_data.to_json, content_hdr )
+      KeyApi.write_master_db( content_hdr, master_db )
 
       Show.new.flow_of_events
 

@@ -1,7 +1,7 @@
 #!/usr/bin/ruby
 # coding: utf-8
 
-module OpenKey
+module SafeDb
 
 
   # SCrypt is a <b>Key Derivation Function (KDF)</b> with a reliable OpenSSL
@@ -75,7 +75,7 @@ module OpenKey
     # 16 and 32 bytes inclusive. Here we opt for 24 bytes which
     # unrolls to 192 bits which in turn is 32 base64 characters.
     #
-    # The {OpenKey::KdfSCrypt::SCRYPT_SALT_BYTE_LENGTH} constant
+    # The {SafeDb::KdfSCrypt::SCRYPT_SALT_BYTE_LENGTH} constant
     # defines the <b>number of random bytes</b> required for a robust
     # SCrypt salt.
     #
@@ -160,9 +160,9 @@ module OpenKey
 
       key_count = 20
       for n in 0 .. key_count
-        scrypt_saltbits = OpenKey::KdfSCrypt.generate_scrypt_salt
-        scrypt_key = OpenKey::KdfSCrypt.generate_key( "abonekanoby", scrypt_saltbits )
-        scrypt_saltchar = OpenKey::Key64.from_bits( scrypt_saltbits )
+        scrypt_saltbits = SafeDb::KdfSCrypt.generate_scrypt_salt
+        scrypt_key = SafeDb::KdfSCrypt.generate_key( "abonekanoby", scrypt_saltbits )
+        scrypt_saltchar = SafeDb::Key64.from_bits( scrypt_saltbits )
         puts "#{n} Salt => #{scrypt_saltchar} (#{scrypt_saltchar.length}) => Key => #{scrypt_key} (#{scrypt_key.length})"
       end
 

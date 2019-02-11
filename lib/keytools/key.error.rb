@@ -1,6 +1,6 @@
 #!/usr/bin/ruby
 
-module OpenKey
+module SafeDb
 
 
   # This class is the parent to all opensession errors

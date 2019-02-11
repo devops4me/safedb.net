@@ -1,6 +1,6 @@
 #!/usr/bin/ruby
 
-module OpenKey
+module SafeDb
 
   # First use the class methods to source keys, then use a key's instance
   # methods to access its properties and in concert with other symmetrical
@@ -129,7 +129,7 @@ module OpenKey
     # This key easily translates to a base64 and/or byte array format because
     # the 384 bit count is a <b>multiple of both 6 and 8</b>.
     #
-    # @return [OpenKey::Key]
+    # @return [SafeDb::Key]
     #    return a key containing 384 random bits (or a random array of 48 bytes)
     #    which can if necessary be serialized into 64 base64 characters.
     #
@@ -166,7 +166,7 @@ module OpenKey
     #    <b>should be a multiple of eight (8)</b> otherwise the new
     #    key's bit string will require padding and extension.
     #
-    # @return [OpenKey::Key]
+    # @return [SafeDb::Key]
     #    return a key from the parameter sequence of base64 characters.
     #
     # @raise [ArgumentError]
@@ -184,7 +184,7 @@ module OpenKey
     #    The binary string that the returned key will be
     #    instantiated from.
     #
-    # @return [OpenKey::Key]
+    # @return [SafeDb::Key]
     #    return a key from the binary byte string parameter
     def self.from_binary binary_text
       ones_and_zeroes = binary_text.unpack("B*")[0]
@@ -204,7 +204,7 @@ module OpenKey
     #
     #    This parameter should not contain newlines nor carriage returns.
     #
-    # @return [OpenKey::Key]
+    # @return [SafeDb::Key]
     #    return a key from the parameter sequence of base64 characters.
     #
     # @raise [ArgumentError]
@@ -338,7 +338,7 @@ module OpenKey
     # - {to_s} you get a string of 384 ones and zeroes
     # - {to_binary} you get a 48 byte binary string
     #
-    # @return [OpenKey::Key]
+    # @return [SafeDb::Key]
     #    a key with a bit length (ones and zeroes) of <b>precisely 384</b>.
     def to_384_bit_key
 
@@ -377,7 +377,7 @@ module OpenKey
     # This method thus enforces the size of the strong key. A strong key has
     # 384 bits of entropy, and is represented by 64 base64 characters.
     #
-    # @param key_to_encrypt [OpenKey::Key]
+    # @param key_to_encrypt [SafeDb::Key]
     #    this is the key that will first be serialized into base64 and then locked
     #    down using the 256 bit binary string from this host object as the symmetric
     #    encryption key.

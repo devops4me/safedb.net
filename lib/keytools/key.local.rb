@@ -1,7 +1,7 @@
 #!/usr/bin/ruby
 # coding: utf-8
 
-module OpenKey
+module SafeDb
 
   # The command line interface has a high entropy randomly generated
   # key whose purpose is to <b>lock the application's data key</b> for
@@ -107,7 +107,7 @@ module OpenKey
     #
     # Regenerating the shell key is done in two steps when given the
     # four (4) <b>session token segments</b> described below, and the
-    # shell identity key described in the {OpenKey::Identifier} class.
+    # shell identity key described in the {SafeDb::Identifier} class.
     #
     # The session token is divided up into 4 segments with a total of 152
     #  characters.
@@ -137,7 +137,7 @@ module OpenKey
     #    Set to true when accessing the safe's credentials from a sub process
     #    rather than directly through the logged in shell.
     #
-    # @return [OpenKey::Key]
+    # @return [SafeDb::Key]
     #    an extremely high entropy 256 bit key derived (digested) from 48
     #    random bytes at the beginning of the shell (cli) session.
     def self.regenerate_shell_key( session_token, use_grandparent_pid = false )
@@ -194,7 +194,7 @@ module OpenKey
     # - the user comes back to their <b>workstation</b>
     # - the clock ticks into another day, month, year ...
     #
-    # @param bcrypt_salt_key [OpenKey::Key]
+    # @param bcrypt_salt_key [SafeDb::Key]
     #
     #    Either use BCrypt to generate the salt or retrieve and post in a
     #    previously generated salt which must hold 22 printable characters.
@@ -208,7 +208,7 @@ module OpenKey
     #    Set to true when accessing the safe's credentials from a sub process
     #    rather than directly through the logged in shell.
     #
-    # @return [OpenKey::Key]
+    # @return [SafeDb::Key]
     #    a digested key suitable for short term (session scoped) use with the
     #    guarantee that the same key will be returned whenever called from within
     #    the same executing shell environment and a different key when not.

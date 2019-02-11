@@ -24,7 +24,7 @@ module SafeDb
 
       return unless ops_key_exists?
 
-      unless ( OpenKey::KeyApi.is_domain_keys_setup?( @domain_name ) )
+      unless ( KeyApi.is_domain_keys_setup?( @domain_name ) )
         print_not_initialized
         return
       end
@@ -36,7 +36,7 @@ module SafeDb
 ############## Call [[ KeyApi.is_logged_in? ]] - then print msg and skip password collection below
 ############## Call [[ KeyApi.is_logged_in? ]] - then print msg and skip password collection below
 
-      domain_secret = OpenKey::KeyPass.password_from_shell( false )
+      domain_secret = KeyPass.password_from_shell( false )
 
 ############## Use [[ KeyApi.valid_password? ]] and give error if not valid
 ############## Use [[ KeyApi.valid_password? ]] and give error if not valid
@@ -44,7 +44,7 @@ module SafeDb
 ############## Use [[ KeyApi.valid_password? ]] and give error if not valid
 ############## Use [[ KeyApi.valid_password? ]] and give error if not valid
 
-      OpenKey::KeyApi.do_login( @domain_name, domain_secret, create_header() )
+      KeyApi.do_login( @domain_name, domain_secret, create_header() )
 
       view_uc = View.new
       view_uc.flow_of_events

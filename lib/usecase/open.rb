@@ -49,12 +49,12 @@ module SafeDb
     def execute
 
       return unless ops_key_exists?
-      master_db = OpenKey::KeyApi.read_master_db()
+      master_db = KeyApi.read_master_db()
 
       master_db[ ENV_PATH ] = @env_path
       master_db[ KEY_PATH ] = @key_path
 
-      OpenKey::KeyApi.write_master_db( create_header(), master_db )
+      KeyApi.write_master_db( create_header(), master_db )
 
       # Show the mini dictionary at the opened chapter and verse location
       # More work is needed when for when only the chapter is opened in

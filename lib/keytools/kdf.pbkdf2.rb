@@ -1,7 +1,7 @@
 #!/usr/bin/ruby
 # coding: utf-8
 
-module OpenKey
+module SafeDb
 
 
   # PBKDF2 is a powerful leading <b>Key Derivation Function (KDF)</b> that exists to

@@ -1,6 +1,6 @@
 #!/usr/bin/ruby
 
-module OpenKey
+module SafeDb
 
   # First use the class methods to source keys, then use a key's instance
   # methods to access its properties and in concert with other symmetrical
@@ -77,7 +77,7 @@ module OpenKey
   # into their 6-bit binary string equivalents.
   #
   # It can convert non-alphanumeric characters within either Base64 or
-  # Radix64 into the OpenKey YACHT64 standard which has a forward slash
+  # Radix64 into the SafeDb YACHT64 standard which has a forward slash
   # but neither a plus sign nor a period character.
   #
   # <b>The Big4 Character Sets | Base64 | UrlSafe64 | Radix64 | YACHT64</b>
@@ -93,8 +93,8 @@ module OpenKey
   # - Radix64 is <b>.</b> then <b>/</b> then <b>0 to 9</b> then <b>A to Z</b> then <b>a to z</b>
   # - UrlSafeBase64 is Base64 but chars 63/64 are an <b>underscore (_)</b> and <b>hyphen (-)</b>
   # - UrlSafeBase64 <b>does not have line breaks and carriage returns</b> (unlike Base64)
-  # - <b>OpenKey 64 (YACHT64)</b> uses the same 62 characters plus an @ sign and a forward slash
-  # - The 64 <b>OpenKey 64</b> characters are <b>obfuscated into a random order</b>
+  # - <b>SafeDb 64 (YACHT64)</b> uses the same 62 characters plus an @ sign and a forward slash
+  # - The 64 <b>SafeDb 64</b> characters are <b>obfuscated into a random order</b>
   #
   # == 4 Non-AlphaNumerics | Base64 | Radix64 | YACHT64
   #
@@ -110,7 +110,7 @@ module OpenKey
   # - convert <b>underscore (_)</b> in <b>Url Safe Base64</b> to an @ sign
   # - <b>delete the (=) equals</b> padding character used by Base64
   #
-  # Neither the OpenBSD backed Radix64 nor the OpenKey (YACHT64) entertain the
+  # Neither the OpenBSD backed Radix64 nor the SafeDb (YACHT64) entertain the
   # concept of padding.
   #
   # == Mapping Each Character to 6 Binary Bits

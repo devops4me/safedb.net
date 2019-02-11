@@ -8,18 +8,18 @@ module SafeDb
   class Export < UseCase
 
     def get_chapter_data( chapter_key )
-      return OpenKey::KeyDb.from_json( OpenKey::KeyApi.content_unlock( chapter_key ) )
+      return KeyDb.from_json( KeyApi.content_unlock( chapter_key ) )
     end
 
     def execute
 
       return unless ops_key_exists?
-      master_db = OpenKey::KeyApi.read_master_db()
+      master_db = KeyApi.read_master_db()
 
       return if unopened_envelope?( master_db )
 
       chapter_id = ENVELOPE_KEY_PREFIX + master_db[ ENV_PATH ]
-      has_chapter = OpenKey::KeyApi.db_envelope_exists?( master_db[ chapter_id ] )
+      has_chapter = KeyApi.db_envelope_exists?( master_db[ chapter_id ] )
 
       unless has_chapter
         puts "{}"

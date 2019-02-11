@@ -7,7 +7,7 @@ module SafeDb
     attr_writer :key_name
 
     def get_chapter_data( chapter_key )
-      return OpenKey::KeyDb.from_json( OpenKey::KeyApi.content_unlock( chapter_key ) )
+      return KeyDb.from_json( KeyApi.content_unlock( chapter_key ) )
     end
 
     def execute
@@ -19,7 +19,7 @@ module SafeDb
       return if unopened_envelope?( master_db )
 
       chapter_id = ENVELOPE_KEY_PREFIX + master_db[ ENV_PATH ]
-      has_chapter = OpenKey::KeyApi.db_envelope_exists?( master_db[ chapter_id ] )
+      has_chapter = KeyApi.db_envelope_exists?( master_db[ chapter_id ] )
 
       chapter_data = get_chapter_data( master_db[ chapter_id ] ) if has_chapter
       has_verse = has_chapter && chapter_data.has_key?( master_db[ KEY_PATH ] )

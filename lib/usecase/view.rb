@@ -24,7 +24,7 @@ module SafeDb
     def execute
 
       return unless ops_key_exists?
-      master_db = OpenKey::KeyApi.read_master_db()
+      master_db = KeyApi.read_master_db()
 
       open_envelope = "(none)" if master_db[ ENV_PATH ].nil?
       open_envelope = master_db[ ENV_PATH ] unless master_db[ ENV_PATH ].nil?
@@ -32,19 +32,19 @@ module SafeDb
       open_key_path = master_db[ KEY_PATH ] unless master_db[ KEY_PATH ].nil?
 
       puts ""
-      puts "--- Book Birthday ~> #{OpenKey::KeyApi.to_db_create_date(master_db)}\n"
-      puts "--- The Book Name ~> #{OpenKey::KeyApi.to_db_domain_name(master_db)}\n"
-      puts "--- The Book (Id) ~> #{OpenKey::KeyApi.to_db_domain_id(master_db)}\n"
+      puts "--- Book Birthday ~> #{KeyApi.to_db_create_date(master_db)}\n"
+      puts "--- The Book Name ~> #{KeyApi.to_db_domain_name(master_db)}\n"
+      puts "--- The Book (Id) ~> #{KeyApi.to_db_domain_id(master_db)}\n"
       puts "---\n"
       puts "--- Chapter ~> #{open_envelope}\n"
       puts "--- + Verse ~> #{open_key_path}\n"
       puts "---\n"
 
       goto_location = 1
-      envelope_dictionaries = OpenKey::KeyApi.to_matching_dictionary( master_db, ENVELOPE_KEY_PREFIX )
+      envelope_dictionaries = KeyApi.to_matching_dictionary( master_db, ENVELOPE_KEY_PREFIX )
       envelope_dictionaries.each_pair do | envelope_name, crumb_dictionary |
         is_opened_chapter = envelope_name.eql?( open_envelope )
-        envelope_content = OpenKey::KeyDb.from_json( OpenKey::KeyApi.content_unlock( crumb_dictionary ) )
+        envelope_content = KeyDb.from_json( KeyApi.content_unlock( crumb_dictionary ) )
         envelope_content.each_key do | envelope_key |
           is_opened_verse = envelope_key.eql?( open_key_path )
           is_open = is_opened_chapter && is_opened_verse

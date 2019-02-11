@@ -34,16 +34,16 @@ module SafeDb
 
       return unless ops_key_exists?
 
-      OpenKey::KeyApi.init_app_domain( @domain_name, @base_path )
-      keys_setup = OpenKey::KeyApi.is_domain_keys_setup?( @domain_name )
+      KeyApi.init_app_domain( @domain_name, @base_path )
+      keys_setup = KeyApi.is_domain_keys_setup?( @domain_name )
 
       if ( keys_setup )
         print_already_initialized
         return
       end
 
-      domain_password = OpenKey::KeyPass.password_from_shell( true )
-      OpenKey::KeyApi.setup_domain_keys( @domain_name, domain_password, create_header() )
+      domain_password = KeyPass.password_from_shell( true )
+      KeyApi.setup_domain_keys( @domain_name, domain_password, create_header() )
       print_domain_initialized
 
 # -->      unless @base_path.nil?

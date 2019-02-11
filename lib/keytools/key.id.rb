@@ -2,7 +2,7 @@
 # coding: utf-8
 
 
-module OpenKey
+module SafeDb
 
 
   # This class derives <b>non secret but unique identifiers</b> based on different

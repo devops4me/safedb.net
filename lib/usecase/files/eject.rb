@@ -25,12 +25,12 @@ module SafeDb
       return if unopened_envelope?( master_db )
       chapter_id = ENVELOPE_KEY_PREFIX + master_db[ ENV_PATH ]
       verse_id = master_db[ KEY_PATH ]
-      chapter_data = OpenKey::KeyDb.from_json( OpenKey::KeyApi.content_unlock( master_db[ chapter_id ] ) )
+      chapter_data = KeyDb.from_json( KeyApi.content_unlock( master_db[ chapter_id ] ) )
 
       base64_content = chapter_data[ verse_id ][ "#{FILE_KEY_PREFIX}#{@file_key}" ][ FILE_CONTENT_KEY ]
       simple_filename = chapter_data[ verse_id ][ "#{FILE_KEY_PREFIX}#{@file_key}" ][ FILE_NAME_KEY ]
       file_full_path = File.join( Dir.pwd, simple_filename )
-      backup_filename = OpenKey::KeyNow.yyjjj_hhmm_sst() + "-" + simple_filename
+      backup_filename = KeyNow.yyjjj_hhmm_sst() + "-" + simple_filename
       backup_file_path = File.join( Dir.pwd, backup_filename )
       will_clobber = File.file?( file_full_path )
 

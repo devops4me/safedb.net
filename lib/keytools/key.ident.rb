@@ -1,7 +1,7 @@
 #!/usr/bin/ruby
 # coding: utf-8
 
-module OpenKey
+module SafeDb
 
   # This class knows how to derive information from the machine environment to aide
   # in producing identifiers unique to the machine and/or workstation, with functionality

@@ -9,8 +9,8 @@ module SafeDb
     def execute
 
       puts ""
-      puts OpenKey::KeyNow.grab()
-      puts OpenKey::KeyNow.fetch()
+      puts KeyNow.grab()
+      puts KeyNow.fetch()
       puts ""
 
       return

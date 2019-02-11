@@ -190,6 +190,6 @@
   # <b>Yes it does!</b> If the app db keys <b>have been instantiated</b> and the client app is
   # <b>sitting pretty</b> in possession of the database ciphertext, no more needs doing.
 
-module OpenKey
+module SafeDb
 
 end

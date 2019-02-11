@@ -1,6 +1,6 @@
 #!/usr/bin/ruby
 
-module OpenKey
+module SafeDb
 
   # Create and deliver representations of a random initialization vector
   # suitable for the AES symmetric encryption algorithm which demands a

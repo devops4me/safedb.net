@@ -21,7 +21,7 @@ module SafeDb
       # Then get (or instantiate) the chapter's hash data structure
       chapter_id = ENVELOPE_KEY_PREFIX + master_db[ ENV_PATH ]
       verse_id = master_db[ KEY_PATH ]
-      chapter_exists = OpenKey::KeyApi.db_envelope_exists?( master_db[ chapter_id ] )
+      chapter_exists = KeyApi.db_envelope_exists?( master_db[ chapter_id ] )
 
 
       # @todo begin
@@ -34,14 +34,14 @@ module SafeDb
       # key/value mini-dictionary breadcrumbs sitting
       # within the master database at the section labelled
       # envelope@<<actual_chapter_id>>.
-      chapter_data = OpenKey::KeyDb.from_json( OpenKey::KeyApi.content_unlock( master_db[ chapter_id ] ) )
+      chapter_data = KeyDb.from_json( KeyApi.content_unlock( master_db[ chapter_id ] ) )
 
 
       # Unlock the file content by supplying the
       # key/value mini-dictionary breadcrumbs sitting
       # within the chapter's data structure in the
       # section labelled <<verse_id>>.
-      file_content = OpenKey::KeyApi.content_unlock( chapter_data[ verse_id ] )
+      file_content = KeyApi.content_unlock( chapter_data[ verse_id ] )
 
 
       # We read the location url we plan to eject the
@@ -55,7 +55,7 @@ module SafeDb
 
       # Create a backup file if we can detect that a
       # file occupies the eject (write) filepath.
-      backup_file_path = ::File.join( ::File.dirname( file_path ), OpenKey::KeyNow.yyjjj_hhmm_sst() + "-" + file_name )
+      backup_file_path = ::File.join( ::File.dirname( file_path ), KeyNow.yyjjj_hhmm_sst() + "-" + file_name )
       ::File.write( backup_file_path, ::File.read( file_path ) ) if ::File.file?( file_path )
 
 

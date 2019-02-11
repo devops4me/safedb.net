@@ -1,7 +1,7 @@
 #!/usr/bin/ruby
 # coding: utf-8
 
-module OpenKey
+module SafeDb
 
   # BCrypt is a <b>Blowfish based Key Derivation Function (KDF)</b> that exists to
   # convert <b>low entropy</b> human created passwords into a high entropy key that
@@ -203,7 +203,7 @@ module OpenKey
     #    resubmitted here (in the future) to regenerate the same key.
     #
     # @return [Key]
-    #    an {OpenKey::Key} that has been initialized from the 30 RADIX64
+    #    an {SafeDb::Key} that has been initialized from the 30 RADIX64
     #    character output from the BCrypt algorithm.
     #
     #    The BCrypt algorithm produces 181 raw binary bits which is just

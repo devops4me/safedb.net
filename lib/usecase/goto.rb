@@ -23,13 +23,13 @@ module SafeDb
     def execute
 
       return unless ops_key_exists?
-      master_db = OpenKey::KeyApi.read_master_db()
+      master_db = KeyApi.read_master_db()
 
       goto_location = 0
-      envelope_dictionaries = OpenKey::KeyApi.to_matching_dictionary( master_db, ENVELOPE_KEY_PREFIX )
+      envelope_dictionaries = KeyApi.to_matching_dictionary( master_db, ENVELOPE_KEY_PREFIX )
       envelope_dictionaries.each_pair do | envelope_name, crumb_dictionary |
 
-        envelope_content = OpenKey::KeyDb.from_json( OpenKey::KeyApi.content_unlock( crumb_dictionary ) )
+        envelope_content = KeyDb.from_json( KeyApi.content_unlock( crumb_dictionary ) )
         envelope_content.each_key do | envelope_key |
 
           goto_location += 1
