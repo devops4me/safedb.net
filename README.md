@@ -1,6 +1,38 @@
 safe [![Build Status](https://secure.travis-ci.org/TwP/inifile.png)](http://travis-ci.org/TwP/inifile)
 ==========
 
+
+## safe push | safe pull
+
+Working with <tt>remote (off-site) storage</tt> and <tt>sync-ing safe books</tt> between **different computers** is done using <tt>safe push</tt> and <tt>safe pull</tt>. Even with a single laptop you need a backup and restore process and this push pull is in-built and ready to go.
+
+The process employs
+
+- a <tt>git repository</tt> to push and pull crypt material to and from
+- a usb key, mobile phone and/or email to stash a small file containing salts
+
+Attackers would need to bring together the crypt material, the salt file and your password, in order to access the safe's credentials.
+
+### Command to Acquire Repository State Key
+
+```
+git log -1 --format="%h" HEAD
+```
+
+## safe's delivery pipeline
+
+safe has an agile and automated delivery pipeline that assures quality, continuity and usability in the major Linux environments including Ubuntu, RHEL, CoreOS, Amazon Linux and Suse Linux.
+
+The pipeline process is triggered when new software arrives in the safedb github repository. When this happens
+
+- Jenkins picks up the latest software
+- Rake and Minitest are used to build and unit test the software
+- Docker is used to system test safedb in the key Linux environments
+- versioning is applied using the date/time and Git's commit hashes
+- if tests pass the safedb gem is deployed to RubyGems.org
+- website documentation is built and posted to [safedb.net](https://www.safedb.net)
+
+
 safe database introduction
 -----------
 **A safe database contains books that you login to.** A book contains **`chapters`** and chapters contain **`verses`**. Each verse has a number of lines which are just key/value pairs.
