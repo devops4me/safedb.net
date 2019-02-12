@@ -21,6 +21,11 @@ git log -1 --format="%h" HEAD
 
 ## safe's delivery pipeline
 
+Visit this Rakefile for an example of how to build, test, version and release.
+
+https://github.com/tslocke/hobo/blob/master/Rakefile
+
+
 safe has an agile and automated delivery pipeline that assures quality, continuity and usability in the major Linux environments including Ubuntu, RHEL, CoreOS, Amazon Linux and Suse Linux.
 
 The pipeline process is triggered when new software arrives in the safedb github repository. When this happens
@@ -350,6 +355,17 @@ In effect, safe can start VPNs, wireless connections, launch Firefox with certif
 
 ## Generating Credentials
 
+The most powerful known technique for generating a random sequence of characters on Linux involves the <tt>urandom</tt> command.
+
+### urandom command example
+
+```
+head /dev/urandom | tr -dc A-Za-z0-9 | head -c 18 ; echo ''
+head /dev/urandom | tr -dc A-Za-z0-9 | head -c 20 ; echo ''
+```
+
+## Generating Credential Types
+
 The following can be generated from a single command
 
 - password strings configurable by length, set of printable characters and encoding
@@ -361,7 +377,7 @@ The following can be generated from a single command
 
 Once the above are locked inside your safe - you
 
-## Did you know?
+### Did you know?
 
 Did you know that
 - plaintext credentials are written by git config credential.helper store
@@ -371,6 +387,10 @@ Did you know that
 
 ## Configure Length of Generated Password
 
+```
+head /dev/urandom | tr -dc A-Za-z0-9 | head -c 18 ; echo ''
+head /dev/urandom | tr -dc A-Za-z0-9 | head -c 20 ; echo ''
+```
 
 Visit the below - has perfect parameters for configuring the output of a generating credential.
 
