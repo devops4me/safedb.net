@@ -284,7 +284,7 @@ module SafeDb
 
     MASTER_LOCK_KEY_NAME = "master.session.lock.key"
 
-    APPLICATION_GEM_NAME = "safedb"
+    APPLICATION_GEM_NAME = "safedb.net"
     APPLICATION_GEM_WEBSITE = "https://www.safedb.net"
     APPLICATION_GITHUB_URL = "https://github.com/devops4me/safedb.net"
 
@@ -348,9 +348,6 @@ module SafeDb
       log.info(x) { "Gem Config File    => #{Gem.config_file()}" }
       log.info(x) { "Gem Binary Path    => #{Gem.default_bindir()}" }
       log.info(x) { "Gem Host Path      => #{Gem.host()}" }
-      log.info(x) { "Gem Spec Info      => #{Gem.latest_spec_for(APPLICATION_GEM_NAME)}" }
-      log.info(x) { "Gem Spec Name      => #{Gem.latest_spec_for(APPLICATION_GEM_NAME).name}" }
-      log.info(x) { "Gem Spec Version   => #{Gem.latest_spec_for(APPLICATION_GEM_NAME).version}" }
       log.info(x) { "Gem Caller Folder  => #{Gem.location_of_caller()}" }
       log.info(x) { "Gem Paths List     => #{Gem.path()}" }
       log.info(x) { "Gem Platforms      => #{Gem.platforms()}" }
