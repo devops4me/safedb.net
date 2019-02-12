@@ -125,8 +125,6 @@ module SafeDb
 
       binary_salt = Key.to_binary_from_bit_string( scrypt_salt )
 
-      require "openssl"
-
       puts ""
       puts $LOADED_FEATURES.grep(/openssl/)
       puts ""

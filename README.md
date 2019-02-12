@@ -15,8 +15,11 @@ Attackers would need to bring together the crypt material, the salt file and you
 
 ### Command to Acquire Repository State Key
 
+Note = you only need 10 base64 chars to hold the 40 character hex hash.
+
 ```
-git log -1 --format="%h" HEAD
+git rev-parse `git log -1 --format=%h HEAD` # acquire the full commit hash hex string
+git log -1 --format=%h HEAD                 # pick up the 1st 7 commit hash characters
 ```
 
 ## safe's delivery pipeline
@@ -37,6 +40,14 @@ The pipeline process is triggered when new software arrives in the safedb github
 - if tests pass the safedb gem is deployed to RubyGems.org
 - website documentation is built and posted to [safedb.net](https://www.safedb.net)
 
+### Command to Acquire Repository State Key
+
+Note = you only need 10 base64 chars to hold the 40 character hex hash.
+
+```
+git rev-parse `git log -1 --format=%h HEAD` # acquire the full commit hash hex string
+git log -1 --format=%h HEAD                 # pick up the 1st 7 commit hash characters
+```
 
 safe database introduction
 -----------
