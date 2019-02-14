@@ -100,12 +100,13 @@ safe is **simple**, intuitive and highly secure. <b><em>It never accesses the cl
 safe | Install and Configure
 -----------
 
-## install safe
+## install safe on ubuntu 18.04
 
-    $ gem install safedb
-    $ export SAFE_TTY_TOKEN=`safe token`        # setup a shell session variable
-    $ safe init joe@abc /home/joe/credentials   # initialize a secrets domain
-    $ safe login joe@abc                        # login to the new domain
+    $ sudo apt-get install ruby-full     # for OpenSSL we need full ruby
+    $ sudo gem install safedb            # install the safe ruby gem
+    $ export SAFE_TTY_TOKEN=`safe token` # setup a shell session variable
+    $ safe init joe@abc ~/safedb.creds   # initialize a safe book in folder
+    $ safe login joe@abc                 # login with the created password
 
 You initialize then login to a **domain** like **joe@abc**. In the init command we specify where the encrypted material will be stored. Best use a USB key or phone to use your secrets on any drive or computer.
 
@@ -115,27 +116,26 @@ More information will be provided on installing and using safe via a gem install
 
 ## Create Alias for Export Safe Terminal Token
 
-It's tiresome to manually create the **SAFE_TTY_TOKEN environment variable** that is required by safe.
+It is tiresome To type <tt>export SAFE_TTY_TOKEN=`safe token`</tt> every time you use the safe. A solution is to create a smaller alias command like <tt>safetty</tt> which will run when we open up a shell.
 
-So create an **alias safetty (export token)** command like this noting the escaped <b>back-ticks</b> surrounding the <b>safe token</b> call.
+```bash
+echo "alias safetty='export SAFE_TTY_TOKEN=\`safe token\`'" >> ~/.bash_aliases
+```
 
-    $ echo "alias safetty='export SAFE_TTY_TOKEN=\`safe token\`'" >> ~/.bash_aliases
+Note the **escaped back-ticks** surrounding <tt>safe token</tt>. It is easy to mistake them for apostrophes.
+
     $ cat ~/.bash_aliases      # Check the alias has been added to ~/.bash_aliases
     $ source ~/.bash_aliases   # Use source to avoid grabbing a new shell this time
 
-Now before using safe simply call safetty.
+## safe book login command
 
-    $ safetty                          # safe terminal token
-    $ printenv | grep SAFE_TTY_TOKEN   # check it was created
-    $ safe login joe@abc               # login to a book
-    $ safe view                        # chapters and verses
+Now that we have created the <tt>safetty</tt> alias we can login with one line like this.
 
-There are other ways to initialize the shell token including
+```bash
+safetty; safe login joe@abc
+```
 
-- via a Docker run ENV parameter
-- inside a Vagrantfile (vagrant up)
-
-Do not add it to the bash profile script because safe uses the parent process id and bash profile will in effect use safe's grandparent's process id.
+Advanced users should avoid adding the export command to <tt>~/.bash_profile</tt>.
 
 
 ## Remove Token | Environment Variable
