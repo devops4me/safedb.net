@@ -48,6 +48,37 @@ class Interprete < Thor
   # the --script flag.
   class_option :script, :type => :boolean
 
+  # Any use case can modify its behaviour if this <tt>--to-dir</tt> class
+  # option is present. For example the file write (eject) use case can place
+  # files in the directory specified by this switch.
+  class_option :to_dir, :aliases => '-t'
+
+
+
+  # Printout the version of this safedb.net command line interface.
+  desc "version", "prints the safedb.net command line interface version"
+
+  # If <tt>safe --version</tt> is issued this line accepts it and converts
+  # it so that the version method is called.
+  map %w[-v --version] => :version
+
+  # Printout the version of this safedb.net command line interface.
+  # The version should be extracted whether the user types in
+  #
+  # - either <tt>safe --version</tt>
+  # - or <tt>safe version</tt>
+  def version
+    log.info(x) { "[usecase] ~> print the version of this safedb.net personal database." }
+
+    puts ""
+    puts "safedb gem version => v#{SafeDb::VERSION}"
+    puts "time and date now  => #{SafeDb::KeyNow.human_readable()}"
+    puts "safedb @github.com => https://github.com/devops4me/safedb.net"
+    puts "safe @rubygems.org => https://rubygems.org/gems/safedb"
+    puts ""
+
+  end
+
 
 
   # Description of the init configuration call.
@@ -55,8 +86,8 @@ class Interprete < Thor
 
   # If confident that command history cannot be exploited to gain the
   # human password or if the agent running safe is itself a script,
-  # the <tt>with</tt> option can be used to convey the password.
-  option :with
+  # the <tt>password</tt> option can be used to convey the password.
+  option :password, :aliases => '-p'
 
   # Initialize the credentials manager, collect the human password and
   # manufacture the strong asymmetric public / private keypair.
@@ -66,9 +97,9 @@ class Interprete < Thor
   def init( domain_name, base_path = nil )
     log.info(x) { "initialize the safe book on this device." }
     init_uc = SafeDb::Init.new
-    init_uc.master_p4ss = options[:with] if options[:with]
+    init_uc.password = options[ :password ] if options[ :password ]
     init_uc.domain_name = domain_name
-    init_uc.base_path = base_path unless base_path.nil?
+    init_uc.base_path = File.expand_path( base_path ) unless base_path.nil?
     init_uc.flow_of_events
   end
 
@@ -79,8 +110,8 @@ class Interprete < Thor
 
   # If confident that command history cannot be exploited to gain the
   # human password or if the agent running safe is itself a script,
-  # the <tt>with</tt> option can be used to convey the password.
-  option :with
+  # the <tt>password</tt> option can be used to convey the password.
+  option :password, :aliases => '-p'
 
   # Login in order to securely interact with your data.
   # @param domain_name [String] the domain the software operates under
@@ -88,7 +119,7 @@ class Interprete < Thor
     log.info(x) { "[usecase] ~> login to the book before interacting with it." }
     login_uc = SafeDb::Login.new
     login_uc.domain_name = domain_name unless domain_name.nil?
-    login_uc.master_p4ss = options[:with] if options[:with]
+    login_uc.password = options[ :password ] if options[ :password ]
     login_uc.flow_of_events
   end
 
@@ -233,6 +264,7 @@ class Interprete < Thor
     log.info(x) { "[usecase] ~> eject file at chapter/verse against specified key." }
     eject_uc = SafeDb::Eject.new
     eject_uc.file_key = file_key
+    eject_uc.to_dir = options[:to_dir] if options[:to_dir]
     eject_uc.flow_of_events
   end
 

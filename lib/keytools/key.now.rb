@@ -316,6 +316,15 @@ module SafeDb
     end
 
 
+    # Fetch the human readable time stamp.
+    #
+    # @return [String]
+    #    the human readable timestamp
+    def self.human_readable
+      return "#{Time.now.ctime} #{yyjjj_hhmm_sst}"
+    end
+
+
     # Fetch the double barreled time stamp that is an amalgam of
     # the human readable time now and a machine time representation
     # from the moment this class was initialized.

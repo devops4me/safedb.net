@@ -17,7 +17,7 @@ module SafeDb
   # - you can deliver the password in multiple ways
   class Login < UseCase
 
-    attr_writer :master_p4ss, :domain_name
+    attr_writer :password, :domain_name
 
 
     def execute
@@ -36,7 +36,8 @@ module SafeDb
 ############## Call [[ KeyApi.is_logged_in? ]] - then print msg and skip password collection below
 ############## Call [[ KeyApi.is_logged_in? ]] - then print msg and skip password collection below
 
-      domain_secret = KeyPass.password_from_shell( false )
+      domain_secret = KeyPass.password_from_shell( false ) if @password.nil?
+      domain_secret = @password unless @password.nil?
 
 ############## Use [[ KeyApi.valid_password? ]] and give error if not valid
 ############## Use [[ KeyApi.valid_password? ]] and give error if not valid

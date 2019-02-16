@@ -481,6 +481,18 @@ applications and systems.
 
 ### Configure Makeup of Password | Printable Characters
 
+Run the below command and note the large character set from which secrets and passwords are generated.
+The larger the character set the **exponentially** more difficult to brute force crack a password. That said, many websites and services impose restrictions on the characters set, usually in an attempt to prevent sql injection and cross-site-scripting attacks.
+
+<tt>safedb</tt> allows you to specify the character set at the book, chapter, verse, line and also at the command line level.
+
+```
+head /dev/urandom | tr -dc A-Za-z0-9?@=$~%/+^.,][\{\}\<\>\&\(\)_\- | head -c 258 ; echo
+```
+
+For easy configuration, just specify --flaky, --weak, --solid, --strong and --herculean.
+
+
 Some systems reject certain characters. Lloyds Bank for example will only accept alpha-numerics.
 
 In these cases we need to configure the set of characters that sources the actual sequence of password characters.

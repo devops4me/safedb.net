@@ -11,7 +11,7 @@ module SafeDb
   # No keyname will eject every file in the opened chapter and verse.
   class Eject < UseCase
 
-    attr_writer :file_key
+    attr_writer :file_key, :to_dir
 
     # Files are always ejected into the present working directory and any
     # about to be clobbered files are backed up with a timestamp.
@@ -29,23 +29,31 @@ module SafeDb
 
       base64_content = chapter_data[ verse_id ][ "#{FILE_KEY_PREFIX}#{@file_key}" ][ FILE_CONTENT_KEY ]
       simple_filename = chapter_data[ verse_id ][ "#{FILE_KEY_PREFIX}#{@file_key}" ][ FILE_NAME_KEY ]
-      file_full_path = File.join( Dir.pwd, simple_filename )
+
+      # Do a mkdir_p if @to_dir has some valid non-whitespace text
+      # If so check that we have permissions to write to the specified folder
+      destination_dir = Dir.pwd if @to_dir.nil?
+      destination_dir = @to_dir unless @to_dir.nil?
+
+      file_full_path = File.join( destination_dir, simple_filename )
       backup_filename = KeyNow.yyjjj_hhmm_sst() + "-" + simple_filename
-      backup_file_path = File.join( Dir.pwd, backup_filename )
+      backup_file_path = File.join( destination_dir, backup_filename )
       will_clobber = File.file?( file_full_path )
+
+      puts ""
+      puts "Clobbered File = #{backup_filename}" if will_clobber
+      puts "Prescribed Directory = #{@to_dir}" unless @to_dir.nil?
+      puts "Present Directory = #{Dir.pwd}" if @to_dir.nil?
+      puts "Ejected Filename = #{simple_filename}"
+      puts "The Full Filepath = #{file_full_path}"
+      puts "Chapter and Verse = #{master_db[ENV_PATH]}::#{verse_id}"
+      puts "Ejected File Key = #{@file_key}"
+      puts ""
+      puts "File successfully ejected from the safe."
+      puts ""
 
       File.write( backup_file_path, File.read( file_full_path ) ) if will_clobber
       ::File.write( file_full_path, Base64.urlsafe_decode64( base64_content ) )
-
-      puts ""
-      puts "File successfully ejected from safe into current directory."
-      puts ""
-      puts "Clobbered File = #{backup_filename}" if will_clobber
-      puts "Current Directory = #{Dir.pwd}"
-      puts "Ejected Filename = #{simple_filename}"
-      puts "Chapter and Verse = #{master_db[ENV_PATH]}:#{verse_id}"
-      puts "Ejected File Key = #{@file_key}"
-      puts ""
 
     end
 

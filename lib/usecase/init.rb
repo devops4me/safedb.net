@@ -24,7 +24,7 @@ module SafeDb
   #
   class Init < UseCase
 
-    attr_writer :master_p4ss, :domain_name, :base_path
+    attr_writer :password, :domain_name, :base_path
 
 
     # The init use case prepares the <b>safe</b> so that you can <b>open</b> an envelope,
@@ -42,7 +42,9 @@ module SafeDb
         return
       end
 
-      domain_password = KeyPass.password_from_shell( true )
+      domain_password = KeyPass.password_from_shell( true ) if @password.nil?
+      domain_password = @password unless @password.nil?
+
       KeyApi.setup_domain_keys( @domain_name, domain_password, create_header() )
       print_domain_initialized
 
