@@ -214,29 +214,6 @@ module SafeDb
     end
 
 
-    # If the system was rebooted on April 23rd, 2018 at 22:00:16 we
-    # expect this method not to return <b>2018-04-23 22:00:16</b>, but
-    # to return the <b>8 least significant digits</b> bootup time
-    # digits which in this case are <b>23220016</b>.
-    #
-    # Investigate all Linux flavours to understand whether this command
-    # works (or is it just Ubuntu). Also does Docker return a sensible
-    # value here?
-    #
-    # This method is not production ready. Not only is the time within
-    # a small range, also the most significant digit can fluctuate up
-    # or down randomly (in  a non-deterministic manner.
-    #
-    # @return [String] the time when the system was booted.
-    def self.get_bootup_time_digits
-
-      boot_time_cmd = "uptime -s"
-      uptime_string = %x[ #{boot_time_cmd} ]
-      return uptime_string.chomp.to_alphanumeric[ 6 .. -1 ]
-
-    end
-
-
   end
 
 

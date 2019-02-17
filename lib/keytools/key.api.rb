@@ -479,7 +479,7 @@ module SafeDb
       # -- Regenerate intra-session key from the session token.
       # -- Encrypt power key for intra (in) session retrieval.
       # --
-      intra_key = KeyLocal.regenerate_shell_key( to_token() )
+      intra_key = KeyLocal.regenerate_shell_key( to_token(), true )
       intra_txt = intra_key.do_encrypt_key( power_key )
 
       # --
@@ -758,7 +758,8 @@ module SafeDb
       # --
       # -- Regenerate intra-session key from the session token.
       # --
-      intra_key = KeyLocal.regenerate_shell_key( to_token(), use_grandparent_pid )
+############      intra_key = KeyLocal.regenerate_shell_key( to_token(), use_grandparent_pid )
+      intra_key = KeyLocal.regenerate_shell_key( to_token(), true )
 
       # --
       # -- Decrypt and acquire the content enryption key that was created
@@ -833,7 +834,7 @@ module SafeDb
       # --
       # -- Regenerate intra-session key from the session token.
       # --
-      intra_key = KeyLocal.regenerate_shell_key( to_token() )
+      intra_key = KeyLocal.regenerate_shell_key( to_token(), true )
 
       # --
       # -- Decrypt and acquire the content enryption key that was created

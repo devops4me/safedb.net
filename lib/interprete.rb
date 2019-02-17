@@ -43,14 +43,22 @@ class Interprete < Thor
   # of the --debug switch.
   class_option :debug, :type => :boolean
 
+
   # The script class option is implemented in the parent {SafeDb::UseCase}
   # use case enabling behaviour alteration based on the presence and state of
   # the --script flag.
   class_option :script, :type => :boolean
 
+
   # Any use case can modify its behaviour if this <tt>--to-dir</tt> class
   # option is present. For example the file write (eject) use case can place
   # files in the directory specified by this switch.
+  #
+  # <tt>class_option :to_dir, :default => Dir.pwd, :aliases => '-t'</tt>
+  #
+  # @todo - adding "default" prevents many many conditionals downstream
+  # <tt>eject.rb</tt> has FOUR (4) conditionals (already) dedicated to this
+  # single field (at the time of writing).
   class_option :to_dir, :aliases => '-t'
 
 
