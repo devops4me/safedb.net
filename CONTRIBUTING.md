@@ -50,19 +50,15 @@ git clone git@safedb.code:devops4me/safedb.net.git mirror.safedb.code
 
 If a config file already exists then safe will back it up with a timestamp prefix before clobbering the file. Now bump up the major, minor or patch versions, then commit.
 
+### development installs | rake install
 
-### rake release RubyGems.org
+Use rake install to locally test local software changes.
 
-Use **`gem push`** at the repository root to create a **rubygems API key** and slurp it up from the **`~/.gem/credentials`** with **`safe file rubygems.org.credentials ~/.gem/credentials`**
+### bump | tag | release to RubyGems.org
 
-Now when releasing we eject the file back into **`~/.gem/credentials`**, secure it and then push up the latest gem changes.
+Once only use **`gem push`** at the repository root to create a **rubygems API key** and slurp it up from the **`~/.gem/credentials`** with **`safe file rubygems.org.credentials ~/.gem/credentials`**
+Now when releasing we eject the file back into **`~/.gem/credentials`**, secure it ( with **`sudo chmod 0600 credentials`** ) and then issue the below command from the **gem-release** gem.
 
-```
-cd ~/.gem
-safe eject rubygems.org.credentials
-sudo chmod 0600 credentials
-cd <<gem-repository-directory>>
-git push -u origin master
-rake install
-rake release
-```
+### `gem bump patch --tag --push --release --file=$PWD/lib/version.rb`
+
+This command bumps up the patch (or major or minor) version, tags the repository, pushes the changes and releases to rubygems.org
