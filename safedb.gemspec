@@ -29,6 +29,8 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'thor',    '~> 0.20'
   spec.add_dependency 'inifile', '~> 3.0'
 
-  spec.add_development_dependency "bundler", "~> 1.16"
+  spec.add_development_dependency "bundler"
+  spec.add_development_dependency "cucumber", "~> 2.0"
+  spec.add_development_dependency "aruba", "~> 1.0.0-alpha.1"
 
 end

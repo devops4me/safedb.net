@@ -9,13 +9,15 @@ You can contriubute software, documentation, issues and even good ideas. Most co
 To contribute software you'll need to setup a development environment.
 
 ```
-sudo apt-get install --assume-yes ruby-full, libicu-dev, git
+sudo apt-get install --assume-yes ruby-full libicu-dev git
 sudo chown -R $USER:$USER /var/lib/gems
 sudo chown -R $USER:$USER /usr/local/bin
-gem install safedb bundler gem-release
+sudo chown -R $USER:$USER /usr/local/lib
+gem install safedb bundler gem-release cucumber aruba
 git clone https://github.com/devops4me/safedb.net.git mirror.safedb.ro
 cd mirror.safedb
 rake install
+bundle install
 ```
 
 You change the software as you see fit and **send a pull request** when you are ready.
