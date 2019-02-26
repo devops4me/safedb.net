@@ -28,7 +28,7 @@ Those with priveleges to release to safedb.net will have a private key to push (
 To release the software to the rubygems.org platform, commonly via a **continuous integration pipeline** based on Jenkins 2.0, one needs
 
 - **either** the email address / password combination
-- **or** a hexadecimal rubygems API key
+- **or** a credentials file containing a hex API key
 
 Release actors are also responsible for bumping the gem version via semantic versioning principles.
 
@@ -53,17 +53,14 @@ If a config file already exists then safe will back it up with a timestamp prefi
 
 ### rake release RubyGems.org
 
-Use **`gem push`** at the repository root to create a **rubygems API key** and slurp it up from the **`~/.gem/credentials`** file. It pays to put it into the safe against a key called **`@rubygems.api.key`**.
+Use **`gem push`** at the repository root to create a **rubygems API key** and slurp it up from the **`~/.gem/credentials`** with **`safe file rubygems.org.credentials ~/.gem/credentials`**
 
-Usually releases will be done within the **Jenkinsfile** with the **GEM_HOST_API_KEY** exported into the environment. Manually, it can be done like this.
-
-```
-export GEM_HOST_API_KEY=`safe print @rubygems.api.key`
-```
-
-Finally, this is how one pushes up the latest gem changes.
+Now when releasing we eject the file back into **`~/.gem/credentials`** and then push up the latest gem changes.
 
 ```
+cd ~/.gem
+safe eject rubygems.org.credentials
+cd <<gem-repository-directory>>
 git push -u origin master
 rake install
 rake release
