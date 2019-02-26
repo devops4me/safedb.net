@@ -55,11 +55,12 @@ If a config file already exists then safe will back it up with a timestamp prefi
 
 Use **`gem push`** at the repository root to create a **rubygems API key** and slurp it up from the **`~/.gem/credentials`** with **`safe file rubygems.org.credentials ~/.gem/credentials`**
 
-Now when releasing we eject the file back into **`~/.gem/credentials`** and then push up the latest gem changes.
+Now when releasing we eject the file back into **`~/.gem/credentials`**, secure it and then push up the latest gem changes.
 
 ```
 cd ~/.gem
 safe eject rubygems.org.credentials
+chmod 0600 credentials
 cd <<gem-repository-directory>>
 git push -u origin master
 rake install
