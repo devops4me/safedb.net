@@ -12,7 +12,7 @@ To contribute software you'll need to setup a development environment.
 sudo apt-get install --assume-yes ruby-full, libicu-dev, git
 sudo chown -R $USER:$USER /var/lib/gems
 sudo chown -R $USER:$USER /usr/local/bin
-gem install safedb bundler
+gem install safedb bundler gem-release
 git clone https://github.com/devops4me/safedb.net.git mirror.safedb.ro
 cd mirror.safedb
 rake install
@@ -60,7 +60,7 @@ Now when releasing we eject the file back into **`~/.gem/credentials`**, secure 
 ```
 cd ~/.gem
 safe eject rubygems.org.credentials
-chmod 0600 credentials
+sudo chmod 0600 credentials
 cd <<gem-repository-directory>>
 git push -u origin master
 rake install
