@@ -18,9 +18,15 @@ git clone https://github.com/devops4me/safedb.net.git mirror.safedb.ro
 cd mirror.safedb
 rake install
 bundle install
+cucumber
 ```
 
 You change the software as you see fit and **send a pull request** when you are ready.
+
+
+## Running Cucumber/Aruba Tests
+
+Use the simple **`cucumber`** command in the project directory to run the tests.
 
 
 ## Releasing Software
