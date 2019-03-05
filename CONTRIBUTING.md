@@ -28,6 +28,19 @@ You change the software as you see fit and **send a pull request** when you are 
 
 Use the simple **`cucumber`** command in the project directory to run the tests.
 
+## Reek | Ruby Code Quality
+
+software quality must improve with every check-in and conversely we should never holistically degrade quality. Every change must be small and incremental so keeping the quality metrics ticking in the right direction is not too much to ask.
+
+**[reek code quality documentation](https://github.com/troessner/reek/tree/v5.3.1/docs)**
+
+We must **install and run reek** within development and continuous integration pipelines, so as to derive a listing of software quality issues.
+
+```
+gem install reek
+reek lib
+```
+
 
 ## Releasing Software
 
