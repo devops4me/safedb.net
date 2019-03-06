@@ -76,7 +76,7 @@ module SafeDb
 
       identity_text =
       [
-        get_ancestor_pid( use_grandparent_pid ),
+######################        get_ancestor_pid( use_grandparent_pid ),
         get_bootup_id(),
         Etc.getlogin(),
         Socket.gethostname()
@@ -140,33 +140,6 @@ module SafeDb
     end
 
 
-    # This method uses a one-way function to return a combinatorial digested
-    # machine identification string using a number of distinct input parameters
-    # to deliver the characteristic of producing the same identifier for the
-    # same machine, virtual machine, workstation and/or compute element, and
-    # reciprocally, a different one on a different machine.
-    #
-    # The userspace is also a key machine identifier so a different machine user
-    # generates a different identifier when all other things remain equal.
-    #
-    # @return [String]
-    #    a one line textual machine workstation or compute element identifier
-    #    that is (surprisingly) different when the machine user changes.
-    def self.derive_machine_identifier
-
-      require 'socket'
-
-      identity_text = [
-        Etc.getlogin,
-        get_machine_id(),
-        Socket.gethostname()
-      ].join.reverse
-
-      return identity_text
-
-    end
-
-
     # If you need to know whether a Linux computer has been rebooted or
     # you need an identifier that stays the same until the computer reboots,
     # look no further than the read only (non sudoer accessible) **boot id**.
@@ -186,30 +159,6 @@ module SafeDb
       bootup_id_cmd = "cat /proc/sys/kernel/random/boot_id"
       bootup_id_str = %x[ #{bootup_id_cmd} ]
       return bootup_id_str.chomp
-
-    end
-
-
-    # The machine identifier is a UUID based hash value that is tied to the
-    # CPU and motherboard of the machine. This read-only identifier can be
-    # accessed without sudoer permissions so is perfect for license generators
-    # and environment sensitive software.
-    #
-    # In the modern era of virtualization you should always check the behaviour
-    # of the above identifiers when used inside
-    #
-    # - docker containers
-    # - Amazon EC2 servers (or Azure or GCE)
-    # - vagrant (VirtualBox/VMWare)
-    # - Windows MSGYWIN (Ubuntu) environments
-    # - Kubernetes pods
-    #
-    # @return [String] the machine ID hash value
-    def self.get_machine_id
-
-      machine_id_cmd = "cat /etc/machine-id"
-      machine_id_str = %x[ #{machine_id_cmd} ]
-      return machine_id_str.chomp
 
     end
 
