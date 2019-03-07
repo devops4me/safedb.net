@@ -729,19 +729,10 @@ module SafeDb
     # - reading the encrypted and encoded content, decoding and decrypting it
     # - employing index key, ciphertext and random iv to reveal the content
     #
-    # @param use_grandparent_pid [Boolean]
-    #
-    #    Optional boolean parameter. If set to true the PID (process ID) used
-    #    as part of an obfuscator key and normally acquired from the parent
-    #    process should now be acquired from the grandparent's process.
-    #
-    #    Set to true when accessing the safe's credentials from a sub process
-    #    rather than directly through the logged in shell.
-    #
     # @return [String]
     #    decode, decrypt and hen return the plain text content that was written
     #    to a file by the {write_content} method.
-    def self.read_master_db( use_grandparent_pid = false )
+    def self.read_master_db()
 
       # --
       # -- Get the filepath to the breadcrumbs file using the trail in
@@ -758,7 +749,7 @@ module SafeDb
       # --
       # -- Regenerate intra-session key from the session token.
       # --
-      intra_key = KeyLocal.regenerate_shell_key( to_token(), use_grandparent_pid )
+      intra_key = KeyLocal.regenerate_shell_key( to_token() )
 
       # --
       # -- Decrypt and acquire the content enryption key that was created

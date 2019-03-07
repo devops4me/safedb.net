@@ -52,22 +52,13 @@ module SafeDb
     # - the user comes back to their <b>workstation</b>
     # - the clock ticks into another day, month, year ...
     #
-    # @param use_grandparent_pid [Boolean]
-    #
-    #    Optional boolean parameter. If set to true the PID (process ID) used
-    #    as part of an obfuscator key and normally acquired from the parent
-    #    process should now be acquired from the grandparent's process.
-    #
-    #    Set to true when accessing the safe's credentials from a sub process
-    #    rather than directly through the logged in shell.
-    #
     # @return [String]
     #    Return a one line textual shell identity string.
     #
     #    As key derivation algorithms enforcing a maximum length may be length may
     #    be applied, each character must add value so non-alphanumerics (mostly hyphens)
     #    are cleansed out before returning.
-    def self.derive_shell_identifier( use_grandparent_pid = false )
+    def self.derive_shell_identifier
 
       require 'socket'
 
@@ -76,13 +67,35 @@ module SafeDb
 
       identity_text =
       [
-######################        get_ancestor_pid( use_grandparent_pid ),
         get_bootup_id(),
         Etc.getlogin(),
         Socket.gethostname()
       ].join
 
       return identity_text.to_alphanumeric
+
+    end
+
+
+    # If you need to know whether a Linux computer has been rebooted or
+    # you need an identifier that stays the same until the computer reboots,
+    # look no further than the read only (non sudoer accessible) **boot id**.
+    #
+    # In the modern era of virtualization you should always check the behaviour
+    # of the above identifiers when used inside
+    #
+    # - docker containers
+    # - Amazon EC2 servers (or Azure or GCE)
+    # - vagrant (VirtualBox/VMWare)
+    # - Windows MSGYWIN (Ubuntu) environments
+    # - Kubernetes pods
+    #
+    # @return [String] the bootup ID hash value
+    def self.get_bootup_id
+
+      bootup_id_cmd = "cat /proc/sys/kernel/random/boot_id"
+      bootup_id_str = %x[ #{bootup_id_cmd} ]
+      return bootup_id_str.chomp
 
     end
 
@@ -136,29 +149,6 @@ module SafeDb
       log.debug(x) { "QQQQQ ~> QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ" }
 
       return ( use_grandparent_pid ? the_grandparent_pid : parental_process_id )
-
-    end
-
-
-    # If you need to know whether a Linux computer has been rebooted or
-    # you need an identifier that stays the same until the computer reboots,
-    # look no further than the read only (non sudoer accessible) **boot id**.
-    #
-    # In the modern era of virtualization you should always check the behaviour
-    # of the above identifiers when used inside
-    #
-    # - docker containers
-    # - Amazon EC2 servers (or Azure or GCE)
-    # - vagrant (VirtualBox/VMWare)
-    # - Windows MSGYWIN (Ubuntu) environments
-    # - Kubernetes pods
-    #
-    # @return [String] the bootup ID hash value
-    def self.get_bootup_id
-
-      bootup_id_cmd = "cat /proc/sys/kernel/random/boot_id"
-      bootup_id_str = %x[ #{bootup_id_cmd} ]
-      return bootup_id_str.chomp
 
     end
 

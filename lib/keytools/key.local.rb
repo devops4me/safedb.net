@@ -128,26 +128,17 @@ module SafeDb
     #    {self.instantiate_shell_key_and_generate_token} and provided
     #    here ad verbatim.
     #
-    # @param use_grandparent_pid [Boolean]
-    #
-    #    Optional boolean parameter. If set to true the PID (process ID) used
-    #    as part of an obfuscator key and normally acquired from the parent
-    #    process should now be acquired from the grandparent's process.
-    #
-    #    Set to true when accessing the safe's credentials from a sub process
-    #    rather than directly through the logged in shell.
-    #
     # @return [SafeDb::Key]
     #    an extremely high entropy 256 bit key derived (digested) from 48
     #    random bytes at the beginning of the shell (cli) session.
-    def self.regenerate_shell_key( session_token, use_grandparent_pid = false )
+    def self.regenerate_shell_key( session_token )
 
       assert_session_token_size( session_token )
       bcrypt_salt = session_token[ BCRYPT_SALT_START_INDEX .. BCRYPT_SALT_END_INDEX ].reverse
       assert_bcrypt_salt_size( bcrypt_salt )
 
       key_ciphertext = session_token[ 0 .. ( BCRYPT_SALT_START_INDEX - 1 ) ]
-      obfuscator_key = derive_session_crypt_key( bcrypt_salt, use_grandparent_pid )
+      obfuscator_key = derive_session_crypt_key( bcrypt_salt )
       regenerated_key = obfuscator_key.do_decrypt_key( key_ciphertext )
 
       return regenerated_key
@@ -199,22 +190,13 @@ module SafeDb
     #    Either use BCrypt to generate the salt or retrieve and post in a
     #    previously generated salt which must hold 22 printable characters.
     #
-    # @param use_grandparent_pid [Boolean]
-    #
-    #    Optional boolean parameter. If set to true the PID (process ID) used
-    #    as part of an obfuscator key and normally acquired from the parent
-    #    process should now be acquired from the grandparent's process.
-    #
-    #    Set to true when accessing the safe's credentials from a sub process
-    #    rather than directly through the logged in shell.
-    #
     # @return [SafeDb::Key]
     #    a digested key suitable for short term (session scoped) use with the
     #    guarantee that the same key will be returned whenever called from within
     #    the same executing shell environment and a different key when not.
-    def self.derive_session_crypt_key bcrypt_salt_key, use_grandparent_pid = false
+    def self.derive_session_crypt_key bcrypt_salt_key
 
-      shell_id_text = KeyIdent.derive_shell_identifier( use_grandparent_pid )
+      shell_id_text = KeyIdent.derive_shell_identifier()
       truncate_text = shell_id_text.length > KdfBCrypt::BCRYPT_MAX_IN_TEXT_LENGTH
       shell_id_trim = shell_id_text unless truncate_text
       shell_id_trim = shell_id_text[ 0 .. ( KdfBCrypt::BCRYPT_MAX_IN_TEXT_LENGTH - 1 ) ] if truncate_text

@@ -114,18 +114,19 @@ You only need to run init once on a computer for each domain - after that you si
 
 More information will be provided on installing and using safe via a gem install, Ubuntu's apt-get, yum, a docker container, a development install, a unit test install and a software development kit (SDK) install.
 
-## Create Alias for Export Safe Terminal Token
+## Automatically Create Safe Token
 
-It is tiresome To type <tt>export SAFE_TTY_TOKEN=`safe token`</tt> every time you use the safe. A solution is to create a smaller alias command like <tt>safetty</tt> which will run when we open up a shell.
+Always typing <tt>export SAFE_TTY_TOKEN=`safe token`</tt> before using safe is tiresome. Ubuntu provides **`.bash_aliases`** for creating tokens like these at the genesis of each shell.
 
 ```bash
-echo "alias safetty='export SAFE_TTY_TOKEN=\`safe token\`'" >> ~/.bash_aliases
+echo "export SAFE_TTY_TOKEN=\`safe token\`" >> ~/.bash_aliases
+source ~/.bash_aliases          # no need to create a new shell
+cat ~/.bash_aliases             # we expect the export command
+printenv | grep SAFE_TTY_TOKEN  # we expect the environment var
 ```
 
-Note the **escaped back-ticks** surrounding <tt>safe token</tt>. It is easy to mistake them for apostrophes.
+Note the **escaped back-ticks** around <tt>safe token</tt>.
 
-    $ cat ~/.bash_aliases      # Check the alias has been added to ~/.bash_aliases
-    $ source ~/.bash_aliases   # Use source to avoid grabbing a new shell this time
 
 ## safe book login command
 
