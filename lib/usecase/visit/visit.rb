@@ -1,14 +1,29 @@
+#!/usr/bin/ruby
+	
+module SafeDb
 
-require "watir" 
-require "rspec/expectations" 
+  class Visit < UseCase
 
-## see README.md for documentation on installing geckodriver
+    def execute
 
-@browser ||= Watir::Browser.new :firefox 
-@browser.goto "google.com" 
-@browser.text_field(:name => "q").set "apollo akora"
-@browser.button.click 
+      require "watir" 
+      require "rspec/expectations" 
 
-@browser.div(:id => "resultStats").wait_until(&:present?)
-sleep 20
-@browser.close
+      ## see README.md for documentation on installing geckodriver
+
+      @browser ||= Watir::Browser.new :firefox 
+      @browser.goto "google.com" 
+      @browser.text_field(:name => "q").set "apollo akora"
+      @browser.button.click 
+
+      @browser.div(:id => "resultStats").wait_until(&:present?)
+      sleep 20
+      @browser.close
+
+    end
+
+
+  end
+
+
+end
