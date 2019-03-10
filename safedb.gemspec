@@ -23,7 +23,7 @@ Gem::Specification.new do |spec|
   spec.bindir        = "bin"
   spec.executables   = [ 'safe' ]
   spec.require_paths = ["lib"]
-  spec.required_ruby_version = '>= 2.5.0'
+  spec.required_ruby_version = '>= 2.3.0'
 
   spec.add_dependency 'bcrypt',  '~> 3.1'
   spec.add_dependency 'thor',    '~> 0.20'

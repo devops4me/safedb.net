@@ -12,7 +12,7 @@ include OpenLogger
 
 
 # This standard out sync command flushes text destined for STDOUT immediately,
-# without waiting either for a full cache or script completion.
+# without waiting either for a full cache or completion.
 $stdout.sync = true
 
 
@@ -44,12 +44,6 @@ class Interprete < Thor
   class_option :debug, :type => :boolean
 
 
-  # The script class option is implemented in the parent {SafeDb::UseCase}
-  # use case enabling behaviour alteration based on the presence and state of
-  # the --script flag.
-  class_option :script, :type => :boolean
-
-
   # Any use case can modify its behaviour if this <tt>--to-dir</tt> class
   # option is present. For example the file write (eject) use case can place
   # files in the directory specified by this switch.
@@ -60,7 +54,6 @@ class Interprete < Thor
   # <tt>eject.rb</tt> has FOUR (4) conditionals (already) dedicated to this
   # single field (at the time of writing).
   class_option :to_dir, :aliases => '-t'
-
 
 
   # Printout the version of this safedb.net command line interface.
@@ -92,9 +85,8 @@ class Interprete < Thor
   # Description of the init configuration call.
   desc "init <book_name> <storage_dir>", "initialize the safe book on this device"
 
-  # If confident that command history cannot be exploited to gain the
-  # human password or if the agent running safe is itself a script,
-  # the <tt>password</tt> option can be used to convey the password.
+  # Use <tt>password</tt> if confident that either the command history is
+  # inaccessible or the call originates from non-interactive software.
   option :password, :aliases => '-p'
 
   # Initialize the credentials manager, collect the human password and
@@ -116,9 +108,8 @@ class Interprete < Thor
   # Description of the login use case command line call.
   desc "login <book_name>", "login to the book before interacting with it"
 
-  # If confident that command history cannot be exploited to gain the
-  # human password or if the agent running safe is itself a script,
-  # the <tt>password</tt> option can be used to convey the password.
+  # Use <tt>password</tt> if confident that either the command history is
+  # inaccessible or the call originates from non-interactive software.
   option :password, :aliases => '-p'
 
   # Login in order to securely interact with your data.
@@ -144,7 +135,6 @@ class Interprete < Thor
     log.info(x) { "[usecase] ~> print the key value at the opened chapter and verse." }
     print_uc = SafeDb::Print.new
     print_uc.key_name = key_name
-    print_uc.from_script = options[:script].nil? ? false : options[:script]
     print_uc.flow_of_events
   end
 
@@ -157,7 +147,6 @@ class Interprete < Thor
   def verse
     log.info(x) { "[usecase] ~> print the verse name at the opened chapter and verse." }
     verse_uc = SafeDb::Verse.new
-    verse_uc.from_script = options[:script].nil? ? false : options[:script]
     verse_uc.flow_of_events
   end
 
@@ -327,7 +316,6 @@ class Interprete < Thor
   def write( file_url = nil )
     log.info(x) { "[usecase] ~> write out file at chapter/verse to (optional) file url." }
     write_uc = SafeDb::Write.new
-    write_uc.from_script = options[:script].nil? ? false : options[:script]
     write_uc.file_url = file_url if file_url
     write_uc.flow_of_events
   end

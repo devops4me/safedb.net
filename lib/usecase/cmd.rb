@@ -28,21 +28,6 @@ module SafeDb
   # - {write} put directive key/value pair in parameter section
   class UseCase
 
-    # This variable should be set to true if the use case call
-    # originates from a shell different from the one through which
-    # the login ocurred.
-    #
-    # To proceed, the shell that hosted the safe login must be a
-    # parent or at least an ancestor of this shell.
-    #
-    # This variable need not be set if the login shell is the direct
-    # parent of this one (the every day manual usage scenario).
-    #
-    # If however the login occurred from a grand or great grandparent
-    # shell (as is the case when nested scripts make an agent-like call),
-    # this variable must be set to true.
-    attr_writer :from_script
-
     # This prefix denotes keys and their values should be posted as environment
     # variables within the context (for example terraform) before instigating the
     # main action like terraform apply.
@@ -89,13 +74,12 @@ module SafeDb
 
       begin
 
-        log.info(x) { "Request for master db with from_script set to #{@from_script}" }
-        return KeyApi.read_master_db( @from_script )
+        log.info(x) { "Request issued to read the master database." }
+        return KeyApi.read_master_db()
 
       rescue OpenSSL::Cipher::CipherError => e
 
         log.fatal(x) { "Exception getting master db for the safe book." }
-        log.fatal(x) { "The from_script parameter came set as [ #{@from_script} ]" }
         log.fatal(x) { "The exception message is ~> [[ #{e.message} ]]" }
         e.backtrace.log_lines
         abort e.message
