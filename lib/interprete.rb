@@ -203,9 +203,9 @@ class Interprete < Thor
   # Description of the export use case command.
   desc "export", "exports the book or chapter or the mini dictionary at verse."
 
-  # Export the entire book if no chapter and verse is specified (achieved with a safe close),
-  # or the chapter if only the chapter is open (safe shut or safe open <<chapter>>, or the
-  # mini-dictionary at the verse if both chapter and verse are open.
+  # Export one, some or all chapters, verses and lines within the logged in book.
+  # The --print flag demands that the exported text goes to stdout otherwise it
+  # will be placed in an aptly named file in  the present working directory.
   def export
     log.info(x) { "[usecase] ~> export book chapter content or dictionary at verse in JSON format." }
     SafeDb::Export.new.flow_of_events

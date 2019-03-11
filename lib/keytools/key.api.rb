@@ -856,62 +856,6 @@ module SafeDb
     end
 
 
-    # Register the URL to the <b>frontend keystore</b> that is tied to
-    # this application instance on this workstation (and user). The default
-    # keystore sits on an accessible filesystem that is preferably a
-    # removable drive (like a USB key or phone) which allows the keys to
-    # your secrets to travel with you in your pocket.
-    #
-    # <b>Changing the Keystore Url</b>
-    #
-    # If the keystore url has already been configured this method will overwrite
-    # (thereby updating) it.
-    #
-    # <b>Changing the Keystore Url</b>
-    #
-    # The keystore directives in the global configuration file looks like this.
-    #
-    #     [keystore.ids]
-    #     dxEy-v2w3-x7y8 = /media/usb_key/family.creds
-    #     47S3-Nv0w-8SYf = /media/usb_key/friend.creds
-    #     3Dds-8Tts-Jy2G = /media/usb_key/office.creds
-    #
-    # <b>Which Use Case Sets the Keystore Url?</b>
-    #
-    # The keystore url must be provided <b>the very first time</b> init
-    # is called for an app instance on a machine. If the configuration
-    # is wiped, the next initialize use case must again provide it.
-    #
-    # <b>How to Add (Extend) Storage Services</b>
-    #
-    # We could use Redis, PostgreSQL, even a Rest API to provide storage
-    # services. To extend it - make a keystore ID boss its own section and
-    # then add keypairs like
-    #
-    # - the keystore URL
-    # - the keystore Type (or interface class)
-    # - keystore create destroy markers
-    #
-    # @param keystore_url [String]
-    #    The keystore url points to where the key metadata protecting
-    #    this application instance lives. The simplest keystores are
-    #    based on files and for them this url is just a folder path.
-    #
-    # @raise [KeyError]
-    #
-    # The keystore URL cannot be <b>NEW</b>. The <b>NEW acronym</b> asserts
-    # that the attribute is
-    #
-    # - neither <b>N</b>il
-    # - nor <b>E</b>mpty
-    # - nor <b>W</b>hitespace only
-    #
-    def register_keystore keystore_url
-      KeyError.not_new( keystore_url, self )
-      @keymap.write( @aim_id, KEYSTORE_IDENTIFIER_KEY, keystore_url )
-    end
-
-
     # Generate a new set of envelope breadcrumbs, derive the new envelope
     # filepath, then <b>encrypt</b> the raw envelope content, and write the
     # resulting ciphertext out into the new file.
@@ -1118,6 +1062,35 @@ module SafeDb
     end
 
 
+    # This method depends on {use_application_domain} which sets
+    # the application ID against the session identity so only call
+    # it if we are in a logged in state.
+    #
+    # NOTE this will NOT be set until the session is logged in so
+    # the call fails before that. For this reason do not call this
+    # method from outside this class. If the domain name is
+    # available use {KeyId.derive_app_instance_identifier} instead.
+    def self.read_app_id()
+
+      aim_id = read_aim_id()
+      keypairs = KeyPair.new( MACHINE_CONFIG_FILE )
+      keypairs.use( aim_id )
+      return keypairs.get( APP_INSTANCE_ID_KEY )
+
+    end
+
+
+    def self.read_aim_id()
+
+      session_identifier = KeyId.derive_session_id( to_token() )
+
+      keypairs = KeyPair.new( MACHINE_CONFIG_FILE )
+      keypairs.use( SESSION_APP_DOMAINS )
+      return keypairs.get( session_identifier )
+
+    end
+
+
     private
 
 
@@ -1226,35 +1199,6 @@ module SafeDb
       initial_db.store( DB_DOMAIN_NAME, domain_name )
       initial_db.store( DB_DOMAIN_ID, app_id )
       return initial_db.to_json
-
-    end
-
-
-    # This method depends on {use_application_domain} which sets
-    # the application ID against the session identity so only call
-    # it if we are in a logged in state.
-    #
-    # NOTE this will NOT be set until the session is logged in so
-    # the call fails before that. For this reason do not call this
-    # method from outside this class. If the domain name is
-    # available use {KeyId.derive_app_instance_identifier} instead.
-    def self.read_app_id()
-
-      aim_id = read_aim_id()
-      keypairs = KeyPair.new( MACHINE_CONFIG_FILE )
-      keypairs.use( aim_id )
-      return keypairs.get( APP_INSTANCE_ID_KEY )
-
-    end
-
-
-    def self.read_aim_id()
-
-      session_identifier = KeyId.derive_session_id( to_token() )
-
-      keypairs = KeyPair.new( MACHINE_CONFIG_FILE )
-      keypairs.use( SESSION_APP_DOMAINS )
-      return keypairs.get( session_identifier )
 
     end
 
