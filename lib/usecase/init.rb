@@ -48,10 +48,6 @@ module SafeDb
       KeyApi.setup_domain_keys( @domain_name, domain_password, create_header() )
       print_domain_initialized
 
-# -->      unless @base_path.nil?
-# -->        key_api.register_keystore( @base_path )
-# -->      end
-
     end
 
 
