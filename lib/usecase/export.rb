@@ -3,6 +3,9 @@
 module SafeDb
 
   # Export one, some or all chapters, verses and lines within the logged in book.
+  #
+  # == Aspirational Feature
+  #
   # The --print flag demands that the exported text goes to stdout otherwise it
   # will be placed in an aptly named file in  the present working directory.
   class Export < UseCase
