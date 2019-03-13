@@ -24,7 +24,7 @@ module SafeDb
       puts "--- --------------------------------------------------------------\n"
 
       chapters = KeyApi.to_matching_dictionary( master_db, ENVELOPE_KEY_PREFIX )
-      export_filename = "safedb.book-#{KeyApi.read_app_id()}-#{KeyNow.yyjjj_hhmm_ss_nanosec()}.json"
+      export_filename = "safedb.#{KeyApi.read_app_id()}.#{KeyNow.yyjjj_hhmm_ss_nanosec()}.json"
       export_filepath = File.join( Dir.pwd, export_filename )
 
       exported_struct = {}
