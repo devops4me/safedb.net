@@ -42,20 +42,67 @@ reek lib
 ```
 
 
-## Releasing Software
+## Automated Software Release
 
-Those with priveleges to release to safedb.net will have a private key to push (or pull) in git repository changes.
+safedb is automatically released by Jenkins using a GitOps style pipeline defined in the Jenkinsfile and Dockerfile. The release to rubygems.org depends on
 
-To release the software to the rubygems.org platform, commonly via a **continuous integration pipeline** based on Jenkins 2.0, one needs
+- a pull request to the [safe github master branch](https://github.com/devops4me/safedb.net.git)
+- an error-free gem build
+- an error-free documentation image build to www.safedb.net
+- immaculate BDD test runs with **Cucumber and Aruba** in Linux environments incl Ubuntu, Raspbian and RHEL.
+- an automated version number bump using the gem-release gem
+- quality numbers passed by the Reek code quality analyzer
+- available rubygems.org credentials in ~/.gem/credentials
 
-- **either** the email address / password combination
-- **or** a credentials file containing a hex API key
+## release safedb to RubyGems.org
 
-Release actors are also responsible for bumping the gem version via semantic versioning principles.
+Once only use **`gem push`** at the repository root to create a **rubygems API key** and slurp it up from the **`~/.gem/credentials`** with **`safe file rubygems.org.credentials ~/.gem/credentials`**
+Now when releasing we eject the file back into **`~/.gem/credentials`**, secure it ( with **`sudo chmod 0600 credentials`** ) and then issue the below command from the **gem-release** gem.
 
-### git push to github.com/devops4me/safedb.net
+### `gem bump patch --tag --push --release --file=$PWD/lib/version.rb`
 
-Write out the SSH config and private key files.
+The gem bump (and release) command bumps up the patch (or major or minor) version, tags the repository, pushes the changes and releases to rubygems.org
+
+
+
+## safedb development environment commands
+
+### `rake install`
+### `cucumber`
+### `git checkout -b feature.commit-session-crypts`
+### `git add; git commit;`
+### `git cherry -v origin`
+### `git push origin feature.commit-session-crypts`
+### `git pull origin master`
+### `git pull origin feature.commit-session-crypts`
+
+## common git feature merge commands
+
+### `git checkout master`
+### `git pull origin master`
+### `git merge feature.commit-session-crypts`
+### `git push origin master`
+
+
+## Branch Naming Convention
+
+Branch names begin with either
+
+- feature. (or)
+- bug. (or)
+- refactor.
+
+Branch names are then typically a **verb-noun concatenation** like
+
+- feature.safe-inport-export
+- refactor.book-id-create-algorithm
+- refactor.validate-book-names
+
+## how to git push to safedb.net
+
+Those with priveleges to release to safedb.net will have a private key to push pull requests into the repository.
+
+This is how to setup the **ssh config** and **pem private key**.
 
 ```
 safe login safe.ecosystem
@@ -71,15 +118,4 @@ git clone git@safedb.code:devops4me/safedb.net.git mirror.safedb.code
 
 If a config file already exists then safe will back it up with a timestamp prefix before clobbering the file. Now bump up the major, minor or patch versions, then commit.
 
-### development installs | rake install
 
-Use rake install to locally test local software changes.
-
-### bump | tag | release to RubyGems.org
-
-Once only use **`gem push`** at the repository root to create a **rubygems API key** and slurp it up from the **`~/.gem/credentials`** with **`safe file rubygems.org.credentials ~/.gem/credentials`**
-Now when releasing we eject the file back into **`~/.gem/credentials`**, secure it ( with **`sudo chmod 0600 credentials`** ) and then issue the below command from the **gem-release** gem.
-
-### `gem bump patch --tag --push --release --file=$PWD/lib/version.rb`
-
-This command bumps up the patch (or major or minor) version, tags the repository, pushes the changes and releases to rubygems.org
