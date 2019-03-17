@@ -2,12 +2,65 @@
 	
 module SafeDb
 
-  # The <b>init use case</b> initializes safe thus preparing it
-  # for the ability to lock secrets, unlock them, transport their keys and
-  # much more.
+  # The <b>init use case</b> should only be called the very first time a
+  # <b>safe book</b> is created. The book can subsequently be instantiated
+  # on different machines via the <b>remote storage</b> commands.
   #
-  # safe is a <b>(glorified) placeholder</b>. It takes things in now,
-  # keeps them safe and gives them back later, in a <b>helpful manner</b>.
+  # == Init Use Case Observable Value
+  #
+  # - the book identifier is derived
+  # - a password is collected
+  # - salts and keys created in local index
+  # - book index id stored in local index
+  # - book crypt store directory created
+  #
+  #
+  # ~/.safedb.net
+  #     |
+  #     |--- safedb-master-index-local.ini
+  #     |--- safedb-activity-journal.log
+  #     |
+  #     |
+  #     |--- safedb-master-crypt-files
+  #              |
+  #              |--- .git
+  #              |--- safedb.master.book.ababab-ababab
+  #                       |
+  #                       |--- safedb.chapter.8d04ldabcd.txt
+  #                       |--- safedb.chapter.fl3456asdf.txt
+  #                       |--- safedb.chapter.pw9521pqwo.txt
+  #
+  #              |
+  #              |--- safedb.master.book.cdcdcd-cdcdcd
+  #                       |
+  #                       |--- safedb.chapter.o3wertpoiu.txt
+  #                       |--- safedb.chapter.xcvbrt2345.txt
+  #     |
+  #     |
+  #     |--- safedb-session-crypt-files
+  #              |
+  #              |--- safedb-session-ababab-ababab-xxxxxx-xxxxxx-xxxxxx
+  #                       |
+  #                       |--- safedb.chapter.id1234abcd.txt
+  #                       |--- safedb.chapter.id3456asdf.txt
+  #                       |--- safedb.chapter.id9521pqwo.txt
+  #              |
+  #              |
+  #              |--- safedb-session-ababab-ababab-xxxxxx-zzzzzz-zzzzzz
+  #                       |
+  #                       |--- safedb.chapter.id1234abcd.txt
+  #                       |--- safedb.chapter.id3456asdf.txt
+  #                       |--- safedb.chapter.id9521pqwo.txt
+  #
+  #     |--- safedb-session-index-files
+  #              |
+  #              |--- safedb-ababab-ababab-xxxxxx-xxxxxx-xxxxxx.ini
+  #
+  #
+  #
+  # == Local Index Path | ~/.safedb.net/safedb-local-index.ini
+  # == master crypt store | ~/.safedb.net/safedb-master-crypts/crypts.xxxxxx-xxxxxx
+  # == master crypt store | ~/.safedb.net/safedb-session-crypts/crypts.xxxxxx-xxxxxx
   #
   # == Alternat Error Flows
   #
