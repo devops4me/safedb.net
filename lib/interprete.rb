@@ -231,6 +231,25 @@ class Interprete < Thor
 
 
 
+  # Description of the set configuration directives command.
+  desc "set <directive_name> <directive_value>", "set book-scoped configuration directive"
+
+  # The <b>set <em>use case</em></b> is the generic tool for setting book scoped
+  # configuration directives. These directives can only be read, written, updated
+  # or removed during a logged in session.
+  #
+  # @param directive_name [String] the name of the book-scoped configuration directive
+  # @param directive_value [String] the value of the book-scoped configuration directive
+  def set directive_name, directive_value
+    log.info(x) { "[usecase] ~> set the configuration directive value for #{directive_name}" }
+    set_uc = SafeDb::Set.new
+    set_uc.directive_name = directive_name
+    set_uc.directive_value = directive_value
+    set_uc.flow_of_events
+  end
+
+
+
   # Description of the file command.
   desc "file <file_key> <file_url>", "ingest a file into the safe from the filesystem (or S3, ssh, Google Drive)"
 
