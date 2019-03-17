@@ -32,7 +32,7 @@ OpenSession::RecursivelyRequire.now( __FILE__ )
 # - ensure that the parameter values are in range
 # - delegate processing to the registered handlers
 
-class Interprete < Thor
+class CLI < Thor
 
 
   log.info(x) { "request to interact with a safe book has been received." }

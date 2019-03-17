@@ -647,7 +647,7 @@ You can require safe (as an SDK) and interact with it directly from any other Ru
     $ gem install safe
     $ irb
     $ > require "safe"
-    $ > SafeDb::Interprete.version()
+    $ > SafeDb::CLI.version()
 
 The above should return the **installed version** of SafeDb.
 
