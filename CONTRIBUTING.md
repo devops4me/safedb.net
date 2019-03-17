@@ -72,7 +72,8 @@ The gem bump (and release) command bumps up the patch (or major or minor) versio
 ### `git checkout -b feature.commit-session-crypts`
 ### `git add; git commit;`
 ### `git cherry -v origin`
-### `git push origin feature.commit-session-crypts`
+### `git cherry -v origin feature.commit-session-crypts`
+### `git push -u origin feature.commit-session-crypts`
 ### `git pull origin master`
 ### `git pull origin feature.commit-session-crypts`
 
@@ -81,7 +82,7 @@ The gem bump (and release) command bumps up the patch (or major or minor) versio
 ### `git checkout master`
 ### `git pull origin master`
 ### `git merge feature.commit-session-crypts`
-### `git push origin master`
+### `git push -u origin master`
 
 
 ## Branch Naming Convention
