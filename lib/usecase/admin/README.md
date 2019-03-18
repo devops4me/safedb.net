@@ -9,14 +9,14 @@ You can use your safe on many machines and on many shells within a machine. All 
 
 These commands handle **book and session creation, instantiation and synchronization** between multiple shells.
 
-| safe command                 | command purpose                                      | cmd summary    |
-|:---------------------------- |:---------------------------------------------------- |:-------------- |
-| **`safe init <BOOK_NAME>`**  | instantiate a new safe database book                 | create book    |
-| **`safe login <BOOK_NAME>`** | create a new shell session for instantiated book     | create session |
-| **`safe commit`**            | save the state of the book locally (like git commit) | update book    |
-| **`safe logout`**            | delete references to this book and shell session     | delete session |
-| **`safe use <BOOK_NAME>`**   | switch shell session to using this logged in book    | update session |
-| **`safe token`**             | creates cryptographic keys for every shell session   | create key     |
+| safe command                 | command purpose                                      | cmd summary      |
+|:---------------------------- |:---------------------------------------------------- |:---------------- |
+| **`safe init <BOOK_NAME>`**  | instantiate a new safe database book                 | create book      |
+| **`safe login <BOOK_NAME>`** | create a new shell session for instantiated book     | instantiate book |
+| **`safe commit`**            | save the state of the book locally (like git commit) | save book        |
+| **`safe logout`**            | delete references to this book and shell session     | delete session   |
+| **`safe use <BOOK_NAME>`**   | switch shell session to using this logged in book    | update session   |
+| **`safe token`**             | creates cryptographic keys for every shell session   | create key       |
 
 
 ## safe remote database sync commands
