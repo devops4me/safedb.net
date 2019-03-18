@@ -1,13 +1,13 @@
 
-# Safe Database Administration
+# Safe Administration Commands
 
 A safe database is a collection of books and each database instance comprises of an index file and a collection of crypt files.
 
 You can use your safe on many machines and on many shells within a machine. All this is synchronized via a **git repository** and with a single index file that is generally kept on removable (usb key) media.
 
-## safe administration commands
+## safe session admin commands
 
-These 3 **safedb** commands handle book creation and synchronization between multiple shells.
+These commands handle **book and session creation, instantiation and synchronization** between multiple shells.
 
 | safe command                 | command purpose                                      | cmd summary    |
 |:---------------------------- |:---------------------------------------------------- |:-------------- |
@@ -16,9 +16,10 @@ These 3 **safedb** commands handle book creation and synchronization between mul
 | **`safe commit`**            | save the state of the book locally (like git commit) | update book    |
 | **`safe logout`**            | delete references to this book and shell session     | delete session |
 | **`safe use <BOOK_NAME>`**   | switch shell session to using this logged in book    | update session |
+| **`safe token`**             | creates cryptographic keys for every shell session   | create key     |
 
 
-## safe remote sync commands
+## safe remote database sync commands
 
 The **push** and **pull** commands synchronize your safe across many machines.
 
