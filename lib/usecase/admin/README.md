@@ -19,7 +19,7 @@ These commands handle **book and session creation, instantiation and synchroniza
 | **`safe token`**             | creates cryptographic keys for every shell session   | create key       |
 
 
-## safe remote database sync commands
+## safe database sync commands
 
 The **push** and **pull** commands synchronize your safe across many machines.
 

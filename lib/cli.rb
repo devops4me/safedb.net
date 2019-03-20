@@ -82,24 +82,22 @@ class CLI < Thor
 
 
 
-  # Description of the init configuration call.
-  desc "init <book_name> <storage_dir>", "initialize the safe book on this device"
+  # Description of the book initialize call.
+  desc "init <book_name> <storage_dir>", "initialize a new safe credentials book"
 
   # Use <tt>password</tt> if confident that either the command history is
   # inaccessible or the call originates from non-interactive software.
   option :password, :aliases => '-p'
 
-  # Initialize the credentials manager, collect the human password and
-  # manufacture the strong asymmetric public / private keypair.
+  # Initialize a safe credentials book with this name and collect the human sourced
+  # pasword to be put through key derivation functions.
   #
-  # @param domain_name [String] the domain the software operates under
-  # @param base_path [String] the path to the base operating directory
-  def init( domain_name, base_path = nil )
-    log.info(x) { "initialize the safe book on this device." }
+  # @param book_name [String] the name of the credentials bok to be created
+  def init( book_name )
+    log.info(x) { "initialize a new safe credentials book called [#{book_name}]." }
     init_uc = SafeDb::Init.new
     init_uc.password = options[ :password ] if options[ :password ]
-    init_uc.domain_name = domain_name
-    init_uc.base_path = File.expand_path( base_path ) unless base_path.nil?
+    init_uc.book_name = book_name
     init_uc.flow_of_events
   end
 

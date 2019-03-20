@@ -13,14 +13,14 @@ On disk, the safe database is largely just **crypt files** and **indices** which
     |--- safedb-master-crypts
              |
              |--- .git
-             |--- safedb.master.book.ababab-ababab
+             |--- safedb.book.ababab-ababab
                       |
                       |--- safedb.chapter.8d04ldabcd.txt
                       |--- safedb.chapter.fl3456asdf.txt
                       |--- safedb.chapter.pw9521pqwo.txt
 
              |
-             |--- safedb.master.book.cdcdcd-cdcdcd
+             |--- safedb.book.cdcdcd-cdcdcd
                       |
                       |--- safedb.chapter.o3wertpoiu.txt
                       |--- safedb.chapter.xcvbrt2345.txt

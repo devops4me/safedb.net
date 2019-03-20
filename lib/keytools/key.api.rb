@@ -86,120 +86,6 @@ module SafeDb
   class KeyApi
 
 
-    # This method should only be called once for each application instance
-    # resident on a workstation (machine) and it derives and writes the identifiers
-    # into the openkey configuration file.
-    #
-    # <b>The Identifiers to Configure</b>
-    #
-    # The principal identifiers to derive and configure are the
-    #
-    # - identifier for the application instance on this machine
-    # - global identifier derived  for the application instance
-    # - keystore url location for this app on this machine
-    # - time the above two identifiers were burned to disk
-    #
-    # <b>Set(App) Configuration File</b>
-    #
-    # Neither the file nor its parent folder need to exist. We attempt to create
-    # the directory path and then the file. After this method has executed the
-    # below directives will be added to the openkey application coniguration.
-    #
-    #    Config filepath is $HOME/.config/openkey/openkey.app.config.ini
-    #
-    #    [srn1-apzd]
-    #    app.instance.id = crnl-d3my
-    #    keystore.url.id = /home/joe/credentials/repo
-    #    initialize.time = Fri May 25 11:59:46 2018 ( 18145.1159.462 )
-    #
-    # @param domain_name [String]
-    #    the string reference that points to the application instance
-    #    that is being initialized on this machine.
-    #
-    # @param keystore_url [String]
-    #    The keystore url points to where the key metadata protecting
-    #    this application instance lives. The simplest keystores are
-    #    based on files and for them this url is just a folder path.
-    #
-    #    The keystore URL cannot be <b>N.E.W</b> (nil, empty, whitespace only).
-    def self.init_app_domain( domain_name, keystore_url )
-
-      KeyError.not_new( domain_name, self )
-      KeyError.not_new( keystore_url, self )
-
-      aim_id = KeyId.derive_app_instance_machine_id( domain_name )
-      app_id = KeyId.derive_app_instance_identifier( domain_name )
-
-      keypairs = KeyPair.new( MACHINE_CONFIG_FILE )
-      keypairs.use( aim_id )
-      keypairs.set( APP_INSTANCE_ID_KEY, app_id )
-      keypairs.set( KEYSTORE_IDENTIFIER_KEY, keystore_url )
-      keypairs.set( APP_INITIALIZE_TIME, KeyNow.fetch() )
-
-      # --
-      # -- Switch the dominant application domain being used to
-      # -- the domain that is being initialized right here.
-      # --
-      use_application_domain( domain_name )
-
-    end
-
-
-    # Has the inter-sessionary key ( derived from a human secret ) been setup
-    # for the application shard referenced in the parameter?
-    #
-    # This method returns yes (true) if and only if
-    #
-    # - the application's keystore file exists
-    # - the file contains a breadcrumbs section
-    # - crumbs exist for human key rederivation
-    #
-    # If false return gives the go-ahead to
-    #
-    # - collect the human secret (in one of a number of ways)
-    # - pass it through key derivation functions
-    # - generate a high entropy power key and lock some initial content with it
-    # - use the key sourced from the human secret to lock the power key
-    # - throw away the secret, power key and human sourced key
-    # - save crumbs (ciphertext, salts, ivs) for content retrieval given secret
-    #
-    # Note that the {init_app_domain} method must have been called on this machine
-    # with the name of this application instance and the keystore url. An error results
-    # if no file is found at the {MACHINE_CONFIG_FILE} path.
-    #
-    # @param domain_name [String]
-    #    a string reference for the <b>in-focus</b> shard of the application
-    #
-    # @return [Boolean]
-    #    return true if the human secret for the parameter application name
-    #    has been collected, transformed into a key, that key used to lock the
-    #    power key, then secret and keys deleted, plus a trail of breadcrumbs
-    #    sprinkled to allow the <b>inter-sessionary key to be regenerated</b>
-    #    at the <b>next login</b>.
-    #
-    #    <b>Lest we forget</b> - buried within this ensemble of activities, is
-    #    <b>generating the high entropy power key</b>, using it to lock the
-    #    application database before discarding it.
-    def self.is_domain_keys_setup?( domain_name )
-
-      KeyError.not_new( domain_name, self )
-      keypairs = KeyPair.new( MACHINE_CONFIG_FILE )
-      aim_id = KeyId.derive_app_instance_machine_id( domain_name )
-      app_id = KeyId.derive_app_instance_identifier( domain_name )
-      keypairs.use( aim_id )
-
-      keystore_file = get_keystore_file_from_domain_name( domain_name )
-      return false unless File.exists?( keystore_file )
-
-      crumbs_db = KeyPair.new( keystore_file )
-      return false unless crumbs_db.has_section?( APP_KEY_DB_BREAD_CRUMBS )
-      
-      crumbs_db.use( APP_KEY_DB_BREAD_CRUMBS )
-      return crumbs_db.contains?( INTER_KEY_CIPHERTEXT )
-
-    end
-
-
     # Transform the domain secret into a key, use that key to lock the
     # power key, delete the secret and keys and leave behind a trail of
     # <b>breadcrumbs sprinkled</b> to allow the <b>inter-sessionary key</b>
@@ -216,10 +102,6 @@ module SafeDb
     # - use the key sourced from the human secret to lock the power key
     # - throw away the secret, power key and human sourced key
     # - save crumbs (ciphertext, salts, ivs) for content retrieval given secret
-    #
-    # Note that the {init_app_domain} method must have been called on this machine
-    # with the name of this application instance and the keystore url. An error results
-    # if no file is found at the {MACHINE_CONFIG_FILE} path.
     #
     # @param domain_name [String]
     #    the string reference that points to the application instance
@@ -512,14 +394,6 @@ module SafeDb
     # - a {SESSION_APP_DOMAINS} section is added if one does not exist
     # - the shell session ID key is added (or updated if it exists)
     # - with a value corresponding to the app instance ID (on this machine)
-    #
-    # Subsequent use cases can now access the application ID by going first to
-    # the {SESSION_APP_DOMAINS} section, reading the ID of the app instance on
-    # this machine and then using that in turn to read the {APP_INSTANCE_ID_KEY}
-    # value.
-    #
-    # The {APP_INSTANCE_ID_KEY} value is the global ID of the app instance no
-    # matter which machine or shell is being used.
     #
     # @param domain_name [String]
     #    the string reference that points to the global application identifier
@@ -1045,19 +919,17 @@ module SafeDb
 
       application_id = KeyId.derive_app_instance_identifier(the_domain_name) unless the_domain_name.nil?
       application_id = read_app_id() if the_domain_name.nil?
-      universal_id = KeyId.derive_universal_id( application_id, to_token() )
 
       line1 = "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n"
       line2 = "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
       line3 = "#{gem_name} ciphertext block\n"
       line4 = "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
-      line5 = "App Ref Num := #{application_id}\n" # application domain reference
+      line5 = "SafeDb Book := #{application_id}\n" # application domain reference
       line6 = "Access Time := #{KeyNow.grab()}\n"  # timestamp of the last write
       line7 = "App Version := #{gem_version}\n"    # this application semantic version
       line8 = "Website Url := #{gem_site}\n"       # app website or github url
-      line9 = "Session Ref := #{universal_id}\n"   # application domain reference
 
-      return line1 + line2 + line3 + line4 + line5 + line6 + line7 + line8 + line9
+      return line1 + line2 + line3 + line4 + line5 + line6 + line7 + line8
 
     end
 
@@ -1103,7 +975,9 @@ module SafeDb
     # --------------------------------------------------------
 
 
-    MACHINE_CONFIG_FILE = File.join( Dir.home, ".config/openkey/openkey.app.config.ini" )
+###    MACHINE_CONFIG_FILE = File.join( Dir.home, ".config/openkey/openkey.app.config.ini" )
+
+
     SESSION_APP_DOMAINS = "session.app.domains"
     SESSION_IDENTIFIER_KEY = "session.identifiers"
     KEYSTORE_IDENTIFIER_KEY = "keystore.url.id"
@@ -1112,7 +986,6 @@ module SafeDb
     LOGIN_TIMESTAMP_KEY = "login.timestamp"
     LOGOUT_TIMESTAMP_KEY = "logout.timestamp"
     MACHINE_CONFIGURATION = "machine.configuration"
-    APP_INITIALIZE_TIME = "initialize.time"
 
     APP_INSTANCE_SETUP_TIME = "app.instance.setup.time"
 

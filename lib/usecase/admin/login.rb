@@ -15,16 +15,16 @@ module SafeDb
   # - you can call it with a --with=password switch
   # - a space before the command prevents it being logged in .bash_history
   # - you can deliver the password in multiple ways
-  class Login < UseCase
+  class Login < AccessUc
 
-    attr_writer :password, :domain_name
+#################################################    attr_writer :password, :book_name
 
 
     def execute
 
       return unless ops_key_exists?
 
-      unless ( KeyApi.is_domain_keys_setup?( @domain_name ) )
+      unless ( is_book_initialized?( @book_name ) )
         print_not_initialized
         return
       end
@@ -45,7 +45,7 @@ module SafeDb
 ############## Use [[ KeyApi.valid_password? ]] and give error if not valid
 ############## Use [[ KeyApi.valid_password? ]] and give error if not valid
 
-      KeyApi.do_login( @domain_name, domain_secret, create_header() )
+      KeyApi.do_login( @book_name, domain_secret, create_header() )
 
       view_uc = View.new
       view_uc.flow_of_events

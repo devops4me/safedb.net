@@ -242,6 +242,12 @@ module SafeDb
     private
 
 
+    SAFE_FLAGSHIP_NAME = "safedb.net"
+    USER_CONFIGURATION_FILE = File.join( Dir.home, ".#{SAFE_FLAGSHIP_NAME}/safedb-user-configuration.ini" )
+    MASTER_INDEX_LOCAL_FILE = File.join( Dir.home, ".#{SAFE_FLAGSHIP_NAME}/safedb-master-index-local.ini" )
+
+
+
     ENV_PATH = "env.path"
     KEY_PATH = "key.path"
     ENVELOPE_KEY_PREFIX = "envelope@"

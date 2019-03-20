@@ -341,6 +341,16 @@ module SafeDb
     end
 
 
+    # Fetch the human readable time denoting the weekday, month day,
+    # month, year and the time (accurate to the nearest minute).
+    #
+    # @return [String]
+    #    the weekday, month day, month, year and the hour minute time.
+    def self.readable
+      return "#{Time.now.ctime}"
+    end
+
+
     # Grab the double barreled time stamp that is an amalgam of
     # the human readable time now and a machine time representation
     # from the moment this class was initialized.
