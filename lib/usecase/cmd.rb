@@ -246,11 +246,18 @@ module SafeDb
     USER_CONFIGURATION_FILE = File.join( Dir.home, ".#{SAFE_FLAGSHIP_NAME}/safedb-user-configuration.ini" )
     MASTER_INDEX_LOCAL_FILE = File.join( Dir.home, ".#{SAFE_FLAGSHIP_NAME}/safedb-master-index-local.ini" )
 
-
-
     ENV_PATH = "env.path"
     KEY_PATH = "key.path"
     ENVELOPE_KEY_PREFIX = "envelope@"
+
+
+## Remove Me    DB_CREATE_DATE = "db.create.date"
+## Remove Me    DB_DOMAIN_NAME = "db.domain.name"
+## Remove Me    DB_DOMAIN_ID = "db.domain.id"
+    BOOK_CREATED_DATE = "book.created.date"
+    BOOK_NAME = "book.name"
+    BOOK_ID = "book.id"
+    BOOK_CREATOR_VERSION = "book.creator.version"
 
     LAST_ACCESSED = "last.accessed.time"
 

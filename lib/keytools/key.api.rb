@@ -86,39 +86,7 @@ module SafeDb
   class KeyApi
 
 
-    # Transform the domain secret into a key, use that key to lock the
-    # power key, delete the secret and keys and leave behind a trail of
-    # <b>breadcrumbs sprinkled</b> to allow the <b>inter-sessionary key</b>
-    # to be <b>regenerated</b> at the <b>next login</b>.
-    #
-    # <b>Lest we forget</b> - buried within this ensemble of activities, is
-    # <b>generating the high entropy power key</b>, using it to lock the
-    # application database before discarding it.
-    #
-    # The use case steps once the human secret is acquired is to
-    #
-    # - pass it through key derivation functions
-    # - generate a high entropy power key and lock some initial content with it
-    # - use the key sourced from the human secret to lock the power key
-    # - throw away the secret, power key and human sourced key
-    # - save crumbs (ciphertext, salts, ivs) for content retrieval given secret
-    #
-    # @param domain_name [String]
-    #    the string reference that points to the application instance
-    #    that is being initialized on this machine.
-    #
-    # @param domain_secret [String]
-    #    the secret text that can potentially be cryptographically weak (low entropy).
-    #    This text is severely strengthened and morphed into a key using multiple key
-    #    derivation functions like <b>PBKDF2, BCrypt</b> and <b>SCrypt</b>.
-    #
-    #    The secret text is discarded and the <b>derived inter-session key</b> is used
-    #    only to encrypt the <em>randomly generated super strong <b>index key</b></em>,
-    #    <b>before being itself discarded</b>.
-    #
-    # @param content_header [String]
-    #    the content header tops the ciphertext storage file with details of how where
-    #    and why the file came to be.
+=begin
     def self.setup_domain_keys( domain_name, domain_secret, content_header )
 
       # --
@@ -136,14 +104,24 @@ module SafeDb
       recycle_keys( domain_name, domain_secret, crumbs_db, content_header, get_virgin_content( domain_name ) )
 
     end
+=end
 
-
-    # Recycle the inter-sessionary key (based on the secret) and create a new
-    # content encryption (power) key and lock the parameter content with it
-    # before returning the new content encryption key.
+    # Transform the domain secret into a key, use that key to lock the
+    # power key, delete the secret and keys and leave behind a trail of
+    # <b>breadcrumbs sprinkled</b> to allow the <b>inter-sessionary key</b>
+    # to be <b>regenerated</b> at the <b>next login</b>.
     #
-    # The {content_ciphertxt_file_from_domain_name} method is used to produce the path at which
-    # the ciphertext (resulting from locking the parameter content), is stored.
+    # <b>Lest we forget</b> - buried within this ensemble of activities, is
+    # <b>generating the high entropy power key</b>, using it to lock the
+    # application database before discarding it.
+    #
+    # The use case steps once the human secret is acquired is to
+    #
+    # - pass it through key derivation functions
+    # - generate a high entropy power key and lock some initial content with it
+    # - use the key sourced from the human secret to lock the power key
+    # - throw away the secret, power key and human sourced key
+    # - save crumbs (ciphertext, salts, ivs) for content retrieval given secret
     #
     # @param domain_name [String]
     #
@@ -894,40 +872,23 @@ module SafeDb
 
 
     # Construct the header for the ciphertext content files written out
-    # onto the filesystem.
+    # onto the filesystem including information such as the application version
+    # and human readable time.
     #
     # @param gem_version [String] the current version number of the calling gem
     # @param gem_name [String] the current name of the calling gem
     # @param gem_site [String] the current website of the calling gem
-    #
-    # @param the_domain_name [String]
-    #
-    #    This method uses one of the two (2) ways to gain the application id.
-    #
-    #    If not logged in callers will have the domain name and should pass it
-    #    in so that this method can use {KeyId.derive_app_instance_identifier}
-    #    to gain the application id.
-    #
-    #    If logged in then method {KeyApi.use_application_domain} will have
-    #    executed and the application ID will be written inside the
-    #    <b>machine configuration file</b> under the application instance on
-    #    machine id and referenced in turn from the {SESSION_APP_DOMAINS} map.
-    #
-    #    In the above case post a NIL domain name and this method will now
-    #    turn to {KeyApi.read_app_id} for the application id.
-    def self.format_header( gem_version, gem_name, gem_site, the_domain_name = nil )
-
-      application_id = KeyId.derive_app_instance_identifier(the_domain_name) unless the_domain_name.nil?
-      application_id = read_app_id() if the_domain_name.nil?
+    # @param book_ref [String] the identifier of the book in play
+    def self.format_header( gem_version, gem_name, gem_site, book_ref )
 
       line1 = "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n"
       line2 = "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
       line3 = "#{gem_name} ciphertext block\n"
       line4 = "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
-      line5 = "SafeDb Book := #{application_id}\n" # application domain reference
-      line6 = "Access Time := #{KeyNow.grab()}\n"  # timestamp of the last write
-      line7 = "App Version := #{gem_version}\n"    # this application semantic version
-      line8 = "Website Url := #{gem_site}\n"       # app website or github url
+      line5 = "SafeDb Book := #{book_ref}\n"      # owning book identifier (ref)
+      line6 = "Access Time := #{KeyNow.grab()}\n" # timestamp of the last write
+      line7 = "App Version := #{gem_version}\n"   # this application semantic version
+      line8 = "Website Url := #{gem_site}\n"      # app website or github url
 
       return line1 + line2 + line3 + line4 + line5 + line6 + line7 + line8
 
@@ -1017,9 +978,6 @@ module SafeDb
     CONTENT_ENCRYPT_KEY = "content.key"
     CONTENT_RANDOM_IV   = "content.iv"
 
-    DB_CREATE_DATE = "db.create.date"
-    DB_DOMAIN_NAME = "db.domain.name"
-    DB_DOMAIN_ID = "db.domain.id"
 
 
     def self.binary_to_write( to_filepath, content_header, binary_ciphertext )

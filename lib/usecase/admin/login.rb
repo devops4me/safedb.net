@@ -17,14 +17,10 @@ module SafeDb
   # - you can deliver the password in multiple ways
   class Login < AccessUc
 
-#################################################    attr_writer :password, :book_name
-
 
     def execute
 
-      return unless ops_key_exists?
-
-      unless ( is_book_initialized?( @book_name ) )
+      unless ( is_book_initialized?() )
         print_not_initialized
         return
       end

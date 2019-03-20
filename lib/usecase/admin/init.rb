@@ -30,25 +30,31 @@ module SafeDb
   #
   class Init < AccessUc
 
-###########################    attr_writer :password, :book_name
-
 
     def execute
 
-      return unless ops_key_exists?
-
-      init_app_domain( @book_name )
-      keys_setup = is_book_initialized?( @book_name )
+      @book_id = initialize_book()
+      keys_setup = is_book_initialized?()
 
       if ( keys_setup )
         print_already_initialized
         return
       end
 
-      domain_password = KeyPass.password_from_shell( true ) if @password.nil?
-      domain_password = @password unless @password.nil?
+      book_secret = KeyPass.password_from_shell( true ) if @password.nil?
+      book_secret = @password unless @password.nil?
 
-      KeyApi.setup_domain_keys( @book_name, domain_password, create_header() )
+      master_keys = KeyPair.new( MASTER_INDEX_LOCAL_FILE )
+      master_keys.use( @book_id )
+
+      KeyApi.recycle_keys(
+        @book_name,
+        book_secret,
+        master_keys,
+        create_header(),
+        virgin_content()
+      )
+
       print_domain_initialized
 
     end
@@ -57,20 +63,20 @@ module SafeDb
     private
 
 
-    def self.init_app_domain( book_name )
+    def initialize_book()
 
-      KeyError.not_new( book_name, self )
+      KeyError.not_new( @book_name, self )
 
-      book_id = KeyId.derive_app_instance_identifier( book_name )
+      @book_id = KeyId.derive_app_instance_identifier( @book_name )
 
       keypairs = KeyPair.new( MASTER_INDEX_LOCAL_FILE )
-      keypairs.use( book_id )
+      keypairs.use( @book_id )
       keypairs.set( "book.creation.time", KeyNow.readable() )
 
 =begin
       session_identifier = KeyId.derive_session_id( to_token() )
       keypairs.use( "session.books" )
-      keypairs.set( session_identifier, book_id )
+      keypairs.set( session_identifier, @book_id )
 
 
       # --
@@ -79,9 +85,24 @@ module SafeDb
       # --
 
 SET THIS UP WHEN LOGIN HAPPENS - SIGNIFY THE SHELL SESSION BOOK USING 
-      use_application_domain( book_name )
+      use_application_domain( @book_name )
 
 =end
+
+      return @book_id
+
+    end
+
+
+    def virgin_content()
+
+      initial_db = KeyDb.new()
+      initial_db.store( BOOK_CREATED_DATE, KeyNow.readable() )
+      initial_db.store( BOOK_NAME, @book_name )
+      initial_db.store( BOOK_ID, @book_id )
+      initial_db.store( BOOK_CREATOR_VERSION, SafeDb::VERSION )
+
+      return initial_db.to_json
 
     end
 
