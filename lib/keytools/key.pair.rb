@@ -13,11 +13,11 @@ module SafeDb
   #
   # Issue the below ruby calls and specify a /path/to/file
   #
-  #    keymap = KeyPair.new "/path/to/file"
+  #    keymap = KeyPair.new ( "/path/to/file" )
   #
-  #    keymap.use "phone_numbers"
-  #    keymap.set "joe", "0044 7500 123456"
-  #    keymap.set "amy", "0044 7678 123456"
+  #    keymap.use ( "phone_numbers"           )
+  #    keymap.set ( "joe", "0044 7500 123456" )
+  #    keymap.set ( "amy", "0044 7678 123456" )
   #
   # Now visit the file to see your exchanged data.
   #

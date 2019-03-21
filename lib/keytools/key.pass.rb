@@ -43,14 +43,14 @@ module SafeDb
         assert_min_size MINIMUM_PASSWORD_SIZE
 
         sleep(1)
-        puts "Password:"
+        puts "Enter Password:"
         first_secret = STDIN.noecho(&:gets).chomp
 
         assert_input_text_size first_secret.length, MINIMUM_PASSWORD_SIZE
         return first_secret unless prompt_twice
 
         sleep(1)
-        puts "Re-enter the password:"
+        puts "Re-enter Password:"
         check_secret = STDIN.noecho(&:gets).chomp
 
         assert_same_size_text first_secret, check_secret

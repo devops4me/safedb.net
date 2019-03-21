@@ -10,18 +10,20 @@ module SafeDb
   #
   class KeyLock
 
-    # Generate a new set of envelope breadcrumbs, derive the new envelope
-    # filepath, then <b>encrypt</b> the raw envelope content, and write the
-    # resulting ciphertext out into the new file.
+    # Lock the content body provided - place the resulting ciphertext
+    # inside a file named by a random identifier, then write this identifier
+    # along wih the initialization and encryption key into the provided
+    # key-value map (hash).
     #
-    # The important parameters in play are the
+    # The content ciphertext derived from encrypting the body is stored
+    # in a file underneath the provided content header.
     #
-    # - session token used to find the storage folder
-    # - random envelope external ID used to name the ciphertext file
-    # - generated random key for encrypting and decrypting the content
-    # - generated random initialization vector (IV) for crypting
-    # - name of the file in which the locked content is placed
-    # - header and footer content that tops and tails the ciphertext
+    # This method returns the highly random key instantiated for the purposes
+    # of encrypting the content.
+    #
+    # @param crypt_key [Key]
+    #
+    #    the key used to (symmetrically) encrypt the content provided
     #
     # @param crumbs_map [Hash]
     #
@@ -34,22 +36,22 @@ module SafeDb
     #
     # @param content_body [String]
     #
-    #    this is the envelope's latest and greatest content that will
-    #    be encrypted, encoded, topped, tailed and then pushed out to
-    #    the domain's storage folder.
+    #    this content is encrypted by this method and the ciphertext
+    #    result is stored in a file.
     #
     # @param content_header [String]
     #
-    #    the string that will top the ciphertext content when it is written
+    #    the string that will top the content's ciphertext when it is written
     #
-    def self.content_lock( crumbs_map, content_body, content_header )
+    def self.content_lock( crypt_key, crumbs_map, content_body, content_header )
 
       # --
       # -- Create the external content ID and place
       # -- it within the crumbs map.
       # --
-      content_exid = get_random_reference()
-      crumbs_map[ CONTENT_EXTERNAL_ID ] = content_exid
+
+      content_id = KeyRand.get_random_identifier( CONTENT_IDENTIFIER_LENGTH )
+      crumbs_map[ CONTENT_EXTERNAL_ID ] = content_id
 
       # --
       # -- Create a random initialization vector (iv)
@@ -60,13 +62,13 @@ module SafeDb
       random_iv = KeyIV.in_binary( iv_base64 )
       crumbs_map[ CONTENT_RANDOM_IV ] = iv_base64
 
-      # --
-      # -- Create a new high entropy random key for
-      # -- locking the content with AES. Place the key
-      # -- within the breadcrumbs map.
-      # --
-      crypt_key = Key.from_random()
-      crumbs_map[ CONTENT_ENCRYPT_KEY ] = crypt_key.to_char64()
+#########      # --
+#########      # -- Create a new high entropy random key for
+#########      # -- locking the content with AES. Place the key
+#########      # -- within the breadcrumbs map.
+#########      # --
+#########      crypt_key = Key.from_random()
+#########      crumbs_map[ CONTENT_ENCRYPT_KEY ] = crypt_key.to_char64()
 
       # --
       # -- Now use AES to lock the content body and write
@@ -154,7 +156,7 @@ module SafeDb
     BLOCK_64_END_STRING   = "ba9876543210fedcba9876543210fedcba9876543210fedcba9876543210\n"
     BLOCK_64_DELIMITER    = "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
 
-    XID_SOURCE_APPROX_LEN = 11
+##############################################    XID_SOURCE_APPROX_LEN = 11
 
     CONTENT_FILE_PREFIX = "tree.db"
     CONTENT_EXTERNAL_ID = "content.xid"

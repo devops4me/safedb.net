@@ -2,89 +2,9 @@
 
 module SafeDb
 
-  # Use RubyMine to understand the correlations and dependencies on
-  # this now monolithic class that must be broken up before meaningful
-  # effective and efficient progress can be made.
-  #
-  # ---
-  #
-  # == REFACTOR KEY API TO DRAW OUT POSSIBLY THESE FIVE CONCEPTS.
-  # 
-  # - [1] the safe tty token
-  # - [2] the machine configurations in ~/.config/openkey/openkey.app.config.ini
-  # - [3] the login / logout session crumbs database
-  # - [4] the master content database holding local config, chapters and verses
-  # - [5] the safe databases that unmarshal into either JSON or file content
-  # 
-  # ---
-  # 
-  # Use the key applications programming interface to transition the
-  # state of three (3) core keys in accordance with the needs of the
-  # executing use case.
-  #
-  # == KeyApi | The 3 Keys
-  #
-  # The three keys service the needs of a <b>command line application</b>
-  # that executes within a <b>shell environment in a unix envirronment</b>
-  # or a <b>command prompt in windows</b>.
-  #
-  # So what are the 3 keys and what is their purpose.
-  #
-  # - shell key | exists to lock the index key created at login
-  # - human key | exists to lock the index key created at login
-  # - index key | exists to lock the application's index file
-  #
-  # So why do two keys (the shell key and human key) exist to lock the
-  # same index key?
-  #
-  # == KeyApi | Why Lock the Index Key Twice?
-  #
-  # On this login, the <b>previous login's human key is regenerated</b> from
-  # the <b>human password and the saved salts</b>. This <em>old human key</em>
-  # decrypts and reveals the <b><em>old index key</em></b> which in turn
-  # decrypts and reveals the index string.
-  #
-  # Both the old human key and the old index key are discarded.
-  #
-  # Then 48 bytes of randomness are sourced to generate the new index key. This
-  # key encrypts the now decrypted index string and is thrown away. The password
-  # sources a new human key (the salts are saved), and this new key locks the
-  # index key's source bytes.
-  #
-  # The shell key again locks the index key's source bytes. <b><em>Why twice?</em></b>
-  #
-  # - during subsequent shell command calls the human key is unavailable however
-  #   the index key can be accessed via the shell key.
-  #
-  # - when the shell dies (or logout is issued) the shell key dies. Now the index
-  #   key can only be accessed by a login when the password is made available.
-  #
-  # That is why the index key is locked twice. The shell key opens it mid-session
-  # and the regenerated human key opens it during the login of the next session.
-  #
-  # == The LifeCycle of each Key
-  #
-  # It seems odd that the human key is born during this login then dies
-  # at the very next one (as stated below). This is because the human key
-  # isn't the password, <b>the human key is sourced from the password</b>.
-  #
-  # So when are the 3 keys <b>born</b> and when do they <b>cease being</b>.
-  #
-  # - shell key | is born when the shell is created and dies when the shell dies
-  # - human key | is born when the user logs in this time and dies at the next login
-  # - index key | the life of the index key exactly mirrors that of the human key
-  #
-  # == The 7 Key API Calls
-  #
-  #   | - | -------- | ------------ | ------------------------------- |
-  #   | # | Rationale                       | Use Case | Goals   |  Tasks        |
-  #   | - | ------------------------------- | ------------ | ------------------------------- |
-  #   | 1 | Create and Obfuscate Shell Key  | key      | x |  y  |
-  #   | 2 | New App Instance on Workstation | init     | x |  y  |
-  #   | 3 | Login to App Instance in Shell  | login    | x |  y  |
-  #
-  class KeyApi
 
+
+  class KeyApi
 
 =begin
     def self.setup_domain_keys( domain_name, domain_secret, content_header )
@@ -105,94 +25,6 @@ module SafeDb
 
     end
 =end
-
-    # Transform the domain secret into a key, use that key to lock the
-    # power key, delete the secret and keys and leave behind a trail of
-    # <b>breadcrumbs sprinkled</b> to allow the <b>inter-sessionary key</b>
-    # to be <b>regenerated</b> at the <b>next login</b>.
-    #
-    # <b>Lest we forget</b> - buried within this ensemble of activities, is
-    # <b>generating the high entropy power key</b>, using it to lock the
-    # application database before discarding it.
-    #
-    # The use case steps once the human secret is acquired is to
-    #
-    # - pass it through key derivation functions
-    # - generate a high entropy power key and lock some initial content with it
-    # - use the key sourced from the human secret to lock the power key
-    # - throw away the secret, power key and human sourced key
-    # - save crumbs (ciphertext, salts, ivs) for content retrieval given secret
-    #
-    # @param domain_name [String]
-    #
-    #    the (application instance) domain name chosen by the user or the
-    #    machine that is interacting with the SafeDb software.
-    #
-    # @param domain_secret [String]
-    #
-    #    the domain secret that is put through key derivation functions in order
-    #    to attain the strongest possible inter-sessionary key which is used only
-    #    to encrypt and decrypt the high-entropy content encryption key.
-    #
-    # @param crumbs_db [KeyPair]
-    #
-    #    The crumbs database is expected to be initialized with a section
-    #    ready to receive breadcrumb data. The crumbs data injected are
-    #
-    #    - a random iv for future AES decryption of the parameter content
-    #    - cryptographic salts for future rederivation of the inter-sessionary key
-    #    - the resultant ciphertext from the inter key locking the content key
-    #
-    # @param the_content [String]
-    #
-    #    the app database content whose ciphertext is to be recycled using the
-    #    recycled (newly derived) high entropy random content encryption key.
-    def self.recycle_keys( domain_name, domain_secret, crumbs_db, content_header, the_content )
-
-      KeyError.not_new( domain_name, self )
-      KeyError.not_new( domain_secret, self )
-      KeyError.not_new( the_content, self )
-
-      # --
-      # -- Create a random initialization vector (iv)
-      # -- used for AES encryption of virgin content
-      # --
-      iv_base64_chars = KeyIV.new().for_storage()
-      crumbs_db.set( INDEX_DB_CRYPT_IV_KEY, iv_base64_chars )
-      random_iv = KeyIV.in_binary( iv_base64_chars )
-
-      # --
-      # -- Create a new high entropy power key
-      # -- for encrypting the virgin content.
-      # --
-      power_key = Key.from_random
-
-      # --
-      # -- Encrypt the virgin content using the
-      # -- power key and the random iv and write
-      # -- the Base64 encoded ciphertext into a
-      # -- neighbouring file.
-      # --
-      to_filepath = content_ciphertxt_file_from_domain_name( domain_name )
-      binary_ciphertext = power_key.do_encrypt_text( random_iv, the_content )
-      binary_to_write( to_filepath, content_header, binary_ciphertext )
-
-      # --
-      # -- Derive new inter-sessionary key.
-      # -- Use it to encrypt the power key.
-      # -- Set the reretrieval breadcrumbs.
-      # --
-      inter_key = KdfApi.generate_from_password( domain_secret, crumbs_db )
-      inter_txt = inter_key.do_encrypt_key( power_key )
-      crumbs_db.set( INTER_KEY_CIPHERTEXT, inter_txt )
-
-      # --
-      # -- Return the just createdC high entropy
-      # -- content encryption (power) key.
-      # --
-      return power_key
-
-    end
 
 
 
@@ -777,6 +609,7 @@ module SafeDb
     TOKEN_VARIABLE_SIZE = 152
     # --------------------------------------------------------
 
+    CONTENT_IDENTIFIER_LENGTH = 14
 
     SESSION_APP_DOMAINS = "session.app.domains"
     SESSION_IDENTIFIER_KEY = "session.identifiers"
