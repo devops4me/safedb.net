@@ -76,6 +76,11 @@ module SafeDb
     # - use the derived key to encrypt the high entropy key
     # - write the resulting ciphertext into the key cache
     #
+    # @param book_id [String]
+    #
+    #    this book identifier is used to locate the sub-directory holding
+    #    the chapter crypt casket (ccc) files.
+    #
     # @param human_secret [String]
     #
     #    the human secret that is input into the key derivation functions
@@ -99,10 +104,10 @@ module SafeDb
     #    this content is encrypted by this method and the ciphertext
     #    result is stored in a file.
     #
-    def self.recycle( human_secret, key_map, content_header, content_body )
+    def self.recycle( book_id, human_secret, key_map, content_header, content_body )
 
       high_entropy_key = Key.from_random
-      KeyLock.content_lock( high_entropy_key, key_map, content_body, content_header )
+      KeyLock.content_lock( book_id, high_entropy_key, key_map, content_body, content_header )
       derived_key = KdfApi.generate_from_password( human_secret, key_map )
       key_map.set( INTER_KEY_CIPHERTEXT, derived_key.do_encrypt_key( high_entropy_key ) )
 

@@ -609,8 +609,6 @@ module SafeDb
     TOKEN_VARIABLE_SIZE = 152
     # --------------------------------------------------------
 
-    CONTENT_IDENTIFIER_LENGTH = 14
-
     SESSION_APP_DOMAINS = "session.app.domains"
     SESSION_IDENTIFIER_KEY = "session.identifiers"
     KEYSTORE_IDENTIFIER_KEY = "keystore.url.id"

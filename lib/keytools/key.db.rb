@@ -58,6 +58,31 @@ module SafeDb
     end
 
 
+    # Set the section to use for future data exchanges via the ubiquitous {get}
+    # and {set} methods as well as the query {contains} key method.
+    #
+    # @param section [String]
+    #    the non-nil and non whitespace only section name that will lead a
+    #    set of key-value pairs in the INI formatted file.
+    def use section
+      raise ArgumentError, "Cannot use a Nil section." if section.nil?
+      @section = section
+    end
+
+
+    # Stash the setting directive and its value into the configuration file
+    # using the default settings group.
+    #
+    # @param key_name [String] the name of the key whose value is to be written
+    # @param key_value [String] the data item value of the key specified
+    def set key_name, key_value
+      raise ArgumentError, "Cannot set a Nil (section)" if @section.nil?
+      raise ArgumentError, "Cannot set a Nil key name." if key_name.nil?
+      raise ArgumentError, "Cannot set a Nil key value" if key_value.nil?
+      create_entry( @section, key_name, key_value )
+    end
+
+
 
     # Create a new key value entry inside a dictionary with the specified
     # name at the root of this database. Successful completion means the

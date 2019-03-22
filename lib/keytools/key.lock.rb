@@ -21,18 +21,29 @@ module SafeDb
     # This method returns the highly random key instantiated for the purposes
     # of encrypting the content.
     #
+    # @param book_id [String]
+    #
+    #    this book identifier is used to locate the sub-directory holding
+    #    the chapter crypt casket (ccc) files.
+    #
     # @param crypt_key [Key]
     #
     #    the key used to (symmetrically) encrypt the content provided
     #
-    # @param crumbs_map [Hash]
+    # @param key_store [Hash]
     #
-    #    nothing is read from this crumbs map but 3 things are written to
-    #    it with these corresponding key names
+    #    pass either the DataMap which is a JSON backed store or a KeyMap
+    #    that streams to and from INI formatted data. The KeyMap is preferred
+    #    for human readable data which is precisely 2 dimensional. The streamed
+    #    DataMap is JSON which at scale isn't human readable but the data
+    #    structure is N dimensional and it supports nested structures such
+    #    as lists, maps, numbers and booleans.
     #
-    #    - random content external ID {CONTENT_EXTERNAL_ID}
-    #    - high entropy crypt key     {CONTENT_ENCRYPT_KEY}
-    #    - and initialization vector  {CONTENT_RANDOM_IV}
+    #    This content locker will write two key-values pairs into the data
+    #    structure - namely
+    #
+    #    - random content identifier {CONTENT_EXTERNAL_ID}
+    #    - and initialization vector {CONTENT_RANDOM_IV}
     #
     # @param content_body [String]
     #
@@ -43,15 +54,15 @@ module SafeDb
     #
     #    the string that will top the content's ciphertext when it is written
     #
-    def self.content_lock( crypt_key, crumbs_map, content_body, content_header )
+    def self.content_lock( book_id, crypt_key, key_store, content_body, content_header )
 
       # --
       # -- Create the external content ID and place
       # -- it within the crumbs map.
       # --
 
-      content_id = KeyRand.get_random_identifier( CONTENT_IDENTIFIER_LENGTH )
-      crumbs_map[ CONTENT_EXTERNAL_ID ] = content_id
+      content_id = KeyRandom.get_random_identifier( CONTENT_ID_LENGTH )
+      key_store.set( CONTENT_EXTERNAL_ID, content_id )
 
       # --
       # -- Create a random initialization vector (iv)
@@ -60,7 +71,7 @@ module SafeDb
       # --
       iv_base64 = KeyIV.new().for_storage()
       random_iv = KeyIV.in_binary( iv_base64 )
-      crumbs_map[ CONTENT_RANDOM_IV ] = iv_base64
+      key_store.set( CONTENT_RANDOM_IV, iv_base64 )
 
 #########      # --
 #########      # -- Create a new high entropy random key for
@@ -68,7 +79,7 @@ module SafeDb
 #########      # -- within the breadcrumbs map.
 #########      # --
 #########      crypt_key = Key.from_random()
-#########      crumbs_map[ CONTENT_ENCRYPT_KEY ] = crypt_key.to_char64()
+#########      key_store[ CONTENT_ENCRYPT_KEY ] = crypt_key.to_char64()
 
       # --
       # -- Now use AES to lock the content body and write
@@ -76,8 +87,8 @@ module SafeDb
       # -- topped with the parameter content header.
       # --
       binary_ctext = crypt_key.do_encrypt_text( random_iv, content_body )
-      content_path = content_filepath( content_exid )
-      binary_to_write( content_path, content_header, binary_ctext )
+      content_file = crypt_filepath( book_id, content_id )
+      binary_to_write( content_file, content_header, binary_ctext )
 
     end
 
@@ -90,7 +101,7 @@ module SafeDb
     # the initialization vector (iv) and decryption key whose values are expected
     # within the breadcrumbs map.
     #
-    # @param crumbs_map [Hash]
+    # @param key_store [Hash]
     #
     #    the three (3) data points expected within the breadcrumbs map are the
     #
@@ -98,14 +109,14 @@ module SafeDb
     #    - AES encryption key    {CONTENT_ENCRYPT_KEY}
     #    - initialization vector {CONTENT_RANDOM_IV}
     #
-    def self.content_unlock( crumbs_map )
+    def self.content_unlock( key_store )
 
       # --
       # -- Get the external ID of the content then use
       # -- that plus the session context to derive the
       # -- content's ciphertext filepath.
       # --
-      content_path = content_filepath( crumbs_map[ CONTENT_EXTERNAL_ID ] )
+      content_path = content_filepath( key_store[ CONTENT_EXTERNAL_ID ] )
 
       # --
       # -- Read the binary ciphertext of the content
@@ -113,36 +124,11 @@ module SafeDb
       # -- AES crypt key and intialization vector.
       # --
       crypt_txt = binary_from_read( content_path )
-      random_iv = KeyIV.in_binary( crumbs_map[ CONTENT_RANDOM_IV ] )
-      crypt_key = Key.from_char64( crumbs_map[ CONTENT_ENCRYPT_KEY ] )
+      random_iv = KeyIV.in_binary( key_store[ CONTENT_RANDOM_IV ] )
+      crypt_key = Key.from_char64( key_store[ CONTENT_ENCRYPT_KEY ] )
       text_data = crypt_key.do_decrypt_text( random_iv, crypt_txt )
 
       return text_data
-
-    end
-
-
-    # This method returns the <b>content filepath</b> which (at its core)
-    # is an amalgam of the application's (domain) identifier and the content's
-    # external identifier (XID).
-    #
-    # The filename is prefixed by {CONTENT_FILE_PREFIX}.
-    #
-    # @param external_id [String]
-    #
-    #    nothing is read from this crumbs map but 3 things are written to
-    #    it with these corresponding key names
-    #
-    #    - random content external ID {CONTENT_EXTERNAL_ID}
-    #    - high entropy crypt key     {CONTENT_ENCRYPT_KEY}
-    #    - and initialization vector  {CONTENT_RANDOM_IV}
-    def self.content_filepath( external_id )
-
-      app_identity = read_app_id()
-      store_folder = get_store_folder()
-      env_filename = "#{CONTENT_FILE_PREFIX}.#{external_id}.#{app_identity}.txt"
-      env_filepath = File.join( store_folder, env_filename )
-      return env_filepath
 
     end
 
@@ -152,12 +138,29 @@ module SafeDb
 
 
 
+    def self.crypt_filepath( book_id, content_id )
+
+      ## Change me when we have to use SESSION / BOOK directories for stashing content
+      ## Change me when we have to use SESSION / BOOK directories for stashing content
+      ## Change me when we have to use SESSION / BOOK directories for stashing content
+      ## Change me when we have to use SESSION / BOOK directories for stashing content
+      ## Change me when we have to use SESSION / BOOK directories for stashing content
+      ## Change me when we have to use SESSION / BOOK directories for stashing content
+
+      crypt_filedir = File.join( Dir.home, ".safedb.net/safedb-master-crypts/safedb.book.#{book_id}" )
+      FileUtils.mkdir_p( crypt_filedir )
+      return File.join( crypt_filedir, "safedb.chapter.#{content_id}.txt" )
+
+    end
+
+
     BLOCK_64_START_STRING = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789ab\n"
     BLOCK_64_END_STRING   = "ba9876543210fedcba9876543210fedcba9876543210fedcba9876543210\n"
     BLOCK_64_DELIMITER    = "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
 
 ##############################################    XID_SOURCE_APPROX_LEN = 11
 
+    CONTENT_ID_LENGTH   = 14
     CONTENT_FILE_PREFIX = "tree.db"
     CONTENT_EXTERNAL_ID = "content.xid"
     CONTENT_ENCRYPT_KEY = "content.key"

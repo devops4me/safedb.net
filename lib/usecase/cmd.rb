@@ -302,13 +302,13 @@ module SafeDb
     end
 
 
-    def create_header()
+    def create_header( book_id )
 
       return format_header(
         SafeDb::VERSION,
         APPLICATION_GEM_NAME,
         APPLICATION_GITHUB_URL,
-        @domain_name
+        book_id
       )
 
     end
@@ -321,19 +321,20 @@ module SafeDb
     # @param gem_version [String] the current version number of the calling gem
     # @param gem_name [String] the current name of the calling gem
     # @param gem_site [String] the current website of the calling gem
-    # @param book_ref [String] the identifier of the book in play
-    def format_header( gem_version, gem_name, gem_site, book_ref )
+    # @param book_id [String] the identifier of the book in play
+    def format_header( gem_version, gem_name, gem_site, book_id )
 
       line1 = "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n"
       line2 = "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
       line3 = "#{gem_name} ciphertext block\n"
       line4 = "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
-      line5 = "SafeDb Book := #{book_ref}\n"      # owning book identifier (ref)
-      line6 = "Access Time := #{KeyNow.grab()}\n" # timestamp of the last write
-      line7 = "App Version := #{gem_version}\n"   # this application semantic version
-      line8 = "Website Url := #{gem_site}\n"      # app website or github url
+      line5 = "Safe Book Id := #{book_id}\n"
+      line6 = "Time Created := #{KeyNow.readable()}\n"
+      line7 = "Safe Version := safedb v#{gem_version}\n"
+      line8 = "Safe Website := #{gem_site}\n"
+      line9 = "RubyGems.org := https://rubygems.org/gems/safedb\n"
 
-      return line1 + line2 + line3 + line4 + line5 + line6 + line7 + line8
+      return line1 + line2 + line3 + line4 + line5 + line6 + line7 + line8 + line9
 
     end
 

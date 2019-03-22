@@ -46,12 +46,13 @@ module SafeDb
 
       master_keys = KeyPair.new( MASTER_INDEX_LOCAL_FILE )
       master_keys.use( @book_id )
+      content_header = create_header( @book_id )
 
-      KeyApi.recycle_keys(
-        @book_name,
+      KeyCycle.recycle(
+        @book_id,
         book_secret,
         master_keys,
-        create_header(),
+        content_header,
         virgin_content()
       )
 
