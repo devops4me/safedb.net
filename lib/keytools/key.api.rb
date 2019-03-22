@@ -179,8 +179,8 @@ module SafeDb
       # -- content encryption (power) key during (inside) this
       # -- shell session.
       # --
-      app_id = KeyId.derive_app_instance_identifier( domain_name )
-      unique_id = KeyId.derive_universal_id( app_id, to_token() )
+      app_id = Identifier.derive_app_instance_identifier( domain_name )
+      unique_id = Identifier.derive_universal_id( app_id, to_token() )
       crumbs_db.use( unique_id )
       crumbs_db.set( INTRA_KEY_CIPHERTEXT, intra_txt )
       crumbs_db.set( SESSION_LOGIN_DATETIME, KeyNow.fetch() )
@@ -212,8 +212,8 @@ module SafeDb
 
       KeyError.not_new( domain_name, self )
 
-      aim_id = KeyId.derive_app_instance_machine_id( domain_name )
-      sid_id = KeyId.derive_session_id( to_token() )
+      aim_id = Identifier.derive_app_instance_machine_id( domain_name )
+      sid_id = Identifier.derive_session_id( to_token() )
 
       keypairs = KeyPair.new( MACHINE_CONFIG_FILE )
       keypairs.use( SESSION_APP_DOMAINS )
@@ -270,7 +270,7 @@ module SafeDb
       # -- content encryption (power) key during (inside) this
       # -- shell session.
       # --
-      unique_id = KeyId.derive_universal_id( domain_name )
+      unique_id = Identifier.derive_universal_id( domain_name )
       crumbs_db.use( unique_id )
       crumbs_db.set( INTRA_KEY_CIPHERTEXT, intra_txt )
       crumbs_db.set( SESSION_LOGOUT_DATETIME, KeyNow.fetch() )
@@ -440,7 +440,7 @@ module SafeDb
       # -- during the login use case and encrypted using the intra sessionary
       # -- key.
       # --
-      unique_id = KeyId.derive_universal_id( read_app_id(), to_token() )
+      unique_id = Identifier.derive_universal_id( read_app_id(), to_token() )
       crumbs_db.use( unique_id )
       power_key = intra_key.do_decrypt_key( crumbs_db.get( INTRA_KEY_CIPHERTEXT ) )
 
@@ -515,7 +515,7 @@ module SafeDb
       # -- during the login use case and encrypted using the intra sessionary
       # -- key.
       # --
-      unique_id = KeyId.derive_universal_id( read_app_id(), to_token() )
+      unique_id = Identifier.derive_universal_id( read_app_id(), to_token() )
       crumbs_db.use( unique_id )
       power_key = intra_key.do_decrypt_key( crumbs_db.get( INTRA_KEY_CIPHERTEXT ) )
 
@@ -576,7 +576,7 @@ module SafeDb
     # NOTE this will NOT be set until the session is logged in so
     # the call fails before that. For this reason do not call this
     # method from outside this class. If the domain name is
-    # available use {KeyId.derive_app_instance_identifier} instead.
+    # available use {Identifier.derive_app_instance_identifier} instead.
     def self.read_app_id()
 
       aim_id = read_aim_id()
@@ -589,7 +589,7 @@ module SafeDb
 
     def self.read_aim_id()
 
-      session_identifier = KeyId.derive_session_id( to_token() )
+      session_identifier = Identifier.derive_session_id( to_token() )
 
       keypairs = KeyPair.new( MACHINE_CONFIG_FILE )
       keypairs.use( SESSION_APP_DOMAINS )
@@ -682,8 +682,8 @@ module SafeDb
 
     def self.get_keystore_file_from_domain_name( domain_name )
 
-      aim_id = KeyId.derive_app_instance_machine_id( domain_name )
-      app_id = KeyId.derive_app_instance_identifier( domain_name )
+      aim_id = Identifier.derive_app_instance_machine_id( domain_name )
+      app_id = Identifier.derive_app_instance_identifier( domain_name )
 
       app_key_db_file = "#{APP_KEY_DB_NAME_PREFIX}.#{app_id}.ini"
       return File.join( get_app_keystore_folder( aim_id, app_id ), app_key_db_file )
@@ -704,8 +704,8 @@ module SafeDb
 
     def self.content_ciphertxt_file_from_domain_name( domain_name )
 
-      aim_id = KeyId.derive_app_instance_machine_id( domain_name )
-      app_id = KeyId.derive_app_instance_identifier( domain_name )
+      aim_id = Identifier.derive_app_instance_machine_id( domain_name )
+      app_id = Identifier.derive_app_instance_identifier( domain_name )
 
       appdb_cipher_file = "#{FILE_CIPHERTEXT_PREFIX}.#{app_id}.txt"
       return File.join( get_app_keystore_folder( aim_id, app_id ), appdb_cipher_file )

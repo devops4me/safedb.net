@@ -92,7 +92,7 @@ class CLI < Thor
   # Initialize a safe credentials book with this name and collect the human sourced
   # pasword to be put through key derivation functions.
   #
-  # @param book_name [String] the name of the credentials bok to be created
+  # @param book_name [String] the name of the credentials book to be created
   def init( book_name )
     log.info(x) { "initialize a new safe credentials book called [#{book_name}]." }
     init_uc = SafeDb::Init.new
@@ -110,12 +110,12 @@ class CLI < Thor
   # inaccessible or the call originates from non-interactive software.
   option :password, :aliases => '-p'
 
-  # Login in order to securely interact with your data.
-  # @param domain_name [String] the domain the software operates under
-  def login( domain_name = nil )
-    log.info(x) { "[usecase] ~> login to the book before interacting with it." }
+  # Login in order to securely interact with your safe credentials.
+  # @param book_name [String] the name of the credentials book to login to
+  def login( book_name = nil )
+    log.info(x) { "login to the safe credentials book called [#{book_name}]." }
     login_uc = SafeDb::Login.new
-    login_uc.domain_name = domain_name unless domain_name.nil?
+    login_uc.book_name = book_name unless book_name.nil?
     login_uc.password = options[ :password ] if options[ :password ]
     login_uc.flow_of_events
   end

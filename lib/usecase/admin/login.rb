@@ -49,13 +49,47 @@ module SafeDb
     end
 
 
-    # Perform pre-conditional validations in preparation to executing the main flow
-    # of events for this use case. This method may throw the below exceptions.
-    #
-    # @raise [SafeDirNotConfigured] if the safe's url has not been configured
-    # @raise [EmailAddrNotConfigured] if the email address has not been configured
-    # @raise [StoreUrlNotConfigured] if the crypt store url is not configured
-    def pre_validation
+    private
+
+
+    def print_already_logged_in
+
+      puts ""
+      puts "We are already logged in. Open a secret envelope, put, then seal."
+      puts ""
+      puts "    #{COMMANDMENT} open aws.credentials:s3reader"
+      puts "    #{COMMANDMENT} put access_key ABCD1234"
+      puts "    #{COMMANDMENT} put secret_key FGHIJ56789"
+      puts "    #{COMMANDMENT} put region_key eu-central-1"
+      puts "    #{COMMANDMENT} seal"
+      puts ""
+
+    end
+
+
+    def print_not_initialized
+
+      puts ""
+      puts "Please initialize the app domain on this machine."
+      puts "Give a domain name and a folder for key storage."
+      puts ""
+      puts "    #{COMMANDMENT} init <domain_name> \"$HOME/open.world\""
+      puts ""
+
+    end
+
+
+    def print_login_success
+
+      puts ""
+      puts "Success - you are logged in."
+      puts ""
+      puts "    #{COMMANDMENT} open aws.credentials:s3reader"
+      puts "    #{COMMANDMENT} put access_key ABCD1234"
+      puts "    #{COMMANDMENT} put secret_key FGHIJ56789"
+      puts "    #{COMMANDMENT} put region_key eu-central-1"
+      puts "    #{COMMANDMENT} seal"
+      puts ""
 
     end
 

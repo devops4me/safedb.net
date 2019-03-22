@@ -34,9 +34,8 @@ module SafeDb
     def execute
 
       @book_id = initialize_book()
-      keys_setup = is_book_initialized?()
 
-      if ( keys_setup )
+      if is_book_initialized?()
         print_already_initialized
         return
       end
@@ -56,7 +55,7 @@ module SafeDb
         virgin_content()
       )
 
-      print_domain_initialized
+      print_success_initializing
 
     end
 
@@ -104,6 +103,32 @@ SET THIS UP WHEN LOGIN HAPPENS - SIGNIFY THE SHELL SESSION BOOK USING
       initial_db.store( BOOK_CREATOR_VERSION, SafeDb::VERSION )
 
       return initial_db.to_json
+
+    end
+
+
+    def print_already_initialized
+
+      puts ""
+      puts "You can go ahead and login."
+      puts "Your domain [#{@book_name}] is already setup."
+      puts "You should already know the password."
+      puts ""
+      puts "    #{COMMANDMENT} login #{@book_name}"
+      puts ""
+
+    end
+
+
+    def print_success_initializing
+
+      puts ""
+      puts "Success! You can now login."
+      puts "Your book #{@book_name} with id #{@book_id} is up."
+      puts "From now on you simply login to this book."
+      puts ""
+      puts "    #{COMMANDMENT} login #{@book_name}"
+      puts ""
 
     end
 

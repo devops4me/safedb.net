@@ -8,7 +8,9 @@ module SafeDb
 
     attr_writer :password, :book_name
 
+
     private
+
 
     # Return true if the human secret for the parameter application name
     # has been collected, transformed into a key, that key used to lock the
@@ -16,22 +18,6 @@ module SafeDb
     # sprinkled to allow the <b>inter-sessionary key to be regenerated</b>
     # at the <b>next login</b>.
     def is_book_initialized?()
-
-##################### Change this and put in some REAL logic
-##################### Change this and put in some REAL logic
-##################### Change this and put in some REAL logic
-##################### Change this and put in some REAL logic
-##################### Change this and put in some REAL logic
-##################### Change this and put in some REAL logic
-##################### Change this and put in some REAL logic
-
-      return false
-
-
-##################### Change this and put in some REAL logic
-##################### Change this and put in some REAL logic
-##################### Change this and put in some REAL logic
-
 
       KeyError.not_new( @book_name, self )
       keypairs = KeyPair.new( MACHINE_CONFIG_FILE )
