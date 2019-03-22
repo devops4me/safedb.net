@@ -43,7 +43,7 @@ module SafeDb
       book_secret = KeyPass.password_from_shell( true ) if @password.nil?
       book_secret = @password unless @password.nil?
 
-      master_keys = KeyPair.new( MASTER_INDEX_LOCAL_FILE )
+      master_keys = KeyMap.new( MASTER_INDEX_LOCAL_FILE )
       master_keys.use( @book_id )
       content_header = create_header( @book_id )
 
@@ -69,7 +69,7 @@ module SafeDb
 
       @book_id = KeyId.derive_app_instance_identifier( @book_name )
 
-      keypairs = KeyPair.new( MASTER_INDEX_LOCAL_FILE )
+      keypairs = KeyMap.new( MASTER_INDEX_LOCAL_FILE )
       keypairs.use( @book_id )
       keypairs.set( "book.creation.time", KeyNow.readable() )
 

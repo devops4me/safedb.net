@@ -20,7 +20,7 @@ module SafeDb
     def is_book_initialized?()
 
       KeyError.not_new( @book_name, self )
-      keypairs = KeyPair.new( MACHINE_CONFIG_FILE )
+      keypairs = KeyMap.new( MACHINE_CONFIG_FILE )
       aim_id = KeyId.derive_app_instance_machine_id( @book_name )
       app_id = KeyId.derive_app_instance_identifier( @book_name )
       keypairs.use( aim_id )
@@ -28,7 +28,7 @@ module SafeDb
       keystore_file = get_keystore_file_from_domain_name( @book_name )
       return false unless File.exists?( keystore_file )
 
-      crumbs_db = KeyPair.new( keystore_file )
+      crumbs_db = KeyMap.new( keystore_file )
       return false unless crumbs_db.has_section?( APP_KEY_DB_BREAD_CRUMBS )
       
       crumbs_db.use( APP_KEY_DB_BREAD_CRUMBS )

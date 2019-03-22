@@ -37,7 +37,7 @@ module SafeDb
   # - other hashes
   # - booleans
   # - integers and floats
-  class KeyDb < Hash
+  class KeyStore < Hash
 
     # Return a key database data structure that is instantiated from
     # the parameter JSON string.
@@ -46,12 +46,12 @@ module SafeDb
     #    this json formatted data structure will be converted into a
     #    a Ruby hash (map) data structure and returned.
     #
-    # @return [KeyDb]
+    # @return [KeyStore]
     #    a hash data structure that has been instantiated as per the
     #    parameter json string content.
     def self.from_json( db_json_string )
 
-      data_db = KeyDb.new()
+      data_db = KeyStore.new()
       data_db.merge!( JSON.parse( db_json_string ) )
       return data_db
 
@@ -284,7 +284,7 @@ module SafeDb
       # @todo -> this is confused - it uses INI but above methods use JSON
       # @todo -> this is confused - it uses INI but above methods use JSON
 
-      raise RuntimeError, "This KeyDb.read() software is never called so how can I be here?"
+      raise RuntimeError, "This KeyStore.read() software is never called so how can I be here?"
 
       @filepath = the_filepath
       return unless File.exists? @filepath
@@ -326,7 +326,7 @@ module SafeDb
       # @todo -> this is confused - it uses INI but above methods use JSON
       # @todo -> this is confused - it uses INI but above methods use JSON
 
-      raise RuntimeError, "This KeyDb.write( key ) software is never called so how can I be here?"
+      raise RuntimeError, "This KeyStore.write( key ) software is never called so how can I be here?"
 
       FileUtils.mkdir_p(File.dirname(@filepath))
       cipher_text = Base64.encode64 ToolBelt::Blowfish.encryptor( self.to_json, encryption_key )

@@ -8,7 +8,7 @@ module SafeDb
   # It supports the encryption of large bodies of text or binary because
   # it uses the efficient and effective AES asymmetric algorithm.
   #
-  class KeyLock
+  class Lock
 
     # Lock the content body provided - place the resulting ciphertext
     # inside a file named by a random identifier, then write this identifier
@@ -220,7 +220,7 @@ module SafeDb
 
     def self.get_app_keystore_folder( aim_id, app_id )
 
-      keypairs = KeyPair.new( MACHINE_CONFIG_FILE )
+      keypairs = KeyMap.new( MACHINE_CONFIG_FILE )
       keypairs.use( aim_id )
       keystore_url = keypairs.get( KEYSTORE_IDENTIFIER_KEY )
       basedir_name = "#{OK_BASE_FOLDER_PREFIX}.#{app_id}"

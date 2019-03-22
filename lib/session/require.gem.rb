@@ -85,7 +85,7 @@ module OpenSession
     # @param gem_filepath [String] path to callling gem (use <tt>__FILE</tt>)
     def self.now gem_filepath
 
-      require_relative "../usecase/cmd"
+      require_relative "../usecase/usecase"
       require_relative "../usecase/admin/access"
 
       gem_basepath = File.expand_path "..", gem_filepath

@@ -215,7 +215,7 @@ module SafeDb
       aim_id = Identifier.derive_app_instance_machine_id( domain_name )
       sid_id = Identifier.derive_session_id( to_token() )
 
-      keypairs = KeyPair.new( MACHINE_CONFIG_FILE )
+      keypairs = KeyMap.new( MACHINE_CONFIG_FILE )
       keypairs.use( SESSION_APP_DOMAINS )
       keypairs.set( sid_id, aim_id )
 
@@ -305,7 +305,7 @@ module SafeDb
 ############## Write this code.
       return false unless File.exists?( frontend_keystore_file() )
 
-      crumbs_db = KeyPair.new( frontend_keystore_file() )
+      crumbs_db = KeyMap.new( frontend_keystore_file() )
       crumbs_db.use( APP_KEY_DB_BREAD_CRUMBS )
       return false unless crumbs_db.contains?( LOGGED_IN_APP_SESSION_ID )
 
@@ -580,7 +580,7 @@ module SafeDb
     def self.read_app_id()
 
       aim_id = read_aim_id()
-      keypairs = KeyPair.new( MACHINE_CONFIG_FILE )
+      keypairs = KeyMap.new( MACHINE_CONFIG_FILE )
       keypairs.use( aim_id )
       return keypairs.get( APP_INSTANCE_ID_KEY )
 
@@ -591,7 +591,7 @@ module SafeDb
 
       session_identifier = Identifier.derive_session_id( to_token() )
 
-      keypairs = KeyPair.new( MACHINE_CONFIG_FILE )
+      keypairs = KeyMap.new( MACHINE_CONFIG_FILE )
       keypairs.use( SESSION_APP_DOMAINS )
       return keypairs.get( session_identifier )
 
@@ -643,7 +643,7 @@ module SafeDb
 
       KeyError.not_new( domain_name, self )
       keystore_file = get_keystore_file_from_domain_name( domain_name )
-      crumbs_db = KeyPair.new( keystore_file )
+      crumbs_db = KeyMap.new( keystore_file )
       crumbs_db.use( APP_KEY_DB_BREAD_CRUMBS )
       return crumbs_db
 
@@ -653,7 +653,7 @@ module SafeDb
     def self.get_crumbs_db_from_session_token()
 
       keystore_file = get_keystore_file_from_session_token()
-      crumbs_db = KeyPair.new( keystore_file )
+      crumbs_db = KeyMap.new( keystore_file )
       crumbs_db.use( APP_KEY_DB_BREAD_CRUMBS )
       return crumbs_db
 
@@ -671,7 +671,7 @@ module SafeDb
 
     def self.get_app_keystore_folder( aim_id, app_id )
 
-      keypairs = KeyPair.new( MACHINE_CONFIG_FILE )
+      keypairs = KeyMap.new( MACHINE_CONFIG_FILE )
       keypairs.use( aim_id )
       keystore_url = keypairs.get( KEYSTORE_IDENTIFIER_KEY )
       basedir_name = "#{OK_BASE_FOLDER_PREFIX}.#{app_id}"

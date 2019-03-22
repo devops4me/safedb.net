@@ -5,7 +5,7 @@ module SafeDb
 
   require 'inifile'
 
-  # KeyPair is a <b>key-value</b> store backed by a plain-text file in
+  # KeyMap is a <b>key-value</b> store backed by a plain-text file in
   # an <b>INI format</b> that sits on an accessible file-system.
   #
   #
@@ -13,7 +13,7 @@ module SafeDb
   #
   # Issue the below ruby calls and specify a /path/to/file
   #
-  #    keymap = KeyPair.new ( "/path/to/file" )
+  #    keymap = KeyMap.new ( "/path/to/file" )
   #
   #    keymap.use ( "phone_numbers"           )
   #    keymap.set ( "joe", "0044 7500 123456" )
@@ -35,7 +35,7 @@ module SafeDb
   # You do not need a new object to switch sections - just go ahead and
   # use another another one.
   #
-  # Remember that KeyPair is <b>two-dimensional</b> data structure so all
+  # Remember that KeyMap is <b>two-dimensional</b> data structure so all
   # key-value pairs are stored under the auspices of a section.
   #
   # == Key-Value Pair Exchanges
@@ -47,7 +47,7 @@ module SafeDb
   #
   # The name given to the default group can be specified to the constructor.
   # If none is provided the aptly named "default" is used.
-  class KeyPair
+  class KeyMap
 
     # Initialize the key value store and auto write a time stamp that
     # has nano-second accuracy with a key whose name is gleened from

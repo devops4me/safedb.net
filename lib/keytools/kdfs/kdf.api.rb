@@ -82,7 +82,7 @@ module SafeDb
     #
     # <b>Example | Derive Key from Password</b>
     #
-    #    key_store = KeyPair.new( "/path/to/kdf-salt-data.ini" )
+    #    key_store = KeyMap.new( "/path/to/kdf-salt-data.ini" )
     #    key_store.use( "peter-pan" )
     #    human_key = KdfApi.generate_from_password( "my_s3cr3t", key_store )
     #
@@ -149,11 +149,11 @@ module SafeDb
     #    dictionary word or name is the way to generate a powerful key
     #    that has embedded a near 100% entropy rating.
     #
-    # @param key_map [KeyPair]
-    #    The KeyPair storage service must have been initialized and a
-    #    section specified using {KeyPair.use} thus allowing this method
+    # @param key_map [KeyMap]
+    #    The KeyMap storage service must have been initialized and a
+    #    section specified using {KeyMap.use} thus allowing this method
     #    to <b>write key-value pairs</b> representing the BCrypt and
-    #    PBKDF2 salts through the {KeyPair.set} behaviour.
+    #    PBKDF2 salts through the {KeyMap.set} behaviour.
     #
     # @return [Key]
     #    the 256 bit symmetric encryption key derived from a human password
