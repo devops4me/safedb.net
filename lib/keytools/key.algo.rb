@@ -5,7 +5,7 @@ module SafeDb
 
   # Algorithms that are quality catalysts in the derivation and entropy spread
   # of keys, identifiers and base64 character numbers.
-  class KeyAlgo
+  class Methods
 
 
     # Cherry pick a given number of characters from the character pool

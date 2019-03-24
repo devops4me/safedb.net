@@ -220,7 +220,7 @@ module SafeDb
       a_64_char_str = a_384_bit_key.to_char64()
       base_64_chars = a_64_char_str.to_alphanumeric
 
-      id_chars_pool = KeyAlgo.cherry_picker( ID_TRI_CHUNK_LEN, base_64_chars )
+      id_chars_pool = Methods.cherry_picker( ID_TRI_CHUNK_LEN, base_64_chars )
       id_hyphen_one = id_chars_pool.insert( IDENTITY_CHUNK_LENGTH, SEGMENT_CHAR )
       id_characters = id_hyphen_one.insert( ( IDENTITY_CHUNK_LENGTH * 2 + 1 ), SEGMENT_CHAR )
 
@@ -260,7 +260,7 @@ module SafeDb
       raise RuntimeError, id_err_msg unless bitstr_252.length == BIT_LENGTH_252
 
       id_chars_pool = Key64.from_bits( bitstr_252 ).to_alphanumeric
-      undivided_str = KeyAlgo.cherry_picker( ID_TWO_CHUNK_LEN, id_chars_pool )
+      undivided_str = Methods.cherry_picker( ID_TWO_CHUNK_LEN, id_chars_pool )
       id_characters = undivided_str.insert( IDENTITY_CHUNK_LENGTH, SEGMENT_CHAR )
 
       min_size_msg = "Id length #{id_characters.length} is not #{(ID_TWO_CHUNK_LEN + 1)} chars."
