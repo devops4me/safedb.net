@@ -128,8 +128,6 @@ module SafeDb
 
     INTER_KEY_CIPHERTEXT = "inter.key.ciphertext"
     INTRA_KEY_CIPHERTEXT = "intra.key.ciphertext"
-    INDEX_DB_CRYPT_IV_KEY = "index.db.cipher.iv"
-
 
 
   end

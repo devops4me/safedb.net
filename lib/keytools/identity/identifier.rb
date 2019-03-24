@@ -73,6 +73,7 @@ module SafeDb
     #    infinitely long.
     def self.get_random_identifier( id_length )
 
+      require 'securerandom'
       random_ref = SecureRandom.urlsafe_base64( id_length ).delete("-_").downcase
       return random_ref[ 0 .. ( id_length - 1 ) ]
 

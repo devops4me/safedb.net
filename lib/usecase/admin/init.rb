@@ -71,7 +71,7 @@ module SafeDb
       keypairs = KeyMap.new( MASTER_INDEX_LOCAL_FILE )
       keypairs.use( @book_id )
       keypairs.set( "book.creation.time", KeyNow.readable() )
-      keypairs.set( "commit.reference",  Identifier.get_random_identifier( 16 ) )
+      keypairs.set( "master.commit.reference",  Identifier.get_random_identifier( 16 ) )
 
 
     end

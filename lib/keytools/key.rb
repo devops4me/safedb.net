@@ -143,12 +143,16 @@ module SafeDb
 
 
     def self.to_random_bits the_byte_length
+
+      require 'securerandom'
+
       random_bit_string = ""
       for n in 1 .. the_byte_length
         random_integer = SecureRandom.random_number( EIGHT_BIT_INTEGER_SIZE )
         random_bit_string += "%08d" % [ random_integer.to_s(2) ]
       end
       return random_bit_string
+
     end
 
 

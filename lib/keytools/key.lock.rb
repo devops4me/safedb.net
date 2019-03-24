@@ -169,7 +169,10 @@ module SafeDb
 
 
     # When we login to a book which may or may not be the first book in the session
-    # that we have logged into, we do a number of things. We
+    # that we have logged into, we are effectively cloning all its master crypts and
+    # some of its keys (indices).
+    #
+    # To clone a book into a session we
     #
     # - create a {session_crypts_folder} and copy all master crypts into it
     # - we {create_session_indices} under general and book_id sections
@@ -185,13 +188,23 @@ module SafeDb
     #
     # @param book_id [String] the book identifier this session is about
     # @param session_id [String] the identifier pertaining to this session
+    # @param master_book_keys [KeyMap] keys from the book's master line
+    # @param crypt_key [Key] symmetric session content encryption key
     #
-    def create_book_session( book_id, session_id, book_keys )
+    def self.clone_book_into_session( book_id, session_id, master_book_keys, crypt_key )
+
       FileUtils.mkdir_p( session_crypts_folder( book_id, session_id ) )
       FileUtils.copy_entry( master_crypts_folder( book_id ), session_crypts_folder( book_id, session_id ) )
       session_keys = create_session_indices( book_id, session_id )
-      session_keys.set( CONTENT_EXTERNAL_ID, book_keys.get( CONTENT_EXTERNAL_ID ) )
+      session_keys.set( CONTENT_EXTERNAL_ID, master_book_keys.get( CONTENT_EXTERNAL_ID ) )
+      session_keys.set( "session.commit.reference", master_book_keys.get( "master.commit.reference" ) )
+
+      session_key = KeyLocal.regenerate_shell_key( to_token() )
+      key_ciphertext = session_key.do_encrypt_key( crypt_key )
+      session_keys.set( INTRA_KEY_CIPHERTEXT, key_ciphertext )
+
     end
+
 
     # Create and return the session indices {KeyMap} pertaining to both the current
     # book and session whose ids are given in the first and second parameters.
@@ -217,11 +230,8 @@ module SafeDb
 
     end
 
-    def self.copy_master_indices_to_session( master_keys, session_keys )
-    end
 
-
-    def create_master_book_crypts_folder( book_id )
+    def self.create_master_book_crypts_folder( book_id )
       FileUtils.mkdir_p( master_crypts_folder( book_id ) )
     end
 
@@ -255,11 +265,21 @@ module SafeDb
     end
 
 
+    def self.contains_all_master_book_indices( key_map )
+      return false unless key_map.contains?( CONTENT_RANDOM_IV )
+      return false unless key_map.contains?( CONTENT_EXTERNAL_ID )
+      return false unless key_map.contains?( INTER_KEY_CIPHERTEXT )
+      return false unless key_map.contains?( "master.commit.reference" )
+      return true
+    end
+
+
+    INTER_KEY_CIPHERTEXT = "inter.key.ciphertext"
+    INTRA_KEY_CIPHERTEXT = "intra.key.ciphertext"
+
     BLOCK_64_START_STRING = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789ab\n"
     BLOCK_64_END_STRING   = "ba9876543210fedcba9876543210fedcba9876543210fedcba9876543210\n"
     BLOCK_64_DELIMITER    = "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
-
-##############################################    XID_SOURCE_APPROX_LEN = 11
 
     SAFE_DATABASE_FOLDER   = File.join( Dir.home, ".safedb.net" )
     MASTER_CRYPTS_FOLDER   = File.join( SAFE_DATABASE_FOLDER, "safedb-master-crypts"   )
@@ -272,6 +292,8 @@ module SafeDb
     CONTENT_ENCRYPT_KEY = "content.key"
     CONTENT_RANDOM_IV   = "content.iv"
 
+    TOKEN_VARIABLE_NAME = "SAFE_TTY_TOKEN"
+    TOKEN_VARIABLE_SIZE = 152
 
 
     def self.get_app_keystore_folder( aim_id, app_id )
@@ -281,6 +303,22 @@ module SafeDb
       keystore_url = keypairs.get( KEYSTORE_IDENTIFIER_KEY )
       basedir_name = "#{OK_BASE_FOLDER_PREFIX}.#{app_id}"
       return File.join( keystore_url, basedir_name )
+
+    end
+
+
+    def self.to_token()
+
+      raw_env_var_value = ENV[TOKEN_VARIABLE_NAME]
+      raise_token_error( TOKEN_VARIABLE_NAME, "not present") unless raw_env_var_value
+
+      env_var_value = raw_env_var_value.strip
+      raise_token_error( TOKEN_VARIABLE_NAME, "consists only of whitespace") if raw_env_var_value.empty?
+
+      size_msg = "length should contain exactly #{TOKEN_VARIABLE_SIZE} characters"
+      raise_token_error( TOKEN_VARIABLE_NAME, size_msg ) unless env_var_value.length == TOKEN_VARIABLE_SIZE
+
+      return env_var_value
 
     end
 

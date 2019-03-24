@@ -138,71 +138,13 @@ module SafeDb
 
       the_book_id = book_keys.section()
 
-      # --
-      # -- Get the old inter-sessionary key (created during the previous login)
-      # -- Get the old content encryption (power) key (again created during the previous login)
-      # -- Get the old random initialization vector (created during the previous login)
-      # --
       old_human_key = KdfApi.regenerate_from_salts( secret, book_keys )
       old_crypt_key = old_human_key.do_decrypt_key( book_keys.get( INTER_KEY_CIPHERTEXT ) )
       plain_content = Lock.content_unlock( old_crypt_key, book_keys )
       new_crypt_key = KeyCycle.recycle( the_book_id, secret, book_keys, content_header, plain_content )
 
       session_id = Identifier.derive_session_id( to_token() )
-      session_keys = Lock.create_session_keys( the_book_id, session_id )
-
-
-      # --
-      # -- Regenerate intra-session key from the session token.
-      # -- Encrypt power key for intra (in) session retrieval.
-      # --
-      intra_key = KeyLocal.regenerate_shell_key( to_token() )
-      intra_txt = intra_key.do_encrypt_key( new_crypt_key )
-
-      # --
-      # -- Set the (ciphertext) breadcrumbs for re-acquiring the
-      # -- content encryption (power) key during (inside) this
-      # -- shell session.
-      # --
-      app_id = Identifier.derive_app_instance_identifier( domain_name )
-      unique_id = Identifier.derive_universal_id( app_id, to_token() )
-      book_keys.use( unique_id )
-      book_keys.set( INTRA_KEY_CIPHERTEXT, intra_txt )
-      book_keys.set( SESSION_LOGIN_DATETIME, KeyNow.fetch() )
-
-      # --
-      # -- Switch the dominant application domain being used to
-      # -- the domain that has just logged in.
-      # --
-      use_application_domain( domain_name )
-
-    end
-
-
-    # Switch the application instance that the current shell session is using.
-    # Trigger this method either during the login use case or when the user
-    # issues an intent to use a different application instance.
-    #
-    # The machine configuration file at path {MACHINE_CONFIG_FILE} is changed
-    # in the following way
-    #
-    # - a {SESSION_APP_DOMAINS} section is added if one does not exist
-    # - the shell session ID key is added (or updated if it exists)
-    # - with a value corresponding to the app instance ID (on this machine)
-    #
-    # @param domain_name [String]
-    #    the string reference that points to the global application identifier
-    #    no matter the machine being used.
-    def self.use_application_domain( domain_name )
-
-      KeyError.not_new( domain_name, self )
-
-      aim_id = Identifier.derive_app_instance_machine_id( domain_name )
-      sid_id = Identifier.derive_session_id( to_token() )
-
-      keypairs = KeyMap.new( MACHINE_CONFIG_FILE )
-      keypairs.use( SESSION_APP_DOMAINS )
-      keypairs.set( sid_id, aim_id )
+      Lock.clone_book_into_session( the_book_id, session_id, book_keys, new_crypt_key )
 
     end
 
@@ -588,13 +530,8 @@ module SafeDb
     CONTENT_RANDOM_IV   = "content.iv"
     CONTENT_EXTERNAL_ID = "content.xid"
 
-    # --------------------------------------------------------
-    # In order to separate keys into a new gem we must
-    # break knowledge of this variable name and have it
-    # instead passed in by clients.
     TOKEN_VARIABLE_NAME = "SAFE_TTY_TOKEN"
     TOKEN_VARIABLE_SIZE = 152
-    # --------------------------------------------------------
 
     SESSION_APP_DOMAINS = "session.app.domains"
     SESSION_IDENTIFIER_KEY = "session.identifiers"
