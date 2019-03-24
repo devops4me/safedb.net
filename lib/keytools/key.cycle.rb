@@ -75,6 +75,7 @@ module SafeDb
     # - save the salts crucial for reproducing this derived key
     # - use the derived key to encrypt the high entropy key
     # - write the resulting ciphertext into the key cache
+    # - return the high entropy key that locked the content
     #
     # @param book_id [String]
     #
@@ -104,12 +105,18 @@ module SafeDb
     #    this content is encrypted by this method and the ciphertext
     #    result is stored in a file.
     #
+    # @return [Key]
+    #
+    #    return the generated random high entropy key that the content is
+    #    locked with
+    #
     def self.recycle( book_id, human_secret, key_map, content_header, content_body )
 
       high_entropy_key = Key.from_random
       Lock.content_lock( book_id, high_entropy_key, key_map, content_body, content_header )
       derived_key = KdfApi.generate_from_password( human_secret, key_map )
       key_map.set( INTER_KEY_CIPHERTEXT, derived_key.do_encrypt_key( high_entropy_key ) )
+      return high_entropy_key
 
     end
 

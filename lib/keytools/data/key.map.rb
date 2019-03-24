@@ -104,6 +104,17 @@ module SafeDb
     end
 
 
+    # Return the name of the currently in-focus section that has been set using
+    # the {use} method.
+    #
+    # @return [String]
+    #    return the name of the currently in-focus section
+    def section
+      raise ArgumentError, "The use method has not specified a section." if @section_to_use.nil?
+      return @section_to_use
+    end
+
+
     # Write the key/value pair in the parameter into this key/value store's
     # base file-system backing INI file.
     #

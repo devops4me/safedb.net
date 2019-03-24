@@ -45,8 +45,8 @@ module SafeDb
       #
       #   a) unlock it using the breadcrumbs or
       #   b) start afresh with a new content db
-      content_box = KeyDb.from_json( KeyApi.content_unlock( master_db[ envelope_id ] ) ) if has_content
-      content_box = KeyDb.new() unless has_content
+      content_box = KeyStore.from_json( KeyApi.content_unlock( master_db[ envelope_id ] ) ) if has_content
+      content_box = KeyStore.new() unless has_content
       content_hdr = create_header()
 
       # If no content envelope exists we need to place

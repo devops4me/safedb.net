@@ -292,7 +292,7 @@ module SafeDb
       raise ArgumentError.new "There is no open chapter here." if unopened_envelope?( master_db )
       chapter_id = ENVELOPE_KEY_PREFIX + master_db[ ENV_PATH ]
       verse_id = master_db[ KEY_PATH ]
-      chapter_data = KeyDb.from_json( KeyApi.content_unlock( master_db[ chapter_id ] ) )
+      chapter_data = KeyStore.from_json( KeyApi.content_unlock( master_db[ chapter_id ] ) )
       mini_dictionary = chapter_data[ master_db[ KEY_PATH ] ]
 
       mini_dictionary.each do | key_str, value_str|
@@ -302,13 +302,13 @@ module SafeDb
     end
 
 
-    def create_header( book_id )
+    def create_header()
 
       return format_header(
         SafeDb::VERSION,
         APPLICATION_GEM_NAME,
         APPLICATION_GITHUB_URL,
-        book_id
+        @book_id
       )
 
     end

@@ -32,7 +32,7 @@ module SafeDb
 
       chapters.each_pair do | chapter_name, crumb_dictionary |
 
-        chapter_struct = KeyDb.from_json( KeyApi.content_unlock( crumb_dictionary ) )
+        chapter_struct = KeyStore.from_json( KeyApi.content_unlock( crumb_dictionary ) )
         verse_count += chapter_struct.length
         exported_struct.store( chapter_name, chapter_struct )
 

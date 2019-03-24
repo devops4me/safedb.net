@@ -69,8 +69,8 @@ module SafeDb
       # --
       chapter_id = ENVELOPE_KEY_PREFIX + master_db[ ENV_PATH ]
       chapter_exists = KeyApi.db_envelope_exists?( master_db[ chapter_id ] )
-      chapter_data = KeyDb.from_json( KeyApi.content_unlock( master_db[ chapter_id ] ) ) if chapter_exists
-      chapter_data = KeyDb.new() unless chapter_exists
+      chapter_data = KeyStore.from_json( KeyApi.content_unlock( master_db[ chapter_id ] ) ) if chapter_exists
+      chapter_data = KeyStore.new() unless chapter_exists
 
       content_hdr = create_header()
 

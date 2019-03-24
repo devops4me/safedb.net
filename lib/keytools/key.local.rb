@@ -196,7 +196,7 @@ module SafeDb
     #    the same executing shell environment and a different key when not.
     def self.derive_session_crypt_key bcrypt_salt_key
 
-      shell_id_text = KeyIdent.derive_shell_identifier()
+      shell_id_text = MachineId.derive_shell_identifier()
       truncate_text = shell_id_text.length > KdfBCrypt::BCRYPT_MAX_IN_TEXT_LENGTH
       shell_id_trim = shell_id_text unless truncate_text
       shell_id_trim = shell_id_text[ 0 .. ( KdfBCrypt::BCRYPT_MAX_IN_TEXT_LENGTH - 1 ) ] if truncate_text

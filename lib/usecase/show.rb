@@ -10,7 +10,7 @@ module SafeDb
   class Show < UseCase
 
     def get_chapter_data( chapter_key )
-      return KeyDb.from_json( KeyApi.content_unlock( chapter_key ) )
+      return KeyStore.from_json( KeyApi.content_unlock( chapter_key ) )
     end
 
     def execute

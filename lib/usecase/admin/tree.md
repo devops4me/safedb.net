@@ -50,5 +50,5 @@ On disk, the safe database is largely just **crypt files** and **indices** which
 
     |--- safedb-session-indices
              |
-             |--- safedb-ababab-ababab-xxxxxx-xxxxxx-xxxxxx.ini
+             |--- safedb-indices-xxxxxx-xxxxxx-xxxxxx.ini
 ```

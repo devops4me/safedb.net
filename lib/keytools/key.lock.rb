@@ -93,49 +93,110 @@ module SafeDb
     end
 
 
-    # Use the content's external id expected in the breadcrumbs together with
-    # the session token to derive the content's filepath and then unlock and
-    # the content as a {KeyDb} structure.
+    # Use the content's external id to find the ciphertext file that is to be unlocked.
+    # Then use the unlock key from the parameter along with the random IV that is inside
+    # the {KeyMap} or {KeyStore} to decrypt and return the ciphertext.
     #
-    # Unlocking the content means reading it, decoding and then decrypting it using
-    # the initialization vector (iv) and decryption key whose values are expected
-    # within the breadcrumbs map.
+    # @param unlock_key [Key]
     #
-    # @param key_store [Hash]
+    #    the symmetric key that was used to encrypt the ciphertext
     #
-    #    the three (3) data points expected within the breadcrumbs map are the
+    # @param key_store [KeyMap]
     #
-    #    - content's external ID {CONTENT_EXTERNAL_ID}
-    #    - AES encryption key    {CONTENT_ENCRYPT_KEY}
-    #    - initialization vector {CONTENT_RANDOM_IV}
+    #    pass through either the {KeyMap} or {KeyStore} that contains both the content's
+    #    external ID {CONTENT_EXTERNAL_ID} and the initialization vector {CONTENT_RANDOM_IV}.
     #
-    def self.content_unlock( key_store )
+    # @return [String]
+    #
+    #    the resulting decrypted text that was encrypted with the parameter key
+    #
+    def self.content_unlock( unlock_key, key_store )
 
-      # --
-      # -- Get the external ID of the content then use
-      # -- that plus the session context to derive the
-      # -- content's ciphertext filepath.
-      # --
-      content_path = content_filepath( key_store[ CONTENT_EXTERNAL_ID ] )
+####### ---->
+####### ---->      crypt_key = Key.from_char64( key_store[ CONTENT_ENCRYPT_KEY ] )
+####### ---->
+####### ---->  Use the above line to find the key from the book contents index page
+####### ---->  that unlocks one of the chapters.
+####### ---->
+      the_book_id = key_store.section()
 
-      # --
-      # -- Read the binary ciphertext of the content
-      # -- from the file. Then decrypt it using the
-      # -- AES crypt key and intialization vector.
-      # --
+      content_path = crypt_filepath( the_book_id, key_store.get( CONTENT_EXTERNAL_ID ) )
       crypt_txt = binary_from_read( content_path )
-      random_iv = KeyIV.in_binary( key_store[ CONTENT_RANDOM_IV ] )
-      crypt_key = Key.from_char64( key_store[ CONTENT_ENCRYPT_KEY ] )
-      text_data = crypt_key.do_decrypt_text( random_iv, crypt_txt )
+      random_iv = KeyIV.in_binary( key_store.get( CONTENT_RANDOM_IV ) )
+      text_data = unlock_key.do_decrypt_text( random_iv, crypt_txt )
 
       return text_data
 
     end
 
 
+## make 2 methods below private once first part of key.api do_login() method is refactored to call unlock
+## make 2 methods below private once first part of key.api do_login() method is refactored to call unlock
+## make 2 methods below private once first part of key.api do_login() method is refactored to call unlock
+## make 2 methods below private once first part of key.api do_login() method is refactored to call unlock
+## make 2 methods below private once first part of key.api do_login() method is refactored to call unlock
+## make 2 methods below private once first part of key.api do_login() method is refactored to call unlock
+## make 2 methods below private once first part of key.api do_login() method is refactored to call unlock
+## make 2 methods below private once first part of key.api do_login() method is refactored to call unlock
+## make 2 methods below private once first part of key.api do_login() method is refactored to call unlock
+## make 2 methods below private once first part of key.api do_login() method is refactored to call unlock
+
+    def self.binary_to_write( to_filepath, content_header, binary_ciphertext )
+
+      base64_ciphertext = Base64.encode64( binary_ciphertext )
+
+      content_to_write =
+        content_header +
+        BLOCK_64_DELIMITER +
+        BLOCK_64_START_STRING +
+        base64_ciphertext +
+        BLOCK_64_END_STRING +
+        BLOCK_64_DELIMITER
+
+      File.write( to_filepath, content_to_write )
+
+    end
+
+
+    def self.binary_from_read( from_filepath )
+
+      file_text = File.read( from_filepath )
+      core_data = file_text.in_between( BLOCK_64_START_STRING, BLOCK_64_END_STRING ).strip
+      return Base64.decode64( core_data )
+
+    end
+
+
+
+    # Create and return the session indices {KeyMap} pertaining to both the current
+    # book and session whose ids are given in the first and second parameters.
+    #
+    # @param book_id [String] the book identifier this session is about
+    # @param session_id [String] the identifier pertaining to this session
+    # @return [KeyMap] return the keys pertaining to this session and book
+    def self.create_session_keys( book_id, session_id )
+
+      session_index_dir = File.join( Dir.home, ".safedb.net/safedb-session-indices" )
+      FileUtils.mkdir_p( session_index_dir )
+      session_index_file = File.join( session_index_dir, "safedb-indices-#{session_id}.ini" )
+      session_exists = File.exists? session_index_file
+      session_keys = KeyMap.new( session_index_file )
+      session_keys.use( "session" )
+      session_keys.set( "session.start.time", KeyNow.readable() ) unless session_exists
+      session_keys.set( "last.accessed.time", KeyNow.readable() )
+      session_keys.set( "current.session.book", book_id )
+
+      logged_in = session_keys.has_section?( book_id )
+      session_keys.use( book_id )
+      session_keys.set( "book.login.time", KeyNow.readable() ) unless logged_in
+      session_keys.set( "last.accessed.time", KeyNow.readable() )
+
+      return session_keys
+
+    end
+
 
     private
-
 
 
     def self.crypt_filepath( book_id, content_id )
@@ -166,32 +227,6 @@ module SafeDb
     CONTENT_ENCRYPT_KEY = "content.key"
     CONTENT_RANDOM_IV   = "content.iv"
 
-
-
-    def self.binary_to_write( to_filepath, content_header, binary_ciphertext )
-
-      base64_ciphertext = Base64.encode64( binary_ciphertext )
-
-      content_to_write =
-        content_header +
-        BLOCK_64_DELIMITER +
-        BLOCK_64_START_STRING +
-        base64_ciphertext +
-        BLOCK_64_END_STRING +
-        BLOCK_64_DELIMITER
-
-      File.write( to_filepath, content_to_write )
-
-    end
-
-
-    def self.binary_from_read( from_filepath )
-
-      file_text = File.read( from_filepath )
-      core_data = file_text.in_between( BLOCK_64_START_STRING, BLOCK_64_END_STRING ).strip
-      return Base64.decode64( core_data )
-
-    end
 
 
     def self.get_random_reference

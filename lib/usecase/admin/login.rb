@@ -20,6 +20,8 @@ module SafeDb
 
     def execute
 
+      @book_id = Identifier.derive_app_instance_identifier( @book_name )
+
       unless ( is_book_initialized?() )
         print_not_initialized
         return
@@ -32,8 +34,8 @@ module SafeDb
 ############## Call [[ KeyApi.is_logged_in? ]] - then print msg and skip password collection below
 ############## Call [[ KeyApi.is_logged_in? ]] - then print msg and skip password collection below
 
-      domain_secret = KeyPass.password_from_shell( false ) if @password.nil?
-      domain_secret = @password unless @password.nil?
+      book_password = KeyPass.password_from_shell( false ) if @password.nil?
+      book_password = @password unless @password.nil?
 
 ############## Use [[ KeyApi.valid_password? ]] and give error if not valid
 ############## Use [[ KeyApi.valid_password? ]] and give error if not valid
@@ -41,7 +43,15 @@ module SafeDb
 ############## Use [[ KeyApi.valid_password? ]] and give error if not valid
 ############## Use [[ KeyApi.valid_password? ]] and give error if not valid
 
-      KeyApi.do_login( @book_name, domain_secret, create_header() )
+      the_text = File.read( MASTER_INDEX_LOCAL_FILE )
+      puts ""
+      puts the_text
+      puts ""
+
+      book_keys = KeyMap.new( MASTER_INDEX_LOCAL_FILE )
+      book_keys.use( @book_id )
+
+      KeyApi.do_login( book_keys, book_password, create_header() )
 
       view_uc = View.new
       view_uc.flow_of_events

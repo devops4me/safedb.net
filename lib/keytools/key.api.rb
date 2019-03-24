@@ -95,11 +95,16 @@ module SafeDb
     # - <b>content ciphertext</b> after the decrypt re-encrypt activities
     #
     #
-    # @param domain_name [String]
-    #    the string reference that points to the application instance
-    #    that is being initialized on this machine.
+    # @param book_keys [KeyMap]
+    #    the {KeyMap} contains the salts for key rederivation seeing as we have the
+    #    book password and the rederived key will be able to unlock the ciphertext
+    #    along with the random initialization vector (iv) also in the key map.
     #
-    # @param domain_secret [String]
+    #    Unlocking the ciphertext reveals the random high entropy key which can be
+    #    used for the asymmetric decryption of the content ciphertext which is in a
+    #    file marked with the content identifier also within the book keys.
+    #
+    # @param secret [String]
     #    the secret text that can potentially be cryptographically weak (low entropy).
     #    This text is severely strengthened and morphed into a key using multiple key
     #    derivation functions like <b>PBKDF2, BCrypt</b> and <b>SCrypt</b>.
@@ -129,50 +134,30 @@ module SafeDb
     # @param content_header [String]
     #    the content header tops the ciphertext storage file with details of how where
     #    and why the file came to be.
-    def self.do_login( domain_name, domain_secret, content_header  )
+    def self.do_login( book_keys, secret, content_header  )
 
-      # --
-      # -- Get the breadcrumbs trail.
-      # --
-      crumbs_db = get_crumbs_db_from_domain_name( domain_name )
+      the_book_id = book_keys.section()
 
       # --
       # -- Get the old inter-sessionary key (created during the previous login)
       # -- Get the old content encryption (power) key (again created during the previous login)
       # -- Get the old random initialization vector (created during the previous login)
       # --
-      old_inter_key = KdfApi.regenerate_from_salts( domain_secret, crumbs_db )
-      old_power_key = old_inter_key.do_decrypt_key( crumbs_db.get( INTER_KEY_CIPHERTEXT ) )
-      old_random_iv = KeyIV.in_binary( crumbs_db.get( INDEX_DB_CRYPT_IV_KEY ) )
+      old_human_key = KdfApi.regenerate_from_salts( secret, book_keys )
+      old_crypt_key = old_human_key.do_decrypt_key( book_keys.get( INTER_KEY_CIPHERTEXT ) )
+      plain_content = Lock.content_unlock( old_crypt_key, book_keys )
+      new_crypt_key = KeyCycle.recycle( the_book_id, secret, book_keys, content_header, plain_content )
 
-      # --
-      # -- Read the binary text representing the encrypted content
-      # -- that was last written by any use case capable of changing
-      # -- the application database content.
-      # --
-      from_filepath = content_ciphertxt_file_from_domain_name( domain_name )
-      old_crypt_txt = binary_from_read( from_filepath )
+      session_id = Identifier.derive_session_id( to_token() )
+      session_keys = Lock.create_session_keys( the_book_id, session_id )
 
-      # --
-      # -- Decrypt the binary ciphertext that was last written by a use case
-      # -- capable of changing the application database.
-      # --
-      plain_content = old_power_key.do_decrypt_text( old_random_iv, old_crypt_txt )
-
-      # --
-      # -- Create a new power key and lock the content with it.
-      # -- Create a new inter key and lock the power key with it.
-      # -- Leave the necessary breadcrumbs for regeneration.
-      # -- Return the new power key that re-locked the content.
-      # --
-      power_key = recycle_keys( domain_name, domain_secret, crumbs_db, content_header, plain_content )
 
       # --
       # -- Regenerate intra-session key from the session token.
       # -- Encrypt power key for intra (in) session retrieval.
       # --
       intra_key = KeyLocal.regenerate_shell_key( to_token() )
-      intra_txt = intra_key.do_encrypt_key( power_key )
+      intra_txt = intra_key.do_encrypt_key( new_crypt_key )
 
       # --
       # -- Set the (ciphertext) breadcrumbs for re-acquiring the
@@ -181,9 +166,9 @@ module SafeDb
       # --
       app_id = Identifier.derive_app_instance_identifier( domain_name )
       unique_id = Identifier.derive_universal_id( app_id, to_token() )
-      crumbs_db.use( unique_id )
-      crumbs_db.set( INTRA_KEY_CIPHERTEXT, intra_txt )
-      crumbs_db.set( SESSION_LOGIN_DATETIME, KeyNow.fetch() )
+      book_keys.use( unique_id )
+      book_keys.set( INTRA_KEY_CIPHERTEXT, intra_txt )
+      book_keys.set( SESSION_LOGIN_DATETIME, KeyNow.fetch() )
 
       # --
       # -- Switch the dominant application domain being used to
@@ -192,6 +177,12 @@ module SafeDb
       use_application_domain( domain_name )
 
     end
+
+
+    def create_session_book()
+
+    end
+
 
 
     # Switch the application instance that the current shell session is using.
@@ -461,7 +452,7 @@ module SafeDb
       crypt_txt = binary_from_read( crypt_filepath )
       json_content = power_key.do_decrypt_text( random_iv, crypt_txt )
 
-      return KeyDb.from_json( json_content )
+      return KeyStore.from_json( json_content )
 
     end
 
@@ -485,7 +476,7 @@ module SafeDb
     # @param content_header [String]
     #    the string that will top the ciphertext content when it is written
     #
-    # @param app_database [KeyDb]
+    # @param app_database [KeyStore]
     #    this key database class will be streamed using its {Hash.to_json}
     #    method and the resulting content will be encrypted and written to
     #    the file at path {content_ciphertxt_file_from_session_token}.
@@ -600,6 +591,8 @@ module SafeDb
 
     private
 
+    CONTENT_RANDOM_IV   = "content.iv"
+    CONTENT_EXTERNAL_ID = "content.xid"
 
     # --------------------------------------------------------
     # In order to separate keys into a new gem we must

@@ -33,7 +33,8 @@ module SafeDb
 
     def execute
 
-      @book_id = initialize_book()
+      @book_id = Identifier.derive_app_instance_identifier( @book_name )
+      initialize_book()
 
       if is_book_initialized?()
         print_already_initialized
@@ -45,13 +46,12 @@ module SafeDb
 
       master_keys = KeyMap.new( MASTER_INDEX_LOCAL_FILE )
       master_keys.use( @book_id )
-      content_header = create_header( @book_id )
 
       KeyCycle.recycle(
         @book_id,
         book_secret,
         master_keys,
-        content_header,
+        create_header(),
         virgin_content()
       )
 
@@ -65,16 +65,12 @@ module SafeDb
 
     def initialize_book()
 
-      KeyError.not_new( @book_name, self )
-
-      @book_id = KeyId.derive_app_instance_identifier( @book_name )
-
       keypairs = KeyMap.new( MASTER_INDEX_LOCAL_FILE )
       keypairs.use( @book_id )
       keypairs.set( "book.creation.time", KeyNow.readable() )
 
 =begin
-      session_identifier = KeyId.derive_session_id( to_token() )
+      session_identifier = Identifier.derive_session_id( to_token() )
       keypairs.use( "session.books" )
       keypairs.set( session_identifier, @book_id )
 
@@ -89,14 +85,12 @@ SET THIS UP WHEN LOGIN HAPPENS - SIGNIFY THE SHELL SESSION BOOK USING
 
 =end
 
-      return @book_id
-
     end
 
 
     def virgin_content()
 
-      initial_db = KeyDb.new()
+      initial_db = KeyStore.new()
       initial_db.store( BOOK_CREATED_DATE, KeyNow.readable() )
       initial_db.store( BOOK_NAME, @book_name )
       initial_db.store( BOOK_ID, @book_id )

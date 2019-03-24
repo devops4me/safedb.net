@@ -46,7 +46,7 @@ module SafeDb
       # key/value mini-dictionary breadcrumbs sitting
       # within the master database at the section labelled
       # envelope@<<actual_chapter_id>>.
-      chapter_data = KeyDb.from_json( KeyApi.content_unlock( master_db[ chapter_id ] ) )
+      chapter_data = KeyStore.from_json( KeyApi.content_unlock( master_db[ chapter_id ] ) )
 
       # Now read the three AWS IAM credentials @access.key, @secret.key and region.key
       # into the 3 environment variables terraform expects to find.
