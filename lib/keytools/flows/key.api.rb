@@ -2,31 +2,7 @@
 
 module SafeDb
 
-
-
   class KeyApi
-
-=begin
-    def self.setup_domain_keys( domain_name, domain_secret, content_header )
-
-      # --
-      # -- Get the breadcrumbs trail and
-      # -- timestamp the moment.
-      # --
-      crumbs_db = get_crumbs_db_from_domain_name( domain_name )
-      crumbs_db.set( APP_INSTANCE_SETUP_TIME, KeyNow.fetch() )
-
-      # --
-      # -- Create a new power key and lock the content with it.
-      # -- Create a new inter key and lock the power key with it.
-      # -- Leave the necessary breadcrumbs for regeneration.
-      # --
-      recycle_keys( domain_name, domain_secret, crumbs_db, content_header, get_virgin_content( domain_name ) )
-
-    end
-=end
-
-
 
     # At <b>the end</b> of a successful login the <b>old content crypt key</b> will
     # have been <b>re-acquired and discarded,</b> with a <b>fresh one created</b>and
@@ -139,7 +115,7 @@ module SafeDb
       the_book_id = book_keys.section()
 
       old_human_key = KdfApi.regenerate_from_salts( secret, book_keys )
-      old_crypt_key = old_human_key.do_decrypt_key( book_keys.get( INTER_KEY_CIPHERTEXT ) )
+      old_crypt_key = old_human_key.do_decrypt_key( book_keys.get( Indices::INTER_SESSION_KEY_CRYPT ) )
       plain_content = Lock.content_unlock( old_crypt_key, book_keys )
       new_crypt_key = KeyCycle.recycle( the_book_id, secret, book_keys, content_header, plain_content )
 
@@ -199,7 +175,7 @@ module SafeDb
       # --
       unique_id = Identifier.derive_universal_id( domain_name )
       crumbs_db.use( unique_id )
-      crumbs_db.set( INTRA_KEY_CIPHERTEXT, intra_txt )
+      crumbs_db.set( Indices::INTRA_SESSION_KEY_CRYPT, intra_txt )
       crumbs_db.set( SESSION_LOGOUT_DATETIME, KeyNow.fetch() )
 
     end
@@ -360,7 +336,7 @@ module SafeDb
       # --
       # -- Regenerate intra-session key from the session token.
       # --
-      intra_key = KeyLocal.regenerate_shell_key( to_token() )
+      intra_key = KeyDerivation.regenerate_shell_key( to_token() )
 
       # --
       # -- Decrypt and acquire the content enryption key that was created
@@ -369,7 +345,7 @@ module SafeDb
       # --
       unique_id = Identifier.derive_universal_id( read_app_id(), to_token() )
       crumbs_db.use( unique_id )
-      power_key = intra_key.do_decrypt_key( crumbs_db.get( INTRA_KEY_CIPHERTEXT ) )
+      power_key = intra_key.do_decrypt_key( crumbs_db.get( Indices::INTRA_SESSION_KEY_CRYPT ) )
 
       # --
       # -- Set the (ciphertext) breadcrumbs for re-acquiring the
@@ -435,7 +411,7 @@ module SafeDb
       # --
       # -- Regenerate intra-session key from the session token.
       # --
-      intra_key = KeyLocal.regenerate_shell_key( to_token() )
+      intra_key = KeyDerivation.regenerate_shell_key( to_token() )
 
       # --
       # -- Decrypt and acquire the content enryption key that was created
@@ -444,7 +420,7 @@ module SafeDb
       # --
       unique_id = Identifier.derive_universal_id( read_app_id(), to_token() )
       crumbs_db.use( unique_id )
-      power_key = intra_key.do_decrypt_key( crumbs_db.get( INTRA_KEY_CIPHERTEXT ) )
+      power_key = intra_key.do_decrypt_key( crumbs_db.get( Indices::INTRA_SESSION_KEY_CRYPT ) )
 
       # --
       # -- Create a new random initialization vector (iv) to use when
@@ -469,7 +445,7 @@ module SafeDb
 
 
     # If the <b>content dictionary is not nil</b> and contains a key named
-    # {CONTENT_EXTERNAL_ID} then we return true as we expect the content
+    # {Indices::CONTENT_IDENTIFIER} then we return true as we expect the content
     # ciphertext and its corresponding file to exist.
     #
     # This method throws an exception if they key exists but there is no
@@ -477,16 +453,16 @@ module SafeDb
     #
     # @param crumbs_map [Hash]
     #
-    #    we test for the existence of the constant {CONTENT_EXTERNAL_ID}
+    #    we test for the existence of the constant {Indices::CONTENT_IDENTIFIER}
     #    and if it exists we assert that the content filepath should also
     #    be present.
     #
     def self.db_envelope_exists?( crumbs_map )
 
       return false if crumbs_map.nil?
-      return false unless crumbs_map.has_key?( CONTENT_EXTERNAL_ID )
+      return false unless crumbs_map.has_key?( Indices::CONTENT_IDENTIFIER )
 
-      external_id = crumbs_map[ CONTENT_EXTERNAL_ID ]
+      external_id = crumbs_map[ Indices::CONTENT_IDENTIFIER ]
       the_filepath = content_filepath( external_id )
       error_string = "External ID #{external_id} found but no file at #{the_filepath}"
       raise RuntimeException, error_string unless File.file?( the_filepath )
@@ -527,12 +503,6 @@ module SafeDb
 
     private
 
-    CONTENT_RANDOM_IV   = "content.iv"
-    CONTENT_EXTERNAL_ID = "content.xid"
-
-    TOKEN_VARIABLE_NAME = "SAFE_TTY_TOKEN"
-    TOKEN_VARIABLE_SIZE = 152
-
     SESSION_APP_DOMAINS = "session.app.domains"
     SESSION_IDENTIFIER_KEY = "session.identifiers"
     KEYSTORE_IDENTIFIER_KEY = "keystore.url.id"
@@ -557,8 +527,6 @@ module SafeDb
     SESSION_LOGIN_DATETIME = "session.login.datetime"
     SESSION_LOGOUT_DATETIME = "session.logout.datetime"
 
-    INTER_KEY_CIPHERTEXT = "inter.key.ciphertext"
-    INTRA_KEY_CIPHERTEXT = "intra.key.ciphertext"
     INDEX_DB_CRYPT_IV_KEY = "index.db.cipher.iv"
 
 
@@ -641,14 +609,14 @@ module SafeDb
 
     def self.to_token()
 
-      raw_env_var_value = ENV[TOKEN_VARIABLE_NAME]
-      raise_token_error( TOKEN_VARIABLE_NAME, "not present") unless raw_env_var_value
+      raw_env_var_value = ENV[Indices::TOKEN_VARIABLE_NAME]
+      raise_token_error( Indices::TOKEN_VARIABLE_NAME, "not present") unless raw_env_var_value
 
       env_var_value = raw_env_var_value.strip
-      raise_token_error( TOKEN_VARIABLE_NAME, "consists only of whitespace") if raw_env_var_value.empty?
+      raise_token_error( Indices::TOKEN_VARIABLE_NAME, "consists only of whitespace") if raw_env_var_value.empty?
 
-      size_msg = "length should contain exactly #{TOKEN_VARIABLE_SIZE} characters"
-      raise_token_error( TOKEN_VARIABLE_NAME, size_msg ) unless env_var_value.length == TOKEN_VARIABLE_SIZE
+      size_msg = "length should contain exactly #{Indices::TOKEN_VARIABLE_SIZE} characters"
+      raise_token_error( Indices::TOKEN_VARIABLE_NAME, size_msg ) unless env_var_value.length == Indices::TOKEN_VARIABLE_SIZE
 
       return env_var_value
 

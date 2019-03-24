@@ -42,8 +42,8 @@ module SafeDb
     #    This content locker will write two key-values pairs into the data
     #    structure - namely
     #
-    #    - random content identifier {CONTENT_EXTERNAL_ID}
-    #    - and initialization vector {CONTENT_RANDOM_IV}
+    #    - random content identifier {Indices::CONTENT_IDENTIFIER}
+    #    - and initialization vector {Indices::CONTENT_RANDOM_IV}
     #
     # @param content_body [String]
     #
@@ -61,8 +61,8 @@ module SafeDb
       # -- it within the crumbs map.
       # --
 
-      content_id = Identifier.get_random_identifier( CONTENT_ID_LENGTH )
-      key_store.set( CONTENT_EXTERNAL_ID, content_id )
+      content_id = Identifier.get_random_identifier( Indices::CONTENT_ID_LENGTH )
+      key_store.set( Indices::CONTENT_IDENTIFIER, content_id )
 
       # --
       # -- Create a random initialization vector (iv)
@@ -71,7 +71,7 @@ module SafeDb
       # --
       iv_base64 = KeyIV.new().for_storage()
       random_iv = KeyIV.in_binary( iv_base64 )
-      key_store.set( CONTENT_RANDOM_IV, iv_base64 )
+      key_store.set( Indices::CONTENT_RANDOM_IV, iv_base64 )
 
 #########      # --
 #########      # -- Create a new high entropy random key for
@@ -104,7 +104,7 @@ module SafeDb
     # @param key_store [KeyMap]
     #
     #    pass through either the {KeyMap} or {KeyStore} that contains both the content's
-    #    external ID {CONTENT_EXTERNAL_ID} and the initialization vector {CONTENT_RANDOM_IV}.
+    #    external ID {Indices::CONTENT_IDENTIFIER} and the initialization vector {Indices::CONTENT_RANDOM_IV}.
     #
     # @return [String]
     #
@@ -120,9 +120,9 @@ module SafeDb
 ####### ---->
       the_book_id = key_store.section()
 
-      content_path = master_crypts_filepath( the_book_id, key_store.get( CONTENT_EXTERNAL_ID ) )
+      content_path = master_crypts_filepath( the_book_id, key_store.get( Indices::CONTENT_IDENTIFIER ) )
       crypt_txt = binary_from_read( content_path )
-      random_iv = KeyIV.in_binary( key_store.get( CONTENT_RANDOM_IV ) )
+      random_iv = KeyIV.in_binary( key_store.get( Indices::CONTENT_RANDOM_IV ) )
       text_data = unlock_key.do_decrypt_text( random_iv, crypt_txt )
 
       return text_data
@@ -147,11 +147,11 @@ module SafeDb
 
       content_to_write =
         content_header +
-        BLOCK_64_DELIMITER +
-        BLOCK_64_START_STRING +
+        Indices::CONTENT_BLOCK_DELIMITER +
+        Indices::CONTENT_BLOCK_START_STRING +
         base64_ciphertext +
-        BLOCK_64_END_STRING +
-        BLOCK_64_DELIMITER
+        Indices::CONTENT_BLOCK_END_STRING +
+        Indices::CONTENT_BLOCK_DELIMITER
 
       File.write( to_filepath, content_to_write )
 
@@ -161,7 +161,7 @@ module SafeDb
     def self.binary_from_read( from_filepath )
 
       file_text = File.read( from_filepath )
-      core_data = file_text.in_between( BLOCK_64_START_STRING, BLOCK_64_END_STRING ).strip
+      core_data = file_text.in_between( Indices::CONTENT_BLOCK_START_STRING, Indices::CONTENT_BLOCK_END_STRING ).strip
       return Base64.decode64( core_data )
 
     end
@@ -196,12 +196,12 @@ module SafeDb
       FileUtils.mkdir_p( session_crypts_folder( book_id, session_id ) )
       FileUtils.copy_entry( master_crypts_folder( book_id ), session_crypts_folder( book_id, session_id ) )
       session_keys = create_session_indices( book_id, session_id )
-      session_keys.set( CONTENT_EXTERNAL_ID, master_book_keys.get( CONTENT_EXTERNAL_ID ) )
-      session_keys.set( "session.commit.reference", master_book_keys.get( "master.commit.reference" ) )
+      session_keys.set( Indices::CONTENT_IDENTIFIER, master_book_keys.get( Indices::CONTENT_IDENTIFIER ) )
+      session_keys.set( Indices::SESSION_COMMIT_ID, master_book_keys.get( Indices::MASTER_COMMIT_ID ) )
 
-      session_key = KeyLocal.regenerate_shell_key( to_token() )
+      session_key = KeyDerivation.regenerate_shell_key( to_token() )
       key_ciphertext = session_key.do_encrypt_key( crypt_key )
-      session_keys.set( INTRA_KEY_CIPHERTEXT, key_ciphertext )
+      session_keys.set( Indices::INTRA_SESSION_KEY_CRYPT, key_ciphertext )
 
     end
 
@@ -216,15 +216,15 @@ module SafeDb
 
       session_exists = File.exists? session_indices_filepath( session_id )
       session_keys = KeyMap.new( session_indices_filepath( session_id ) )
-      session_keys.use( "session" )
-      session_keys.set( "session.start.time", KeyNow.readable() ) unless session_exists
-      session_keys.set( "last.accessed.time", KeyNow.readable() )
-      session_keys.set( "current.session.book", book_id )
+      session_keys.use( Indices::SESSION_DATA )
+      session_keys.set( Indices::SESSION_FIRST_LOG_IN_POINT, KeyNow.readable() ) unless session_exists
+      session_keys.set( Indices::SESSION_LAST_ACCESSED_TIME, KeyNow.readable() )
+      session_keys.set( Indices::CURRENT_SESSION_BOOK_ID, book_id )
 
       logged_in = session_keys.has_section?( book_id )
       session_keys.use( book_id )
-      session_keys.set( "book.login.time", KeyNow.readable() ) unless logged_in
-      session_keys.set( "last.accessed.time", KeyNow.readable() )
+      session_keys.set( Indices::BOOK_SESSION_LOGIN_TIME, KeyNow.readable() ) unless logged_in
+      session_keys.set( Indices::BOOK_LAST_ACCESSED_TIME, KeyNow.readable() )
 
       return session_keys
 
@@ -266,34 +266,20 @@ module SafeDb
 
 
     def self.contains_all_master_book_indices( key_map )
-      return false unless key_map.contains?( CONTENT_RANDOM_IV )
-      return false unless key_map.contains?( CONTENT_EXTERNAL_ID )
-      return false unless key_map.contains?( INTER_KEY_CIPHERTEXT )
-      return false unless key_map.contains?( "master.commit.reference" )
+      return false unless key_map.contains?( Indices::CONTENT_RANDOM_IV )
+      return false unless key_map.contains?( Indices::CONTENT_IDENTIFIER )
+      return false unless key_map.contains?( Indices::INTER_SESSION_KEY_CRYPT )
+      return false unless key_map.contains?( Indices::MASTER_COMMIT_ID )
       return true
     end
 
 
-    INTER_KEY_CIPHERTEXT = "inter.key.ciphertext"
-    INTRA_KEY_CIPHERTEXT = "intra.key.ciphertext"
-
-    BLOCK_64_START_STRING = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789ab\n"
-    BLOCK_64_END_STRING   = "ba9876543210fedcba9876543210fedcba9876543210fedcba9876543210\n"
-    BLOCK_64_DELIMITER    = "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
 
     SAFE_DATABASE_FOLDER   = File.join( Dir.home, ".safedb.net" )
     MASTER_CRYPTS_FOLDER   = File.join( SAFE_DATABASE_FOLDER, "safedb-master-crypts"   )
     SESSION_INDICES_FOLDER = File.join( SAFE_DATABASE_FOLDER, "safedb-session-indices" )
     SESSION_CRYPTS_FOLDER  = File.join( SAFE_DATABASE_FOLDER, "safedb-session-crypts"  )
 
-    CONTENT_ID_LENGTH   = 14
-    CONTENT_FILE_PREFIX = "tree.db"
-    CONTENT_EXTERNAL_ID = "content.xid"
-    CONTENT_ENCRYPT_KEY = "content.key"
-    CONTENT_RANDOM_IV   = "content.iv"
-
-    TOKEN_VARIABLE_NAME = "SAFE_TTY_TOKEN"
-    TOKEN_VARIABLE_SIZE = 152
 
 
     def self.get_app_keystore_folder( aim_id, app_id )
@@ -309,14 +295,14 @@ module SafeDb
 
     def self.to_token()
 
-      raw_env_var_value = ENV[TOKEN_VARIABLE_NAME]
-      raise_token_error( TOKEN_VARIABLE_NAME, "not present") unless raw_env_var_value
+      raw_env_var_value = ENV[Indices::TOKEN_VARIABLE_NAME]
+      raise_token_error( Indices::TOKEN_VARIABLE_NAME, "not present") unless raw_env_var_value
 
       env_var_value = raw_env_var_value.strip
-      raise_token_error( TOKEN_VARIABLE_NAME, "consists only of whitespace") if raw_env_var_value.empty?
+      raise_token_error( Indices::TOKEN_VARIABLE_NAME, "consists only of whitespace") if raw_env_var_value.empty?
 
-      size_msg = "length should contain exactly #{TOKEN_VARIABLE_SIZE} characters"
-      raise_token_error( TOKEN_VARIABLE_NAME, size_msg ) unless env_var_value.length == TOKEN_VARIABLE_SIZE
+      size_msg = "length should contain exactly #{Indices::TOKEN_VARIABLE_SIZE} characters"
+      raise_token_error( Indices::TOKEN_VARIABLE_NAME, size_msg ) unless env_var_value.length == Indices::TOKEN_VARIABLE_SIZE
 
       return env_var_value
 
@@ -326,15 +312,15 @@ module SafeDb
     def self.raise_token_error env_var_name, message
 
       puts ""
-      puts "#{TOKEN_VARIABLE_NAME} environment variable #{message}."
+      puts "#{Indices::TOKEN_VARIABLE_NAME} environment variable #{message}."
       puts "To instantiate it you can use the below command."
       puts ""
-      puts "$ export #{TOKEN_VARIABLE_NAME}=`safe token`"
+      puts "$ export #{Indices::TOKEN_VARIABLE_NAME}=`safe token`"
       puts ""
       puts "ps => those are backticks around `safe token` (not apostrophes)."
       puts ""
 
-      raise RuntimeError, "#{TOKEN_VARIABLE_NAME} environment variable #{message}."
+      raise RuntimeError, "#{Indices::TOKEN_VARIABLE_NAME} environment variable #{message}."
 
     end
 

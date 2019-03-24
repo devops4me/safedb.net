@@ -19,7 +19,7 @@ module SafeDb
   # - a high entropy randomly generated shell key for locking the app data key
   # - one environment variable whose value embodies three (3) data segments
   # - a session id derived by pushing the env var through a one-way function
-  class KeyLocal
+  class KeyDerivation
 
 
     # The number of Radix64 characters that make up a valid BCrypt salt.

@@ -77,57 +77,22 @@ module SafeDb
     # - write the resulting ciphertext into the key cache
     # - return the high entropy key that locked the content
     #
-    # @param book_id [String]
-    #
-    #    this book identifier is used to locate the sub-directory holding
-    #    the chapter crypt casket (ccc) files.
-    #
-    # @param human_secret [String]
-    #
-    #    the human secret that is input into the key derivation functions
-    #
-    # @param key_map [Hash]
-    #
-    #    nothing is read from this key map but 3 things are written to
-    #    it with these corresponding key names
-    #
-    #    - random content identifier   {CONTENT_EXTERNAL_ID}
-    #    - and initialization vector   {CONTENT_RANDOM_IV}
-    #    - salts for kdf regeneration  {xxxxx}
-    #    - ciphertext from key locking {INTER_KEY_CIPHERTEXT}
-    #
-    # @param content_header [String]
-    #
-    #    the string that will top the content's ciphertext when it is written
-    #
-    # @param content_body [String]
-    #
-    #    this content is encrypted by this method and the ciphertext
-    #    result is stored in a file.
-    #
-    # @return [Key]
-    #
-    #    return the generated random high entropy key that the content is
-    #    locked with
+    # @param book_id [String] the identifier of the book whose keys we are cycling
+    # @param human_secret [String] this secret is sourced into key derivation functions
+    # @param key_map [Hash] book related key/value data that will be populated as appropriate
+    # @param content_header [String] text that tops the content's ciphertext file
+    # @param content_body [String] this content is encrypted and the ciphertext output stored
+    # @return [Key] the generated random high entropy key that the content is locked with
     #
     def self.recycle( book_id, human_secret, key_map, content_header, content_body )
 
       high_entropy_key = Key.from_random
       Lock.content_lock( book_id, high_entropy_key, key_map, content_body, content_header )
       derived_key = KdfApi.generate_from_password( human_secret, key_map )
-      key_map.set( INTER_KEY_CIPHERTEXT, derived_key.do_encrypt_key( high_entropy_key ) )
+      key_map.set( Indices::INTER_SESSION_KEY_CRYPT, derived_key.do_encrypt_key( high_entropy_key ) )
       return high_entropy_key
 
     end
-
-
-
-    private
-
-
-
-    INTER_KEY_CIPHERTEXT = "inter.key.ciphertext"
-    INTRA_KEY_CIPHERTEXT = "intra.key.ciphertext"
 
 
   end

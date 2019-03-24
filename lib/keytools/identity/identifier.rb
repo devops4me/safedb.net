@@ -162,9 +162,7 @@ module SafeDb
     #    is the input to the digesting (hashing) algorithm.
     #
     # @param session_token [String]
-    #    a triply segmented (and one liner) text token instantiated by
-    #    {KeyLocal.generate_shell_key_and_token} and provided
-    #    here ad verbatim.
+    #    a triply segmented (and one liner) text token
     #
     # @return [String]
     #    a 32 character string that cannot feasibly be repeated due to the use
@@ -183,8 +181,7 @@ module SafeDb
 
 
     # The session ID generated here is a derivative of the 150 character
-    # session token instantiated by {KeyLocal.generate_shell_key_and_token}
-    # and provided here <b>ad verbatim</b>.
+    # session token.
     #
     # The algorithm for deriving the session ID is as follows.
     #
@@ -202,9 +199,7 @@ module SafeDb
     #       g3sf-pab5-9xvd
     #
     # @param session_token [String]
-    #    a triply segmented (and one liner) text token instantiated by
-    #    {KeyLocal.generate_shell_key_and_token} and provided here ad
-    #    verbatim.
+    #    a triply segmented (and one liner) text token
     #
     # @return [String]
     #    a 14 character string that cannot feasibly be repeated
@@ -282,8 +277,8 @@ module SafeDb
 
 
     def self.assert_session_token_size session_token
-      err_msg = "Session token has #{session_token.length} and not #{KeyLocal::SESSION_TOKEN_SIZE} chars."
-      raise RuntimeError, err_msg unless session_token.length == KeyLocal::SESSION_TOKEN_SIZE
+      err_msg = "Session token has #{session_token.length} and not #{KeyDerivation::SESSION_TOKEN_SIZE} chars."
+      raise RuntimeError, err_msg unless session_token.length == KeyDerivation::SESSION_TOKEN_SIZE
     end
 
 

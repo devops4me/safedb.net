@@ -11,7 +11,7 @@ module SafeDb
 
     def execute
 
-      print KeyLocal.generate_shell_key_and_token()
+      print KeyDerivation.generate_shell_key_and_token()
 
     end
 
