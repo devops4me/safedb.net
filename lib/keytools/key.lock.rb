@@ -61,7 +61,7 @@ module SafeDb
       # -- it within the crumbs map.
       # --
 
-      content_id = KeyRandom.get_random_identifier( CONTENT_ID_LENGTH )
+      content_id = Identifier.get_random_identifier( CONTENT_ID_LENGTH )
       key_store.set( CONTENT_EXTERNAL_ID, content_id )
 
       # --
@@ -87,7 +87,7 @@ module SafeDb
       # -- topped with the parameter content header.
       # --
       binary_ctext = crypt_key.do_encrypt_text( random_iv, content_body )
-      content_file = crypt_filepath( book_id, content_id )
+      content_file = master_crypts_filepath( book_id, content_id )
       binary_to_write( content_file, content_header, binary_ctext )
 
     end
@@ -120,7 +120,7 @@ module SafeDb
 ####### ---->
       the_book_id = key_store.section()
 
-      content_path = crypt_filepath( the_book_id, key_store.get( CONTENT_EXTERNAL_ID ) )
+      content_path = master_crypts_filepath( the_book_id, key_store.get( CONTENT_EXTERNAL_ID ) )
       crypt_txt = binary_from_read( content_path )
       random_iv = KeyIV.in_binary( key_store.get( CONTENT_RANDOM_IV ) )
       text_data = unlock_key.do_decrypt_text( random_iv, crypt_txt )
@@ -168,19 +168,41 @@ module SafeDb
 
 
 
+    # When we login to a book which may or may not be the first book in the session
+    # that we have logged into, we do a number of things. We
+    #
+    # - create a {session_crypts_folder} and copy all master crypts into it
+    # - we {create_session_indices} under general and book_id sections
+    # - we copy the commit reference and content identifier from the master
+    # - lock the content crypt key with the session key and save the ciphertext
+    #
+    # == commit references
+    #
+    # We can only commit (save) a session's crypts when the master and session commit
+    # references match. The commit process places a new commit reference into both
+    # the master and session indices. Like git's push/pull, this prevents a sync when
+    # the master has moved forward by one or more commits.
+    #
+    # @param book_id [String] the book identifier this session is about
+    # @param session_id [String] the identifier pertaining to this session
+    #
+    def create_book_session( book_id, session_id, book_keys )
+      FileUtils.mkdir_p( session_crypts_folder( book_id, session_id ) )
+      FileUtils.copy_entry( master_crypts_folder( book_id ), session_crypts_folder( book_id, session_id ) )
+      session_keys = create_session_indices( book_id, session_id )
+      session_keys.set( CONTENT_EXTERNAL_ID, book_keys.get( CONTENT_EXTERNAL_ID ) )
+    end
+
     # Create and return the session indices {KeyMap} pertaining to both the current
     # book and session whose ids are given in the first and second parameters.
     #
     # @param book_id [String] the book identifier this session is about
     # @param session_id [String] the identifier pertaining to this session
     # @return [KeyMap] return the keys pertaining to this session and book
-    def self.create_session_keys( book_id, session_id )
+    def self.create_session_indices( book_id, session_id )
 
-      session_index_dir = File.join( Dir.home, ".safedb.net/safedb-session-indices" )
-      FileUtils.mkdir_p( session_index_dir )
-      session_index_file = File.join( session_index_dir, "safedb-indices-#{session_id}.ini" )
-      session_exists = File.exists? session_index_file
-      session_keys = KeyMap.new( session_index_file )
+      session_exists = File.exists? session_indices_filepath( session_id )
+      session_keys = KeyMap.new( session_indices_filepath( session_id ) )
       session_keys.use( "session" )
       session_keys.set( "session.start.time", KeyNow.readable() ) unless session_exists
       session_keys.set( "last.accessed.time", KeyNow.readable() )
@@ -195,23 +217,41 @@ module SafeDb
 
     end
 
+    def self.copy_master_indices_to_session( master_keys, session_keys )
+    end
+
+
+    def create_master_book_crypts_folder( book_id )
+      FileUtils.mkdir_p( master_crypts_folder( book_id ) )
+    end
+
 
     private
 
 
-    def self.crypt_filepath( book_id, content_id )
+    def self.master_crypts_filepath( book_id, content_id )
+      return File.join( master_crypts_folder( book_id ), "safedb.chapter.#{content_id}.txt" )
 
-      ## Change me when we have to use SESSION / BOOK directories for stashing content
-      ## Change me when we have to use SESSION / BOOK directories for stashing content
-      ## Change me when we have to use SESSION / BOOK directories for stashing content
-      ## Change me when we have to use SESSION / BOOK directories for stashing content
-      ## Change me when we have to use SESSION / BOOK directories for stashing content
-      ## Change me when we have to use SESSION / BOOK directories for stashing content
+    end
 
-      crypt_filedir = File.join( Dir.home, ".safedb.net/safedb-master-crypts/safedb.book.#{book_id}" )
-      FileUtils.mkdir_p( crypt_filedir )
-      return File.join( crypt_filedir, "safedb.chapter.#{content_id}.txt" )
 
+    def self.master_crypts_folder( book_id )
+      return File.join( MASTER_CRYPTS_FOLDER, "safedb.book.#{book_id}" )
+    end
+
+
+    def self.session_crypts_filepath( book_id, session_id, content_id )
+      return File.join( session_crypts_folder( book_id, session_id ), "safedb.chapter.#{content_id}.txt" )
+    end
+
+
+    def self.session_crypts_folder( book_id, session_id )
+      return File.join( SESSION_CRYPTS_FOLDER, "safedb-session-#{book_id}-#{session_id}" )
+    end
+
+
+    def self.session_indices_filepath( session_id )
+      return File.join( SESSION_INDICES_FOLDER, "safedb-indices-#{session_id}.ini" )
     end
 
 
@@ -221,36 +261,17 @@ module SafeDb
 
 ##############################################    XID_SOURCE_APPROX_LEN = 11
 
+    SAFE_DATABASE_FOLDER   = File.join( Dir.home, ".safedb.net" )
+    MASTER_CRYPTS_FOLDER   = File.join( SAFE_DATABASE_FOLDER, "safedb-master-crypts"   )
+    SESSION_INDICES_FOLDER = File.join( SAFE_DATABASE_FOLDER, "safedb-session-indices" )
+    SESSION_CRYPTS_FOLDER  = File.join( SAFE_DATABASE_FOLDER, "safedb-session-crypts"  )
+
     CONTENT_ID_LENGTH   = 14
     CONTENT_FILE_PREFIX = "tree.db"
     CONTENT_EXTERNAL_ID = "content.xid"
     CONTENT_ENCRYPT_KEY = "content.key"
     CONTENT_RANDOM_IV   = "content.iv"
 
-
-
-    def self.get_random_reference
-
-      # Do not forget that you can pass this through
-      # the derive identifier method if uniformity is
-      # what you seek.
-      #
-      #    [  KeyId.derive_identifier( reference )  ]
-      #
-      random_ref = SecureRandom.urlsafe_base64( XID_SOURCE_APPROX_LEN ).delete("-_").downcase
-      return random_ref[ 0 .. ( XID_SOURCE_APPROX_LEN - 1 ) ]
-
-    end
-
-
-
-    def self.get_store_folder()
-
-      aim_id = read_aim_id()
-      app_id = read_app_id()
-      return get_app_keystore_folder( aim_id, app_id )
-
-    end
 
 
     def self.get_app_keystore_folder( aim_id, app_id )

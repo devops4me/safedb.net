@@ -34,12 +34,13 @@ module SafeDb
     def execute
 
       @book_id = Identifier.derive_app_instance_identifier( @book_name )
-      initialize_book()
 
       if is_book_initialized?()
         print_already_initialized
         return
       end
+
+      initialize_book()
 
       book_secret = KeyPass.password_from_shell( true ) if @password.nil?
       book_secret = @password unless @password.nil?
@@ -65,25 +66,13 @@ module SafeDb
 
     def initialize_book()
 
+      Lock.create_master_book_crypts_folder( @book_id )
+
       keypairs = KeyMap.new( MASTER_INDEX_LOCAL_FILE )
       keypairs.use( @book_id )
       keypairs.set( "book.creation.time", KeyNow.readable() )
+      keypairs.set( "commit.reference",  Identifier.get_random_identifier( 16 ) )
 
-=begin
-      session_identifier = Identifier.derive_session_id( to_token() )
-      keypairs.use( "session.books" )
-      keypairs.set( session_identifier, @book_id )
-
-
-      # --
-      # -- Switch the dominant application domain being used to
-      # -- the domain that is being initialized right here.
-      # --
-
-SET THIS UP WHEN LOGIN HAPPENS - SIGNIFY THE SHELL SESSION BOOK USING 
-      use_application_domain( @book_name )
-
-=end
 
     end
 

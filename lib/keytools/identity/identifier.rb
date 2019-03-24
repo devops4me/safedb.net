@@ -58,6 +58,27 @@ module SafeDb
     SEGMENT_CHAR = "-"
 
 
+    # This method produces a soft random identifier by grabbing a secure
+    # random binary string, transforming it to base64, removing any and all
+    # hyphens and underscores, downcasing the result and finally truncating
+    # it to produce a random identifier of the desired length.
+    #
+    # Do not use this method to produce passwords or secrets because it
+    # provides IDs from a pool of only 36 characters with a fixed length so
+    # can be brute forced with ease. Only use it for producing identifiers.
+    #
+    # @param id_length [Number]
+    #    the length of the returned identifier. This value should not exceed
+    #    50 characters as the source pool is a good size - but is by no means
+    #    infinitely long.
+    def self.get_random_identifier( id_length )
+
+      random_ref = SecureRandom.urlsafe_base64( id_length ).delete("-_").downcase
+      return random_ref[ 0 .. ( id_length - 1 ) ]
+
+    end
+
+
     # Get an identifier that is <b>always the same</b> for the parameter
     # application reference <b>regardless of the machine or shell</b> or
     # even the machine user, coming together to make the request.

@@ -179,12 +179,6 @@ module SafeDb
     end
 
 
-    def create_session_book()
-
-    end
-
-
-
     # Switch the application instance that the current shell session is using.
     # Trigger this method either during the login use case or when the user
     # issues an intent to use a different application instance.
@@ -649,15 +643,6 @@ module SafeDb
       crumbs_db = KeyMap.new( keystore_file )
       crumbs_db.use( APP_KEY_DB_BREAD_CRUMBS )
       return crumbs_db
-
-    end
-
-
-    def self.get_store_folder()
-
-      aim_id = read_aim_id()
-      app_id = read_app_id()
-      return get_app_keystore_folder( aim_id, app_id )
 
     end
 
