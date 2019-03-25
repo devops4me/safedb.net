@@ -46,7 +46,7 @@ module SafeDb
       book_keys = KeyMap.new( MASTER_INDEX_LOCAL_FILE )
       book_keys.use( @book_id )
 
-      KeyApi.do_login( book_keys, book_password, create_header() )
+      LoginOut.do_login( book_keys, book_password, create_header() )
 
       view_uc = View.new
       view_uc.flow_of_events

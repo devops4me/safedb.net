@@ -75,7 +75,7 @@ module SafeDb
       begin
 
         log.info(x) { "Request issued to read the master database." }
-        return KeyApi.read_master_db()
+        return BookIndex.read()
 
       rescue OpenSSL::Cipher::CipherError => e
 

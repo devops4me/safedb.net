@@ -23,7 +23,7 @@ module SafeDb
     def execute
 
       return unless ops_key_exists?
-      master_db = KeyApi.read_master_db()
+      master_db = BookIndex.read()
 
       goto_location = 0
       envelope_dictionaries = KeyApi.to_matching_dictionary( master_db, ENVELOPE_KEY_PREFIX )

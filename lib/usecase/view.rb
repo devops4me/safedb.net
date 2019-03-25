@@ -24,7 +24,7 @@ module SafeDb
     def execute
 
       return unless ops_key_exists?
-      master_db = KeyApi.read_master_db()
+      master_db = BookIndex.read()
 
       open_envelope = "(none)" if master_db[ ENV_PATH ].nil?
       open_envelope = master_db[ ENV_PATH ] unless master_db[ ENV_PATH ].nil?

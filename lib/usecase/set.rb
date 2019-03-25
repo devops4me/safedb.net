@@ -23,7 +23,7 @@ module SafeDb
     def execute
 
       return unless ops_key_exists?
-      master_db = KeyApi.read_master_db()
+      master_db = BookIndex.read()
 
       master_db[ @directive_name ] = @directive_value
 

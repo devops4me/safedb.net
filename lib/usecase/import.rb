@@ -55,7 +55,7 @@ module SafeDb
     def execute
 
       return unless ops_key_exists?
-      master_db = KeyApi.read_master_db()
+      master_db = BookIndex.read()
 
       puts "---\n"
       puts "--- The Master Database (Before)\n"
