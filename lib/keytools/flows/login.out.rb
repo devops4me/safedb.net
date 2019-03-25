@@ -1,0 +1,181 @@
+#!/usr/bin/ruby
+
+module SafeDb
+
+  # The login process recycles the content encryption key by regenerating the human
+  # key from the password text and salts and then accessing the old crypt key, generating
+  # the new one and deftly unlocking the master database with the old and immediately
+  # locking it back up again with the new.
+  #
+  # The login process also creates a new workspace consisting of
+  # - a clone of the master content crypt files
+  # - a new set of indices allowing for the acquisition of the new content key via a shell-based session key
+  # - a mirrored commit reference that allows commit (save) back to the master if it hasn't moved forward
+  # - stating that subsequent commands are for this book and other session books in play are to be set aside
+  #
+  # The logout process destroys the breadcrumb route back to the re-acquisition of the
+  # content encryption key via the shell session key. It also deletes the session crypts.
+  #
+  # == Login Logout Stack Push Pop
+  #
+  # The login/logout works like a stack push pop or like a nested structure. A login wrests
+  # control away from the currently logged in book whilst a logout cedes control to the
+  # book that was last in play.
+  #
+  # <b>Login Recycles 3 things</b>
+  #
+  # The three (3) things recycled by this login are
+  #
+  # - the human key (sourced by putting the secret text through two key derivation functions)
+  # - the content crypt key (sourced from a random 48 byte sequence) 
+  # - the content ciphertext (sourced by decrypting with the old and re-encrypting with the new)
+  #
+  # Remember that the content crypt key is itself encrypted by two key entities.
+  #
+  class LoginOut
+
+    # The login process recycles the content encryption key by regenerating the human
+    # key from the password text and salts and then accessing the old crypt key, generating
+    # the new one and deftly unlocking the master database with the old and immediately
+    # locking it back up again with the new.
+    #
+    # It also creates a new workspace of crypts and indices that initially mirror the current
+    # state of the master book. A login acts like a stack push in that it wrests control from
+    # the current book only to cede it back during logout.
+
+    # @param book_keys [KeyMap]
+    #    the {KeyMap} contains the salts for key rederivation seeing as we have the
+    #    book password and the rederived key will be able to unlock the ciphertext
+    #    along with the random initialization vector (iv) also in the key map.
+    #
+    #    Unlocking the ciphertext reveals the random high entropy key which can be
+    #    used for the asymmetric decryption of the content ciphertext which is in a
+    #    file marked with the content identifier also within the book keys.
+    #
+    # @param secret [String]
+    #    the secret text that can potentially be cryptographically weak (low entropy).
+    #    This text is severely strengthened and morphed into a key using multiple key
+    #    derivation functions like <b>PBKDF2, BCrypt</b> and <b>SCrypt</b>.
+    #
+    #    The secret text is discarded and the <b>derived inter-session key</b> is used
+    #    only to encrypt the <em>randomly generated super strong <b>index key</b></em>,
+    #    <b>before being itself discarded</b>.
+    #
+    #    The key ring only stores the salts. This means the secret text based key can
+    #    only be regenerated at the next login, which explains the inter-session label.
+    #
+    # @param content_header [String]
+    #    the content header tops the ciphertext storage file with details of how where
+    #    and why the file came to be.
+    def self.do_login( book_keys, secret, content_header  )
+
+      the_book_id = book_keys.section()
+
+      old_human_key = KdfApi.regenerate_from_salts( secret, book_keys )
+      old_crypt_key = old_human_key.do_decrypt_key( book_keys.get( Indices::INTER_SESSION_KEY_CRYPT ) )
+      plain_content = Lock.content_unlock( old_crypt_key, book_keys )
+      new_crypt_key = KeyCycle.recycle( the_book_id, secret, book_keys, content_header, plain_content )
+
+      session_id = Identifier.derive_session_id( ShellSession.to_token() )
+      Lock.clone_book_into_session( the_book_id, session_id, book_keys, new_crypt_key )
+
+    end
+
+
+    # <b>Logout of the shell key session</b> by making the high entropy content
+    # encryption key <b>irretrievable for all intents and purposes</b> to anyone
+    # who does not possess the domain secret.
+    #
+    # The key logout action is deleting the ciphertext originally produced when
+    # the intra-sessionary (shell) key encrypted the content encryption key.
+    #
+    # <b>Why Isn't the Session Token Deleted?</b>
+    #
+    # The session token is left to <b>die by natural causes</b> so that we don't
+    # interfere with other domain interactions that may be in progress within
+    # this shell session.
+    #
+    # @param domain_name [String]
+    #    the string reference that points to the application instance that we
+    #    are logging out of from the shell on this machine.
+    def self.do_logout( domain_name )
+
+      # --> @todo - user should ONLY type in logout | without domain name
+      # --> @todo - user should ONLY type in logout | without domain name
+      # --> @todo - user should ONLY type in logout | without domain name
+      # --> @todo - user should ONLY type in logout | without domain name
+      # --> @todo - user should ONLY type in logout | without domain name
+
+
+      # --> ######################
+      # --> Login / Logout Time
+      # --> ######################
+      # -->
+      # --> During login you create a section heading same as the session ID
+      # -->    You then put the intra-key ciphertext there (from locking power key)
+      # -->    To check if a login has occurred we ensure this session's ID exists as a header in crumbs DB
+      # -->    On logout we remove the session ID and all the subsection crumbs (intra key ciphertext)
+      # -->    Logout makes it impossible to access the power key (now only by seret delivery and the inter key ciphertext)
+      # -->
+
+
+      # --
+      # -- Get the breadcrumbs trail.
+      # --
+      crumbs_db = get_crumbs_db_from_domain_name( domain_name )
+
+
+      # --
+      # -- Set the (ciphertext) breadcrumbs for re-acquiring the
+      # -- content encryption (power) key during (inside) this
+      # -- shell session.
+      # --
+      unique_id = Identifier.derive_universal_id( domain_name )
+      crumbs_db.use( unique_id )
+      crumbs_db.set( Indices::INTRA_SESSION_KEY_CRYPT, intra_txt )
+      crumbs_db.set( SESSION_LOGOUT_DATETIME, KeyNow.fetch() )
+
+    end
+
+
+    # Has the user orchestrating this shell session logged in? Yes or no?
+    # If yes then they appear to have supplied the correct secret
+    #
+    # - in this shell session
+    # - on this machine and
+    # - for this application instance
+    #
+    # Use the crumbs found underneath the universal (session) ID within the
+    # main breadcrumbs file for this application instance.
+    #
+    # Note that the system does not rely on this value for its security, it
+    # exists only to give a pleasant error message.
+    #
+    # @return [Boolean]
+    #    return true if a marker denoting that this shell session with this
+    #    application instance on this machine has logged in. Subverting this
+    #    return value only serves to evoke disgraceful degradation.
+    def self.is_logged_in?( domain_name )
+############## Write this code.
+############## Write this code.
+############## Write this code.
+############## Write this code.
+############## Write this code.
+############## Write this code.
+############## Write this code.
+      return false unless File.exists?( frontend_keystore_file() )
+
+      crumbs_db = KeyMap.new( frontend_keystore_file() )
+      crumbs_db.use( APP_KEY_DB_BREAD_CRUMBS )
+      return false unless crumbs_db.contains?( LOGGED_IN_APP_SESSION_ID )
+
+      recorded_id = crumbs_db.get( LOGGED_IN_APP_SESSION_ID )
+      return recorded_id.eql?( @uni_id )
+
+    end
+
+
+  end
+
+
+end
