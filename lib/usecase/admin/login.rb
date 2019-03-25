@@ -43,11 +43,6 @@ module SafeDb
 ############## Use [[ KeyApi.valid_password? ]] and give error if not valid
 ############## Use [[ KeyApi.valid_password? ]] and give error if not valid
 
-      the_text = File.read( MASTER_INDEX_LOCAL_FILE )
-      puts ""
-      puts the_text
-      puts ""
-
       book_keys = KeyMap.new( MASTER_INDEX_LOCAL_FILE )
       book_keys.use( @book_id )
 

@@ -32,9 +32,9 @@ module SafeDb
       open_key_path = master_db[ KEY_PATH ] unless master_db[ KEY_PATH ].nil?
 
       puts ""
-      puts "--- Book Birthday ~> #{KeyApi.to_db_create_date(master_db)}\n"
-      puts "--- The Book Name ~> #{KeyApi.to_db_domain_name(master_db)}\n"
-      puts "--- The Book (Id) ~> #{KeyApi.to_db_domain_id(master_db)}\n"
+##      puts "--- Book Birthday ~> #{KeyApi.to_db_create_date(master_db)}\n"
+##      puts "--- The Book Name ~> #{KeyApi.to_db_domain_name(master_db)}\n"
+##      puts "--- The Book (Id) ~> #{KeyApi.to_db_domain_id(master_db)}\n"
       puts "---\n"
       puts "--- Chapter ~> #{open_envelope}\n"
       puts "--- + Verse ~> #{open_key_path}\n"

@@ -321,10 +321,10 @@ module SafeDb
     #    to a file by the {write_content} method.
     def self.read_master_db()
 
-      session_id = ShellSession.to_token()
+      session_id = Identifier.derive_session_id( ShellSession.to_token() )
       session_indices_file = FilePath.session_indices_filepath( session_id )
       session_keys = KeyMap.new( session_indices_file )
-      book_id = session_keys.read( Indices::SESSION_DATA, Indicess::CURRENT_SESSION_BOOK_ID )
+      book_id = session_keys.read( Indices::SESSION_DATA, Indices::CURRENT_SESSION_BOOK_ID )
       session_keys.use( book_id )
       content_id = session_keys.get( Indices::CONTENT_IDENTIFIER )
       random_iv = KeyIV.in_binary( session_keys.get( Indices::CONTENT_RANDOM_IV ) )
@@ -333,7 +333,6 @@ module SafeDb
 
       intra_key = KeyDerivation.regenerate_shell_key( ShellSession.to_token() )
       crypt_key = intra_key.do_decrypt_key( intra_key_ciphertext )
-
       crypt_txt = Lock.binary_from_read( content_crypt_path )
       json_content = crypt_key.do_decrypt_text( random_iv, crypt_txt )
 
@@ -448,30 +447,9 @@ module SafeDb
     private
 
 
-    SESSION_APP_DOMAINS = "session.app.domains"
-    SESSION_IDENTIFIER_KEY = "session.identifiers"
-    KEYSTORE_IDENTIFIER_KEY = "keystore.url.id"
-    APP_INSTANCE_ID_KEY = "app.instance.id"
-    AIM_IDENTITY_REF_KEY = "aim.identity.ref"
-    LOGIN_TIMESTAMP_KEY = "login.timestamp"
-    LOGOUT_TIMESTAMP_KEY = "logout.timestamp"
-    MACHINE_CONFIGURATION = "machine.configuration"
-
-    APP_INSTANCE_SETUP_TIME = "app.instance.setup.time"
-
-    APP_KEY_DB_NAME_PREFIX = "openkey.breadcrumbs"
-    FILE_CIPHERTEXT_PREFIX = "openkey.cipher.file"
-    OK_BASE_FOLDER_PREFIX   = "openkey.store"
-    OK_BACKEND_CRYPT_PREFIX = "backend.crypt"
-
-    APP_KEY_DB_DIRECTIVES = "key.db.directives"
-    APP_KEY_DB_CREATE_TIME_KEY = "initialize.time"
     APP_KEY_DB_BREAD_CRUMBS = "openkey.bread.crumbs"
-
     LOGGED_IN_APP_SESSION_ID = "logged.in.app.session.id"
-    SESSION_LOGIN_DATETIME = "session.login.datetime"
     SESSION_LOGOUT_DATETIME = "session.logout.datetime"
-
     INDEX_DB_CRYPT_IV_KEY = "index.db.cipher.iv"
 
   end
