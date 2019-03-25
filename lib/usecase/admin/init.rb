@@ -108,7 +108,7 @@ module SafeDb
       puts ""
       puts "Success! You can now login."
       puts "Your book #{@book_name} with id #{@book_id} is up."
-      puts "From now on you simply login to this book."
+      puts "From now on you simply login like this."
       puts ""
       puts "    #{COMMANDMENT} login #{@book_name}"
       puts ""

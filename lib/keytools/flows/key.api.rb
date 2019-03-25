@@ -119,7 +119,7 @@ module SafeDb
       plain_content = Lock.content_unlock( old_crypt_key, book_keys )
       new_crypt_key = KeyCycle.recycle( the_book_id, secret, book_keys, content_header, plain_content )
 
-      session_id = Identifier.derive_session_id( to_token() )
+      session_id = Identifier.derive_session_id( ShellSession.to_token() )
       Lock.clone_book_into_session( the_book_id, session_id, book_keys, new_crypt_key )
 
     end
@@ -321,48 +321,21 @@ module SafeDb
     #    to a file by the {write_content} method.
     def self.read_master_db()
 
-      # --
-      # -- Get the filepath to the breadcrumbs file using the trail in
-      # -- the global configuration left by {use_application_domain}.
-      # --
-      crumbs_db = get_crumbs_db_from_session_token()
+      session_id = ShellSession.to_token()
+      session_indices_file = FilePath.session_indices_filepath( session_id )
+      session_keys = KeyMap.new( session_indices_file )
+      book_id = session_keys.read( Indices::SESSION_DATA, Indicess::CURRENT_SESSION_BOOK_ID )
+      session_keys.use( book_id )
+      content_id = session_keys.get( Indices::CONTENT_IDENTIFIER )
+      random_iv = KeyIV.in_binary( session_keys.get( Indices::CONTENT_RANDOM_IV ) )
+      content_crypt_path = FilePath.session_crypts_filepath( book_id, session_id, content_id )
+      intra_key_ciphertext = session_keys.get( Indices::INTRA_SESSION_KEY_CRYPT )
 
-      # --
-      # -- Get the path to the file holding the ciphertext of the application
-      # -- database content locked by the content encryption key.
-      # --
-      crypt_filepath = content_ciphertxt_file_from_session_token()
+      intra_key = KeyDerivation.regenerate_shell_key( ShellSession.to_token() )
+      crypt_key = intra_key.do_decrypt_key( intra_key_ciphertext )
 
-      # --
-      # -- Regenerate intra-session key from the session token.
-      # --
-      intra_key = KeyDerivation.regenerate_shell_key( to_token() )
-
-      # --
-      # -- Decrypt and acquire the content enryption key that was created
-      # -- during the login use case and encrypted using the intra sessionary
-      # -- key.
-      # --
-      unique_id = Identifier.derive_universal_id( read_app_id(), to_token() )
-      crumbs_db.use( unique_id )
-      power_key = intra_key.do_decrypt_key( crumbs_db.get( Indices::INTRA_SESSION_KEY_CRYPT ) )
-
-      # --
-      # -- Set the (ciphertext) breadcrumbs for re-acquiring the
-      # -- content encryption (power) key during (inside) this
-      # -- shell session.
-      # --
-      crumbs_db.use( APP_KEY_DB_BREAD_CRUMBS )
-      random_iv = KeyIV.in_binary( crumbs_db.get( INDEX_DB_CRYPT_IV_KEY ) )
-
-      # --
-      # -- Get the full ciphertext file (warts and all) and then top and
-      # -- tail until just the valuable ciphertext is at hand. Decode then
-      # -- decrypt the ciphertext and instantiate a key database from the
-      # -- resulting JSON string.
-      # --
-      crypt_txt = binary_from_read( crypt_filepath )
-      json_content = power_key.do_decrypt_text( random_iv, crypt_txt )
+      crypt_txt = Lock.binary_from_read( content_crypt_path )
+      json_content = crypt_key.do_decrypt_text( random_iv, crypt_txt )
 
       return KeyStore.from_json( json_content )
 
@@ -411,14 +384,14 @@ module SafeDb
       # --
       # -- Regenerate intra-session key from the session token.
       # --
-      intra_key = KeyDerivation.regenerate_shell_key( to_token() )
+      intra_key = KeyDerivation.regenerate_shell_key( ShellSession.to_token() )
 
       # --
       # -- Decrypt and acquire the content enryption key that was created
       # -- during the login use case and encrypted using the intra sessionary
       # -- key.
       # --
-      unique_id = Identifier.derive_universal_id( read_app_id(), to_token() )
+      unique_id = Identifier.derive_universal_id( read_app_id(), ShellSession.to_token() )
       crumbs_db.use( unique_id )
       power_key = intra_key.do_decrypt_key( crumbs_db.get( Indices::INTRA_SESSION_KEY_CRYPT ) )
 
@@ -472,36 +445,8 @@ module SafeDb
     end
 
 
-    # This method depends on {use_application_domain} which sets
-    # the application ID against the session identity so only call
-    # it if we are in a logged in state.
-    #
-    # NOTE this will NOT be set until the session is logged in so
-    # the call fails before that. For this reason do not call this
-    # method from outside this class. If the domain name is
-    # available use {Identifier.derive_app_instance_identifier} instead.
-    def self.read_app_id()
-
-      aim_id = read_aim_id()
-      keypairs = KeyMap.new( MACHINE_CONFIG_FILE )
-      keypairs.use( aim_id )
-      return keypairs.get( APP_INSTANCE_ID_KEY )
-
-    end
-
-
-    def self.read_aim_id()
-
-      session_identifier = Identifier.derive_session_id( to_token() )
-
-      keypairs = KeyMap.new( MACHINE_CONFIG_FILE )
-      keypairs.use( SESSION_APP_DOMAINS )
-      return keypairs.get( session_identifier )
-
-    end
-
-
     private
+
 
     SESSION_APP_DOMAINS = "session.app.domains"
     SESSION_IDENTIFIER_KEY = "session.identifiers"
@@ -528,100 +473,6 @@ module SafeDb
     SESSION_LOGOUT_DATETIME = "session.logout.datetime"
 
     INDEX_DB_CRYPT_IV_KEY = "index.db.cipher.iv"
-
-
-
-    def self.get_crumbs_db_from_domain_name( domain_name )
-
-      KeyError.not_new( domain_name, self )
-      keystore_file = get_keystore_file_from_domain_name( domain_name )
-      crumbs_db = KeyMap.new( keystore_file )
-      crumbs_db.use( APP_KEY_DB_BREAD_CRUMBS )
-      return crumbs_db
-
-    end
-
-
-    def self.get_crumbs_db_from_session_token()
-
-      keystore_file = get_keystore_file_from_session_token()
-      crumbs_db = KeyMap.new( keystore_file )
-      crumbs_db.use( APP_KEY_DB_BREAD_CRUMBS )
-      return crumbs_db
-
-    end
-
-
-    def self.get_app_keystore_folder( aim_id, app_id )
-
-      keypairs = KeyMap.new( MACHINE_CONFIG_FILE )
-      keypairs.use( aim_id )
-      keystore_url = keypairs.get( KEYSTORE_IDENTIFIER_KEY )
-      basedir_name = "#{OK_BASE_FOLDER_PREFIX}.#{app_id}"
-      return File.join( keystore_url, basedir_name )
-
-    end
-
-
-    def self.get_keystore_file_from_domain_name( domain_name )
-
-      aim_id = Identifier.derive_app_instance_machine_id( domain_name )
-      app_id = Identifier.derive_app_instance_identifier( domain_name )
-
-      app_key_db_file = "#{APP_KEY_DB_NAME_PREFIX}.#{app_id}.ini"
-      return File.join( get_app_keystore_folder( aim_id, app_id ), app_key_db_file )
-
-    end
-
-
-    def self.get_keystore_file_from_session_token()
-
-      aim_id = read_aim_id()
-      app_id = read_app_id()
-
-      app_key_db_file = "#{APP_KEY_DB_NAME_PREFIX}.#{app_id}.ini"
-      return File.join( get_app_keystore_folder( aim_id, app_id ), app_key_db_file )
-
-    end
-
-
-    def self.content_ciphertxt_file_from_domain_name( domain_name )
-
-      aim_id = Identifier.derive_app_instance_machine_id( domain_name )
-      app_id = Identifier.derive_app_instance_identifier( domain_name )
-
-      appdb_cipher_file = "#{FILE_CIPHERTEXT_PREFIX}.#{app_id}.txt"
-      return File.join( get_app_keystore_folder( aim_id, app_id ), appdb_cipher_file )
-
-    end
-
-
-    def self.content_ciphertxt_file_from_session_token()
-
-      aim_id = read_aim_id()
-      app_id = read_app_id()
-
-      appdb_cipher_file = "#{FILE_CIPHERTEXT_PREFIX}.#{app_id}.txt"
-      return File.join( get_app_keystore_folder( aim_id, app_id ), appdb_cipher_file )
-
-    end
-
-
-    def self.to_token()
-
-      raw_env_var_value = ENV[Indices::TOKEN_VARIABLE_NAME]
-      raise_token_error( Indices::TOKEN_VARIABLE_NAME, "not present") unless raw_env_var_value
-
-      env_var_value = raw_env_var_value.strip
-      raise_token_error( Indices::TOKEN_VARIABLE_NAME, "consists only of whitespace") if raw_env_var_value.empty?
-
-      size_msg = "length should contain exactly #{Indices::TOKEN_VARIABLE_SIZE} characters"
-      raise_token_error( Indices::TOKEN_VARIABLE_NAME, size_msg ) unless env_var_value.length == Indices::TOKEN_VARIABLE_SIZE
-
-      return env_var_value
-
-    end
-
 
   end
 

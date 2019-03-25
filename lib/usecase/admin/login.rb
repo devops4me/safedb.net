@@ -80,25 +80,10 @@ module SafeDb
     def print_not_initialized
 
       puts ""
-      puts "Please initialize the app domain on this machine."
-      puts "Give a domain name and a folder for key storage."
+      puts "This book [ #{@book_name} ] has not yet been initialized."
+      puts "Please initialize it with this command."
       puts ""
-      puts "    #{COMMANDMENT} init <domain_name> \"$HOME/open.world\""
-      puts ""
-
-    end
-
-
-    def print_login_success
-
-      puts ""
-      puts "Success - you are logged in."
-      puts ""
-      puts "    #{COMMANDMENT} open aws.credentials:s3reader"
-      puts "    #{COMMANDMENT} put access_key ABCD1234"
-      puts "    #{COMMANDMENT} put secret_key FGHIJ56789"
-      puts "    #{COMMANDMENT} put region_key eu-central-1"
-      puts "    #{COMMANDMENT} seal"
+      puts "    #{COMMANDMENT} init #{@book_name}"
       puts ""
 
     end

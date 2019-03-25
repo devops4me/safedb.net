@@ -196,10 +196,12 @@ module SafeDb
       FileUtils.mkdir_p( session_crypts_folder( book_id, session_id ) )
       FileUtils.copy_entry( master_crypts_folder( book_id ), session_crypts_folder( book_id, session_id ) )
       session_keys = create_session_indices( book_id, session_id )
-      session_keys.set( Indices::CONTENT_IDENTIFIER, master_book_keys.get( Indices::CONTENT_IDENTIFIER ) )
-      session_keys.set( Indices::SESSION_COMMIT_ID, master_book_keys.get( Indices::MASTER_COMMIT_ID ) )
 
-      session_key = KeyDerivation.regenerate_shell_key( to_token() )
+      session_keys.set( Indices::CONTENT_IDENTIFIER, master_book_keys.get( Indices::CONTENT_IDENTIFIER ) )
+      session_keys.set( Indices::CONTENT_RANDOM_IV,  master_book_keys.get( Indices::CONTENT_RANDOM_IV  ) )
+      session_keys.set( Indices::SESSION_COMMIT_ID,  master_book_keys.get( Indices::MASTER_COMMIT_ID   ) )
+
+      session_key = KeyDerivation.regenerate_shell_key( ShellSession.to_token() )
       key_ciphertext = session_key.do_encrypt_key( crypt_key )
       session_keys.set( Indices::INTRA_SESSION_KEY_CRYPT, key_ciphertext )
 
@@ -279,50 +281,6 @@ module SafeDb
     MASTER_CRYPTS_FOLDER   = File.join( SAFE_DATABASE_FOLDER, "safedb-master-crypts"   )
     SESSION_INDICES_FOLDER = File.join( SAFE_DATABASE_FOLDER, "safedb-session-indices" )
     SESSION_CRYPTS_FOLDER  = File.join( SAFE_DATABASE_FOLDER, "safedb-session-crypts"  )
-
-
-
-    def self.get_app_keystore_folder( aim_id, app_id )
-
-      keypairs = KeyMap.new( MACHINE_CONFIG_FILE )
-      keypairs.use( aim_id )
-      keystore_url = keypairs.get( KEYSTORE_IDENTIFIER_KEY )
-      basedir_name = "#{OK_BASE_FOLDER_PREFIX}.#{app_id}"
-      return File.join( keystore_url, basedir_name )
-
-    end
-
-
-    def self.to_token()
-
-      raw_env_var_value = ENV[Indices::TOKEN_VARIABLE_NAME]
-      raise_token_error( Indices::TOKEN_VARIABLE_NAME, "not present") unless raw_env_var_value
-
-      env_var_value = raw_env_var_value.strip
-      raise_token_error( Indices::TOKEN_VARIABLE_NAME, "consists only of whitespace") if raw_env_var_value.empty?
-
-      size_msg = "length should contain exactly #{Indices::TOKEN_VARIABLE_SIZE} characters"
-      raise_token_error( Indices::TOKEN_VARIABLE_NAME, size_msg ) unless env_var_value.length == Indices::TOKEN_VARIABLE_SIZE
-
-      return env_var_value
-
-    end
-
-
-    def self.raise_token_error env_var_name, message
-
-      puts ""
-      puts "#{Indices::TOKEN_VARIABLE_NAME} environment variable #{message}."
-      puts "To instantiate it you can use the below command."
-      puts ""
-      puts "$ export #{Indices::TOKEN_VARIABLE_NAME}=`safe token`"
-      puts ""
-      puts "ps => those are backticks around `safe token` (not apostrophes)."
-      puts ""
-
-      raise RuntimeError, "#{Indices::TOKEN_VARIABLE_NAME} environment variable #{message}."
-
-    end
 
 
   end
