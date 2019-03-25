@@ -304,17 +304,18 @@ module SafeDb
     # database decryption key which in turn reveals the JSON representation of the
     # master database.
     #
-    # The master database JSON is deserialized as a {Hash} and returned.
+    # The {KeyMap} master database JSON is streamed into one of the crypt files denoted by
+    # a content identifier - this file is decrypted and the data structure deserialized
+    # into a {Hash} and returned.
     #
     # <b>Steps Taken To Read the Master Database</b>
     #
-    # Reading the master database requires a rostra of actions namely
+    # Reading up and returning the master database requires a rostra of actions namely
     #
-    # - reading the path to the <b>keystore breadcrumbs file</b>
-    # - using the session token to derive the (unique to the) shell key
-    # - using the shell key and ciphertext to unlock the index key
-    # - reading the encrypted and encoded content, decoding and decrypting it
-    # - employing index key, ciphertext and random iv to reveal the content
+    # - finding the session data and reading the ID of the book in play
+    # - using the content id, session id and book id to locate the crypt file
+    # - using the session shell key and salt to unlock the content encryption key
+    # - using the content crypt key and random iv to unlock the file's ciphertext
     #
     # @return [String]
     #    decode, decrypt and hen return the plain text content that was written
