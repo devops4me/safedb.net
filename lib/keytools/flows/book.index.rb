@@ -36,12 +36,12 @@ module SafeDb
     def self.read()
 
       session_id = Identifier.derive_session_id( ShellSession.to_token() )
-      session_indices_file = FilePath.session_indices_filepath( session_id )
+      session_indices_file = FileTree.session_indices_filepath( session_id )
       session_keys = KeyMap.new( session_indices_file )
       book_id = session_keys.read( Indices::SESSION_DATA, Indices::CURRENT_SESSION_BOOK_ID )
       session_keys.use( book_id )
       content_id = session_keys.get( Indices::CONTENT_IDENTIFIER )
-      content_crypt_path = FilePath.session_crypts_filepath( book_id, session_id, content_id )
+      content_crypt_path = FileTree.session_crypts_filepath( book_id, session_id, content_id )
 
       crypt_txt = Lock.binary_from_read( content_crypt_path )
 
@@ -87,16 +87,16 @@ module SafeDb
     def self.write( content_header, app_database )
 
       session_id = Identifier.derive_session_id( ShellSession.to_token() )
-      session_indices_file = FilePath.session_indices_filepath( session_id )
+      session_indices_file = FileTree.session_indices_filepath( session_id )
       session_keys = KeyMap.new( session_indices_file )
       book_id = session_keys.read( Indices::SESSION_DATA, Indices::CURRENT_SESSION_BOOK_ID )
 
       session_keys.use( book_id )
 
       old_content_id = session_keys.get( Indices::CONTENT_IDENTIFIER )
-      old_content_crypt_path = FilePath.session_crypts_filepath( book_id, session_id, old_content_id )
+      old_content_crypt_path = FileTree.session_crypts_filepath( book_id, session_id, old_content_id )
       new_content_id = Identifier.get_random_identifier( Indices::CONTENT_ID_LENGTH )
-      new_content_crypt_path = FilePath.session_crypts_filepath( book_id, session_id, new_content_id )
+      new_content_crypt_path = FileTree.session_crypts_filepath( book_id, session_id, new_content_id )
 
       iv_base64 = KeyIV.new().for_storage()
       random_iv = KeyIV.in_binary( iv_base64 )

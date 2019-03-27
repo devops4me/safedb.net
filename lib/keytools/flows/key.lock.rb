@@ -73,14 +73,6 @@ module SafeDb
       random_iv = KeyIV.in_binary( iv_base64 )
       key_store.set( Indices::CONTENT_RANDOM_IV, iv_base64 )
 
-#########      # --
-#########      # -- Create a new high entropy random key for
-#########      # -- locking the content with AES. Place the key
-#########      # -- within the breadcrumbs map.
-#########      # --
-#########      crypt_key = Key.from_random()
-#########      key_store[ CONTENT_ENCRYPT_KEY ] = crypt_key.to_char64()
-
       # --
       # -- Now use AES to lock the content body and write
       # -- the encoded ciphertext out to a file that is

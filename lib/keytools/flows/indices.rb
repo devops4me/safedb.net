@@ -3,10 +3,22 @@
 module SafeDb
 
   # Indices are key/value pairs that serve within the safe database index
-  # files for denoting, pinpointing, writing and retrieving data values.
-  #
+  # files for denoting, pinpointing, writing and retrieving data values as
+  # well as for naming of files folders and other artifacts.
   class Indices
 
+
+    # The short url name of the safe personal database.
+    SAFEDB_URL_NAME = "safedb.net"
+
+    # The name ofthe master crypts folder.
+    MASTER_CRYPTS_FOLDER_NAME = "safedb-master-crypts"
+
+    # The name ofthe session indices folder.
+    SESSION_INDICES_FOLDER_NAME = "safedb-session-indices"
+
+    # The name ofthe session crypts folder.
+    SESSION_CRYPTS_FOLDER_NAME = "safedb-session-crypts"
 
     # The desired length of a content identifier
     CONTENT_ID_LENGTH  = 14
