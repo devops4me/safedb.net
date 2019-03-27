@@ -31,19 +31,18 @@ module SafeDb
 ##instance_variables - DONE
 ##class_variables - tough nut to crack with very little benefit (method class_variables not defined)
 
-=begin
       puts ""
       puts "QQQ QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ"
       puts "QQQ ~~~~~~~~~~~~~ Global Variable Array List ~~~~~~~~~~~~~~~~ QQQQQ"
       puts "QQQ QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ"
 
-      puts global_variables.inspect
+      puts global_variables().inspect
 
       puts "QQQ QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ"
       puts "QQQ ~~~~~~~~~~~~~ Global Variable Values Printed ~~~~~~~~~~~~~~~~ QQQQQ"
       puts "QQQ QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ"
 
-      global_variables.sort.each do |name|
+      global_variables().sort.each do |name|
 
         puts "<<< ------------------------------------------------------------------->>>"
         puts "<<< #{name.to_s} >>>"
@@ -62,7 +61,7 @@ module SafeDb
       puts "QQQQQQQQQQQ Bug Finder QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ"
       puts "QQQQQQQQQQQ QQQQQQQQQQ QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ"
       puts ""
-      self.instance_variables.map do |attribute|
+      self.instance_variables().map do |attribute|
         puts "=============================================="
         puts "----------------------------------------------"
         puts attribute
@@ -81,16 +80,15 @@ module SafeDb
       puts "QQQQQQQQQQQ Local Variables QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ"
       puts "QQQQQQQQQQQ QQQQQQQQQQQQQQQ QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ"
 
-      local_variables.map do |attribute|
+      local_variables().map do |attribute|
         puts "=============================================="
         puts "----------------------------------------------"
         puts attribute
-        pp binding.local_variable_get(attribute.to_sym)
+        pp binding().local_variable_get(attribute.to_sym)
       end
       puts "QQQQQQQQQQQ QQQQQQQQQQQQQQQ QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ"
 
       puts ""
-=end
 
 
       return unless has_verse
