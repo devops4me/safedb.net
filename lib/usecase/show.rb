@@ -25,9 +25,6 @@ module SafeDb
       chapter_data = get_chapter_data( master_db[ chapter_id ] ) if has_chapter
       has_verse = has_chapter && chapter_data.has_key?( master_db[ KEY_PATH ] )
 
-
-
-
       return unless has_verse
 
       line_dictionary = chapter_data[ master_db[ KEY_PATH ] ]

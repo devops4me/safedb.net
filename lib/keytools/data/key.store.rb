@@ -9,6 +9,16 @@ module SafeDb
   # (put, add etc) <b>after reading and then decrypting it</b> from a
   # file and <b>before encrypting and then writing it</b> to a file.
   #
+  # == Difference Between KeyStore and DataStore
+  #
+  # The DataStore is a JSON backed store that streams to and from INI formatted
+  # data.
+  # The KeyStore  is preferred for human readable data which is
+  # precisely 2 dimensional. The streamed DataMap is JSON which
+  # at scale isn't human readable but the data structure is
+  # N dimensional and it supports nested structures such as
+  # lists, maps, numbers and booleans.
+  #
   # It provides behaviour to which we can create, append (add), update
   # (change), read parts and delete essentially two structures
   #

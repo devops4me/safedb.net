@@ -175,6 +175,71 @@ module SafeDb
     end
 
 
+    # When we login to a book which may or may not be the first book in the session
+    # that we have logged into, we are effectively cloning all its master crypts and
+    # some of its keys (indices).
+    #
+    # To clone a book into a session we
+    #
+    # - create a session crypts folder and copy all master crypts into it
+    # - we create session indices under general and book_id sections
+    # - we copy the commit reference and content identifier from the master
+    # - lock the content crypt key with the session key and save the ciphertext
+    #
+    # == commit references
+    #
+    # We can only commit (save) a session's crypts when the master and session commit
+    # references match. The commit process places a new commit reference into both
+    # the master and session indices. Like git's push/pull, this prevents a sync when
+    # the master has moved forward by one or more commits.
+    #
+    # @param book_id [String] the book identifier this session is about
+    # @param session_id [String] the identifier pertaining to this session
+    # @param master_book_keys [KeyMap] keys from the book's master line
+    # @param crypt_key [Key] symmetric session content encryption key
+    #
+    def self.clone_book_into_session( book_id, session_id, master_book_keys, crypt_key )
+
+      FileUtils.mkdir_p( session_crypts_folder( book_id, session_id ) )
+      FileUtils.copy_entry( master_crypts_folder( book_id ), session_crypts_folder( book_id, session_id ) )
+      session_keys = create_session_indices( book_id, session_id )
+
+      session_keys.set( Indices::CONTENT_IDENTIFIER, master_book_keys.get( Indices::CONTENT_IDENTIFIER ) )
+      session_keys.set( Indices::CONTENT_RANDOM_IV,  master_book_keys.get( Indices::CONTENT_RANDOM_IV  ) )
+      session_keys.set( Indices::SESSION_COMMIT_ID,  master_book_keys.get( Indices::MASTER_COMMIT_ID   ) )
+
+      session_key = KeyDerivation.regenerate_shell_key( ShellSession.to_token() )
+      key_ciphertext = session_key.do_encrypt_key( crypt_key )
+      session_keys.set( Indices::INTRA_SESSION_KEY_CRYPT, key_ciphertext )
+
+    end
+
+
+    # Create and return the session indices {KeyMap} pertaining to both the current
+    # book and session whose ids are given in the first and second parameters.
+    #
+    # @param book_id [String] the book identifier this session is about
+    # @param session_id [String] the identifier pertaining to this session
+    # @return [KeyMap] return the keys pertaining to this session and book
+    def self.create_session_indices( book_id, session_id )
+
+      session_exists = File.exists? session_indices_filepath( session_id )
+      session_keys = KeyMap.new( session_indices_filepath( session_id ) )
+      session_keys.use( Indices::SESSION_DATA )
+      session_keys.set( Indices::SESSION_FIRST_LOG_IN_POINT, KeyNow.readable() ) unless session_exists
+      session_keys.set( Indices::SESSION_LAST_ACCESSED_TIME, KeyNow.readable() )
+      session_keys.set( Indices::CURRENT_SESSION_BOOK_ID, book_id )
+
+      logged_in = session_keys.has_section?( book_id )
+      session_keys.use( book_id )
+      session_keys.set( Indices::BOOK_SESSION_LOGIN_TIME, KeyNow.readable() ) unless logged_in
+      session_keys.set( Indices::BOOK_LAST_ACCESSED_TIME, KeyNow.readable() )
+
+      return session_keys
+
+    end
+
+
   end
 
 

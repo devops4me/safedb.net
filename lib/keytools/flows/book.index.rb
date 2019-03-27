@@ -41,14 +41,9 @@ module SafeDb
       book_id = session_keys.read( Indices::SESSION_DATA, Indices::CURRENT_SESSION_BOOK_ID )
       session_keys.use( book_id )
       content_id = session_keys.get( Indices::CONTENT_IDENTIFIER )
-      content_crypt_path = FileTree.session_crypts_filepath( book_id, session_id, content_id )
-
-      crypt_txt = Lock.binary_from_read( content_crypt_path )
-
+      crypt_path = FileTree.session_crypts_filepath( book_id, session_id, content_id )
       crypt_key = content_crypt_key( session_keys )
-      random_iv = KeyIV.in_binary( session_keys.get( Indices::CONTENT_RANDOM_IV ) )
-      json_content = crypt_key.do_decrypt_text( random_iv, crypt_txt )
-      return KeyStore.from_json( json_content )
+      return KeyStore.from_json( Lock.unlock_it( crypt_path, crypt_key, session_keys ) )
 
     end
 
@@ -94,24 +89,22 @@ module SafeDb
       session_keys.use( book_id )
 
       old_content_id = session_keys.get( Indices::CONTENT_IDENTIFIER )
-      old_content_crypt_path = FileTree.session_crypts_filepath( book_id, session_id, old_content_id )
+      old_crypt_path = FileTree.session_crypts_filepath( book_id, session_id, old_content_id )
+
       new_content_id = Identifier.get_random_identifier( Indices::CONTENT_ID_LENGTH )
-      new_content_crypt_path = FileTree.session_crypts_filepath( book_id, session_id, new_content_id )
-
-      iv_base64 = KeyIV.new().for_storage()
-      random_iv = KeyIV.in_binary( iv_base64 )
-
+      session_keys.set( Indices::CONTENT_IDENTIFIER, new_content_id )
+      new_crypt_path = FileTree.session_crypts_filepath( book_id, session_id, new_content_id )
       crypt_key = content_crypt_key( session_keys )
 
-      binary_ciphertext = crypt_key.do_encrypt_text( random_iv, app_database.to_json )
-      Lock.binary_to_write( new_content_crypt_path, content_header, binary_ciphertext )
+      Lock.lock_it( new_crypt_path, crypt_key, session_keys, app_database.to_json, content_header )
 
-      # The new book index file has been successfully written so we can now replace
-      # the content id and random iv, then delete the old content crypt.
-
-      session_keys.set( Indices::CONTENT_IDENTIFIER, new_content_id )
+=begin
+      iv_base64 = KeyIV.new().for_storage()
       session_keys.set( Indices::CONTENT_RANDOM_IV, iv_base64 )
-
+      random_iv = KeyIV.in_binary( iv_base64 )
+      binary_ciphertext = crypt_key.do_encrypt_text( random_iv, app_database.to_json )
+      Lock.binary_to_write( new_crypt_path, content_header, binary_ciphertext )
+=end
     end
 
 

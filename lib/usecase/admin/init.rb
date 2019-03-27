@@ -66,7 +66,7 @@ module SafeDb
 
     def initialize_book()
 
-      Lock.create_master_book_crypts_folder( @book_id )
+      FileUtils.mkdir_p( FileTree.master_crypts_folder( @book_id ) )
 
       keypairs = KeyMap.new( MASTER_INDEX_LOCAL_FILE )
       keypairs.use( @book_id )
