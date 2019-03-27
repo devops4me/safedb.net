@@ -23,7 +23,7 @@ module SafeDb
 
       chapter_id = ENVELOPE_KEY_PREFIX + master_db[ ENV_PATH ]
       chapter_exists = KeyApi.db_envelope_exists?( master_db[ chapter_id ] )
-      chapter_data = KeyStore.from_json( KeyApi.content_unlock( master_db[ chapter_id ] ) ) if chapter_exists
+      chapter_data = KeyStore.from_json( Lock.content_unlock( master_db[ chapter_id ] ) ) if chapter_exists
       chapter_data = KeyStore.new() unless chapter_exists
 
       content_hdr = create_header()
@@ -33,8 +33,8 @@ module SafeDb
       chapter_data.delete_entry( verse_id, @entity_id )
       chapter_data.delete_entry( verse_id, "#{FILE_KEY_PREFIX}#{@entity_id}" )
 
-      KeyApi.content_lock( master_db[ chapter_id ], chapter_data.to_json, content_hdr )
-      KeyApi.write_master_db( content_hdr, master_db )
+      Lock.content_lock( master_db[ chapter_id ], chapter_data.to_json, content_hdr )
+      BookIndex.write( content_hdr, master_db )
       Show.new.flow_of_events
 
     end

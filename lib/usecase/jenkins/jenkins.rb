@@ -169,7 +169,7 @@ module SafeDb
             # key/value mini-dictionary breadcrumbs sitting
             # within the master database at the section labelled
             # envelope@<<actual_chapter_id>>.
-            chapter_data = KeyStore.from_json( KeyApi.content_unlock( master_db[ chapter_id ] ) )
+            chapter_data = KeyStore.from_json( Lock.content_unlock( master_db[ chapter_id ] ) )
 
             key_value_dictionary = chapter_data[ verse_id ]
 

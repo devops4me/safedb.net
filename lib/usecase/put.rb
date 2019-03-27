@@ -45,7 +45,7 @@ module SafeDb
       #
       #   a) unlock it using the breadcrumbs or
       #   b) start afresh with a new content db
-      content_box = KeyStore.from_json( KeyApi.content_unlock( master_db[ envelope_id ] ) ) if has_content
+      content_box = KeyStore.from_json( Lock.content_unlock( master_db[ envelope_id ] ) ) if has_content
       content_box = KeyStore.new() unless has_content
       content_hdr = create_header()
 
@@ -62,12 +62,12 @@ module SafeDb
       # the envelope to the content filepath.
       crumbs_dict = master_db[ envelope_id ]
       content_box.create_entry( master_db[ KEY_PATH ], @secret_id, @secret_value )
-      KeyApi.content_lock( crumbs_dict, content_box.to_json, content_hdr )
+      Lock.content_lock( crumbs_dict, content_box.to_json, content_hdr )
 
       # Three envelope crumbs namely the external ID, the
       # random iv and the crypt key are written afresh into
       # the master database.
-      KeyApi.write_master_db( content_hdr, master_db )
+      BookIndex.write( content_hdr, master_db )
 
       # Show the mini dictionary at the opened chapter and verse location
       Show.new.flow_of_events

@@ -29,7 +29,7 @@ module SafeDb
       envelope_dictionaries = KeyApi.to_matching_dictionary( master_db, ENVELOPE_KEY_PREFIX )
       envelope_dictionaries.each_pair do | envelope_name, crumb_dictionary |
 
-        envelope_content = KeyStore.from_json( KeyApi.content_unlock( crumb_dictionary ) )
+        envelope_content = KeyStore.from_json( Lock.content_unlock( crumb_dictionary ) )
         envelope_content.each_key do | envelope_key |
 
           goto_location += 1

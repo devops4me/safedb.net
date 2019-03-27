@@ -31,7 +31,7 @@ module SafeDb
       puts JSON.pretty_generate( master_db )
       puts ""
 
-      KeyApi.write_master_db( create_header(), master_db )
+      BookIndex.write( create_header(), master_db )
 
     end
 

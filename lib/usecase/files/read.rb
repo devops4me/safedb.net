@@ -69,7 +69,7 @@ module SafeDb
       # --
       chapter_id = ENVELOPE_KEY_PREFIX + master_db[ ENV_PATH ]
       chapter_exists = KeyApi.db_envelope_exists?( master_db[ chapter_id ] )
-      chapter_data = KeyStore.from_json( KeyApi.content_unlock( master_db[ chapter_id ] ) ) if chapter_exists
+      chapter_data = KeyStore.from_json( Lock.content_unlock( master_db[ chapter_id ] ) ) if chapter_exists
       chapter_data = KeyStore.new() unless chapter_exists
 
       content_hdr = create_header()
@@ -94,7 +94,7 @@ module SafeDb
       # -- the file attributes mini dictionary to facilitate
       # -- decrypting and writing out the file again.
       # --
-      KeyApi.content_lock( chapter_data[ verse_id ], ::File.read( @file_url ), content_hdr )
+      Lock.content_lock( chapter_data[ verse_id ], ::File.read( @file_url ), content_hdr )
 
       # -- Lock No.2
       # --
@@ -107,7 +107,7 @@ module SafeDb
       # -- database (content id, content iv and content key)
       # -- to facilitate decrypting the chapter's data.
       # --
-      KeyApi.content_lock( master_db[ chapter_id ], chapter_data.to_json, content_hdr )
+      Lock.content_lock( master_db[ chapter_id ], chapter_data.to_json, content_hdr )
 
       # -- Lock No.3
       # --
@@ -115,7 +115,7 @@ module SafeDb
       # -- (content id, content iv and content key) that will
       # -- (in the future) decrypt this chapter's data.
       # --
-      KeyApi.write_master_db( content_hdr, master_db )
+      BookIndex.write( content_hdr, master_db )
 
 
       # -- Communicate that the indicated file has just been

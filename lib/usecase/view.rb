@@ -44,7 +44,7 @@ module SafeDb
       envelope_dictionaries = KeyApi.to_matching_dictionary( master_db, ENVELOPE_KEY_PREFIX )
       envelope_dictionaries.each_pair do | envelope_name, crumb_dictionary |
         is_opened_chapter = envelope_name.eql?( open_envelope )
-        envelope_content = KeyStore.from_json( KeyApi.content_unlock( crumb_dictionary ) )
+        envelope_content = KeyStore.from_json( Lock.content_unlock( crumb_dictionary ) )
         envelope_content.each_key do | envelope_key |
           is_opened_verse = envelope_key.eql?( open_key_path )
           is_open = is_opened_chapter && is_opened_verse

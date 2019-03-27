@@ -104,7 +104,7 @@ module SafeDb
       crypt_key = content_crypt_key( session_keys )
 
       binary_ciphertext = crypt_key.do_encrypt_text( random_iv, app_database.to_json )
-      binary_to_write( new_content_crypt_path, content_header, binary_ciphertext )
+      Lock.binary_to_write( new_content_crypt_path, content_header, binary_ciphertext )
 
       # The new book index file has been successfully written so we can now replace
       # the content id and random iv, then delete the old content crypt.
