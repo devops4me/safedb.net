@@ -77,7 +77,7 @@ module SafeDb
       new_crypt_key = KeyCycle.recycle( the_book_id, secret, book_keys, content_header, plain_content )
 
       session_id = Identifier.derive_session_id( ShellSession.to_token() )
-      Lock.clone_book_into_session( the_book_id, session_id, book_keys, new_crypt_key )
+      clone_book_into_session( the_book_id, session_id, book_keys, new_crypt_key )
 
     end
 
@@ -200,8 +200,8 @@ module SafeDb
     #
     def self.clone_book_into_session( book_id, session_id, master_book_keys, crypt_key )
 
-      FileUtils.mkdir_p( session_crypts_folder( book_id, session_id ) )
-      FileUtils.copy_entry( master_crypts_folder( book_id ), session_crypts_folder( book_id, session_id ) )
+      FileUtils.mkdir_p( FileTree.session_crypts_folder( book_id, session_id ) )
+      FileUtils.copy_entry( FileTree.master_crypts_folder( book_id ), FileTree.session_crypts_folder( book_id, session_id ) )
       session_keys = create_session_indices( book_id, session_id )
 
       session_keys.set( Indices::CONTENT_IDENTIFIER, master_book_keys.get( Indices::CONTENT_IDENTIFIER ) )
@@ -223,8 +223,8 @@ module SafeDb
     # @return [KeyMap] return the keys pertaining to this session and book
     def self.create_session_indices( book_id, session_id )
 
-      session_exists = File.exists? session_indices_filepath( session_id )
-      session_keys = KeyMap.new( session_indices_filepath( session_id ) )
+      session_exists = File.exists? FileTree.session_indices_filepath( session_id )
+      session_keys = KeyMap.new( FileTree.session_indices_filepath( session_id ) )
       session_keys.use( Indices::SESSION_DATA )
       session_keys.set( Indices::SESSION_FIRST_LOG_IN_POINT, KeyNow.readable() ) unless session_exists
       session_keys.set( Indices::SESSION_LAST_ACCESSED_TIME, KeyNow.readable() )

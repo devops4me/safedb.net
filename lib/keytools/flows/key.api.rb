@@ -85,32 +85,6 @@ module SafeDb
     end
 
 
-    # If the <b>content dictionary is not nil</b> and contains a key named
-    # {Indices::CONTENT_IDENTIFIER} then we return true as we expect the content
-    # ciphertext and its corresponding file to exist.
-    #
-    # This method throws an exception if they key exists but there is no
-    # file at the expected location.
-    #
-    # @param crumbs_map [Hash]
-    #
-    #    we test for the existence of the constant {Indices::CONTENT_IDENTIFIER}
-    #    and if it exists we assert that the content filepath should also
-    #    be present.
-    #
-    def self.db_envelope_exists?( crumbs_map )
-
-      return false if crumbs_map.nil?
-      return false unless crumbs_map.has_key?( Indices::CONTENT_IDENTIFIER )
-
-      external_id = crumbs_map[ Indices::CONTENT_IDENTIFIER ]
-      the_filepath = content_filepath( external_id )
-      error_string = "External ID #{external_id} found but no file at #{the_filepath}"
-      raise RuntimeException, error_string unless File.file?( the_filepath )
-
-      return true
-
-    end
 
 
     private

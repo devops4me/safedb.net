@@ -63,6 +63,38 @@ module SafeDb
     APP_DIR_NAME = "safedb.net"
 
 
+    # If the <b>content dictionary is not nil</b> and contains a key named
+    # {Indices::CONTENT_IDENTIFIER} then we return true as we expect the content
+    # ciphertext and its corresponding file to exist.
+    #
+    # This method throws an exception if they key exists but there is no
+    # file at the expected location.
+    #
+    # @param crumbs_map [Hash]
+    #
+    #    we test for the existence of the constant {Indices::CONTENT_IDENTIFIER}
+    #    and if it exists we assert that the content filepath should also
+    #    be present.
+    #
+    def db_envelope_exists?( crumbs_map )
+
+      return false if crumbs_map.nil?
+      return false unless crumbs_map[ Indices::CONTENT_IDENTIFIER ]
+
+      session_id = Identifier.derive_session_id( ShellSession.to_token() )
+      session_indices_file = FileTree.session_indices_filepath( session_id )
+      book_id = KeyMap.new( session_indices_file ).read( Indices::SESSION_DATA, Indices::CURRENT_SESSION_BOOK_ID )
+
+      external_id = crumbs_map[ Indices::CONTENT_IDENTIFIER ]
+      the_filepath = FileTree.session_crypts_filepath( book_id, session_id, external_id )
+
+      error_string = "External ID #{external_id} found but no file at #{the_filepath}"
+      raise RuntimeException, error_string unless File.file?( the_filepath )
+
+      return true
+
+    end
+
     # Get the master database. This behaviour can only complete
     # correctly if a successful login precedes this call either
     # in this or an ancestral shell environment.

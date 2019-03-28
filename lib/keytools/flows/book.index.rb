@@ -44,7 +44,7 @@ module SafeDb
       random_iv = KeyIV.in_binary( session_keys.get( Indices::CONTENT_RANDOM_IV ) )
       crypt_path = FileTree.session_crypts_filepath( book_id, session_id, content_id )
       crypt_key = content_crypt_key( session_keys )
-      return KeyStore.from_json( Lock.unlock_it( crypt_path, crypt_key, random_iv ) )
+      return KeyStore.from_json( Content.unlock_it( crypt_path, crypt_key, random_iv ) )
 
     end
 
@@ -99,7 +99,7 @@ module SafeDb
       session_keys.set( Indices::CONTENT_RANDOM_IV, iv_base64 )
       random_iv = KeyIV.in_binary( iv_base64 )
 
-      Lock.lock_it( new_crypt_path, crypt_key, random_iv, app_database.to_json, content_header )
+      Content.lock_it( new_crypt_path, crypt_key, random_iv, app_database.to_json, content_header )
 
       unless old_content_id.nil?
         old_crypt_path = FileTree.session_crypts_filepath( book_id, session_id, old_content_id )

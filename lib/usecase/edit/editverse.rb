@@ -28,7 +28,7 @@ module SafeDb
 
       @chapter_id = ENVELOPE_KEY_PREFIX + master_db[ ENV_PATH ]
       @has_chapter = KeyApi.db_envelope_exists?( master_db[ @chapter_id ] )
-      @chapter_data = KeyStore.from_json( Lock.content_unlock( master_db[ @chapter_id ] ) ) if @has_chapter
+      @chapter_data = Content.unlock_chapter( master_db[ @chapter_id ] ) if @has_chapter
       @chapter_data = KeyStore.new() unless @has_chapter
 
       @verse_id = master_db[ KEY_PATH ]
@@ -49,7 +49,7 @@ module SafeDb
 
 
       content_header = create_header()
-      Lock.content_lock( master_db[ @chapter_id ], @chapter_data.to_json, content_header )
+      Content.unlock_chapter( master_db[ @chapter_id ], @chapter_data.to_json, content_header )
       BookIndex.write( content_header, master_db )
       Show.new.flow_of_events
 

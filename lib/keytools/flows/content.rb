@@ -56,19 +56,19 @@ module SafeDb
       session_indices_file = FileTree.session_indices_filepath( session_id )
       book_id = KeyMap.new( session_indices_file ).read( Indices::SESSION_DATA, Indices::CURRENT_SESSION_BOOK_ID )
 
-      old_content_id = key_store.get(Indices::CONTENT_IDENTIFIER) if key_store.has_key?(Indices::CONTENT_IDENTIFIER)
+      old_content_id = key_store[ Indices::CONTENT_IDENTIFIER ] if key_store.has_key?(Indices::CONTENT_IDENTIFIER)
 
       new_content_id = Identifier.get_random_identifier( Indices::CONTENT_ID_LENGTH )
-      key_store.set( Indices::CONTENT_IDENTIFIER, new_content_id )
+      key_store.store( Indices::CONTENT_IDENTIFIER, new_content_id )
 
       new_chapter_crypt_path = FileTree.session_crypts_filepath( book_id, session_id, new_content_id )
 
       iv_base64 = KeyIV.new().for_storage()
-      key_store.set( Indices::CONTENT_RANDOM_IV, iv_base64 )
+      key_store.store( Indices::CONTENT_RANDOM_IV, iv_base64 )
       random_iv = KeyIV.in_binary( iv_base64 )
 
       crypt_key = Key.from_random()
-      key_store.set( Indices::CHAPTER_KEY_CRYPT, crypt_key.to_char64() )
+      key_store.store( Indices::CHAPTER_KEY_CRYPT, crypt_key.to_char64() )
 
       lock_it( new_chapter_crypt_path, crypt_key, random_iv, content_body, content_header )
 
@@ -116,7 +116,7 @@ module SafeDb
     def self.unlock_master( unlock_key, key_store )
 
       book_id = key_store.section()
-      crypt_path = master_crypts_filepath( book_id, key_store.get( Indices::CONTENT_IDENTIFIER ) )
+      crypt_path = FileTree.master_crypts_filepath( book_id, key_store.get( Indices::CONTENT_IDENTIFIER ) )
       random_iv = KeyIV.in_binary( key_store.get( Indices::CONTENT_RANDOM_IV ) )
       return unlock_it( crypt_path, unlock_key, random_iv )
 
@@ -137,12 +137,12 @@ module SafeDb
       session_indices_file = FileTree.session_indices_filepath( session_id )
       book_id = KeyMap.new( session_indices_file ).read( Indices::SESSION_DATA, Indices::CURRENT_SESSION_BOOK_ID )
 
-      content_id = key_store.get( Indices::CONTENT_IDENTIFIER )
+      content_id = key_store[ Indices::CONTENT_IDENTIFIER ]
       crypt_path = FileTree.session_crypts_filepath( book_id, session_id, content_id )
-      crypt_key = Key.from_char64( key_store.get( Indices::CHAPTER_KEY_CRYPT ) )
-      random_iv = KeyIV.in_binary( key_store.get( Indices::CONTENT_RANDOM_IV ) )
+      crypt_key = Key.from_char64( key_store[ Indices::CHAPTER_KEY_CRYPT ] )
+      random_iv = KeyIV.in_binary( key_store[ Indices::CONTENT_RANDOM_IV ] )
 
-      return KeyStore.from_json( Lock.unlock_it( crypt_path, crypt_key, random_iv ) )
+      return KeyStore.from_json( unlock_it( crypt_path, crypt_key, random_iv ) )
 
     end
 
