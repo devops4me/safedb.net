@@ -87,7 +87,7 @@ module SafeDb
     def self.recycle( book_id, human_secret, key_map, content_header, content_body )
 
       high_entropy_key = Key.from_random
-      Lock.content_lock( book_id, high_entropy_key, key_map, content_body, content_header )
+      Content.lock_master( book_id, high_entropy_key, key_map, content_body, content_header )
       derived_key = KdfApi.generate_from_password( human_secret, key_map )
       key_map.set( Indices::INTER_SESSION_KEY_CRYPT, derived_key.do_encrypt_key( high_entropy_key ) )
       return high_entropy_key

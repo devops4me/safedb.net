@@ -73,7 +73,7 @@ module SafeDb
 
       old_human_key = KdfApi.regenerate_from_salts( secret, book_keys )
       old_crypt_key = old_human_key.do_decrypt_key( book_keys.get( Indices::INTER_SESSION_KEY_CRYPT ) )
-      plain_content = Lock.content_unlock( old_crypt_key, book_keys )
+      plain_content = Content.unlock_master( old_crypt_key, book_keys )
       new_crypt_key = KeyCycle.recycle( the_book_id, secret, book_keys, content_header, plain_content )
 
       session_id = Identifier.derive_session_id( ShellSession.to_token() )

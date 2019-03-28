@@ -13,7 +13,6 @@ module SafeDb
 
     def self.master_crypts_filepath( book_id, content_id )
       return File.join( master_crypts_folder( book_id ), "safedb.chapter.#{content_id}.txt" )
-
     end
 
     def self.master_crypts_folder( book_id )

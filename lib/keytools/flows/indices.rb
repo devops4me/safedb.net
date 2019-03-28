@@ -50,6 +50,9 @@ module SafeDb
     # The intra session crypt is locked with the session key for retrieval at the next command
     INTRA_SESSION_KEY_CRYPT = "intra.session.key.crypt"
 
+    # The chapter content is locked with the key that is marshalled from the value here
+    CHAPTER_KEY_CRYPT = "chapter.key.crypt"
+
     # This is the global section header of the session book index file
     SESSION_DATA = "session.data"
 

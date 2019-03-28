@@ -41,9 +41,10 @@ module SafeDb
       book_id = session_keys.read( Indices::SESSION_DATA, Indices::CURRENT_SESSION_BOOK_ID )
       session_keys.use( book_id )
       content_id = session_keys.get( Indices::CONTENT_IDENTIFIER )
+      random_iv = KeyIV.in_binary( session_keys.get( Indices::CONTENT_RANDOM_IV ) )
       crypt_path = FileTree.session_crypts_filepath( book_id, session_id, content_id )
       crypt_key = content_crypt_key( session_keys )
-      return KeyStore.from_json( Lock.unlock_it( crypt_path, crypt_key, session_keys ) )
+      return KeyStore.from_json( Lock.unlock_it( crypt_path, crypt_key, random_iv ) )
 
     end
 
@@ -88,23 +89,23 @@ module SafeDb
 
       session_keys.use( book_id )
 
-      old_content_id = session_keys.get( Indices::CONTENT_IDENTIFIER )
-      old_crypt_path = FileTree.session_crypts_filepath( book_id, session_id, old_content_id )
+      old_content_id = session_keys.get( Indices::CONTENT_IDENTIFIER ) if session_keys.contains?( Indices::CONTENT_IDENTIFIER )
 
       new_content_id = Identifier.get_random_identifier( Indices::CONTENT_ID_LENGTH )
       session_keys.set( Indices::CONTENT_IDENTIFIER, new_content_id )
       new_crypt_path = FileTree.session_crypts_filepath( book_id, session_id, new_content_id )
       crypt_key = content_crypt_key( session_keys )
-
-      Lock.lock_it( new_crypt_path, crypt_key, session_keys, app_database.to_json, content_header )
-
-=begin
       iv_base64 = KeyIV.new().for_storage()
       session_keys.set( Indices::CONTENT_RANDOM_IV, iv_base64 )
       random_iv = KeyIV.in_binary( iv_base64 )
-      binary_ciphertext = crypt_key.do_encrypt_text( random_iv, app_database.to_json )
-      Lock.binary_to_write( new_crypt_path, content_header, binary_ciphertext )
-=end
+
+      Lock.lock_it( new_crypt_path, crypt_key, random_iv, app_database.to_json, content_header )
+
+      unless old_content_id.nil?
+        old_crypt_path = FileTree.session_crypts_filepath( book_id, session_id, old_content_id )
+        File.delete( old_crypt_path )
+      end
+
     end
 
 
