@@ -25,90 +25,15 @@ module SafeDb
   # - a new group_name/key_name (like monica/surname) entry is added if required
   # - a secret value is added against the key or updated if it already exists
   # - a new session id and encryption key is generated and used to re-encrypt
-  class Put < UseCase
+  class Put < EditVerse
 
-    attr_writer :secret_id, :secret_value
+    attr_writer :credential_id, :credential_value
 
-    # Execute the act of putting a string key and string value pair into a
-    # map at the chapter and verse location, overwriting if need be.
-    def execute
+    # Execute the act of validating and then putting the credential key and
+    # its value into the chapter and verse location, overwriting if need be.
+    def edit_verse()
 
-
-      return unless ops_key_exists?
-      master_db = BookIndex.read()
-      return if unopened_envelope?( master_db )
-
-      @chapter_id = ENVELOPE_KEY_PREFIX + master_db[ ENV_PATH ]
-      @has_chapter = db_envelope_exists?( master_db[ @chapter_id ] )
-      @chapter_data = Content.unlock_chapter( master_db[ @chapter_id ] ) if @has_chapter
-      @chapter_data = KeyStore.new() unless @has_chapter
-
-      @verse_id = master_db[ KEY_PATH ]
-      @has_verse = @has_chapter && @chapter_data.has_key?( @verse_id )
-      @verse_data = @chapter_data[ @verse_id ] if @has_verse
-      master_db[ @chapter_id ] = {} unless @has_chapter
-
-############## ===========================================================
-############## Do we need this? Probably Not.
-############## Do we need this? Probably Not.
-##############      master_db[ @chapter_id ] = {} unless @has_chapter
-############## ===========================================================
-
-      @chapter_data.create_entry( @verse_id, @secret_id, @secret_value )
-
-################################      content_box.create_entry( master_db[ KEY_PATH ], @secret_id, @secret_value )
-
-#################      edit_verse()
-
-
-      content_header = create_header()
-      Content.lock_chapter( master_db[ @chapter_id ], @chapter_data.to_json, content_header )
-      BookIndex.write( content_header, master_db )
-      Show.new.flow_of_events
-
-
-
-=begin
-      return unless ops_key_exists?
-      master_db = BookIndex.read()
-
-      return if unopened_envelope?( master_db )
-
-      envelope_id = ENVELOPE_KEY_PREFIX + master_db[ ENV_PATH ]
-      has_content = KeyApi.db_envelope_exists?( master_db[ envelope_id ] )
-
-      # To get hold of the content we must either
-      #
-      #   a) unlock it using the breadcrumbs or
-      #   b) start afresh with a new content db
-      content_box = KeyStore.from_json( Lock.content_unlock( master_db[ envelope_id ] ) ) if has_content
-      content_box = KeyStore.new() unless has_content
-      content_hdr = create_header()
-
-      # If no content envelope exists we need to place
-      # an empty one inside the appdb content database.
-      master_db[ envelope_id ] = {} unless has_content
-
-      # This is the PUT use case so we append a
-      #
-      #   a) key for the new dictionary entry
-      #   b) value for the new dictionary entry
-      #
-      # into the current content envelope and write
-      # the envelope to the content filepath.
-      crumbs_dict = master_db[ envelope_id ]
-      content_box.create_entry( master_db[ KEY_PATH ], @secret_id, @secret_value )
-      Lock.content_lock( crumbs_dict, content_box.to_json, content_hdr )
-
-      # Three envelope crumbs namely the external ID, the
-      # random iv and the crypt key are written afresh into
-      # the master database.
-      BookIndex.write( content_hdr, master_db )
-
-      # Show the mini dictionary at the opened chapter and verse location
-      Show.new.flow_of_events
-=end
-
+      @chapter_data.create_entry( @verse_id, @credential_id, @credential_value )
 
     end
 

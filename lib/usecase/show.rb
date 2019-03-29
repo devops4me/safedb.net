@@ -11,31 +11,6 @@ module SafeDb
 
     def execute
 
-=begin
-      return unless ops_key_exists?
-      master_db = BookIndex.read()
-
-      return if unopened_envelope?( master_db )
-
-      chapter_id = ENVELOPE_KEY_PREFIX + master_db[ ENV_PATH ]
-      has_chapter = KeyApi.db_envelope_exists?( master_db[ chapter_id ] )
-      chapter_data = get_chapter_data( master_db[ chapter_id ] ) if has_chapter
-      has_verse = has_chapter && chapter_data.has_key?( master_db[ KEY_PATH ] )
-
-      return unless has_verse
-
-      line_dictionary = chapter_data[ master_db[ KEY_PATH ] ]
-
-      puts ""
-      puts "### ##################################\n"
-      puts "### chapter =>> #{master_db[ ENV_PATH ]}\n"
-      puts "### & verse =>> #{master_db[ KEY_PATH ]}\n"
-      puts "### # lines =>> #{line_dictionary.length}\n"
-      puts "### ##################################\n"
-      puts "--- ----------------------------------\n"
-      puts ""
-=end
-
       return unless ops_key_exists?
       master_db = BookIndex.read()
       return if unopened_envelope?( master_db )
@@ -76,12 +51,12 @@ module SafeDb
       @verse_data.each do | key_str, value_object |
 
         is_file = key_str.start_with? FILE_KEY_PREFIX
-        value_object.store( FILE_CONTENT_KEY, SECRET_MASK_STRING ) if is_file
+        value_object.store( FILE_CONTENT_KEY, Indices::SECRET_MASK_STRING ) if is_file
         showable_content.store( key_str[ FILE_KEY_PREFIX.length .. -1 ], value_object ) if is_file
         next if is_file
 
         is_secret = key_str.start_with? "@"
-        showable_val = SECRET_MASK_STRING if is_secret
+        showable_val = Indices::SECRET_MASK_STRING if is_secret
         showable_val = value_object unless is_secret
         showable_content.store( key_str, showable_val )
 
@@ -96,7 +71,7 @@ module SafeDb
 
     private
 
-    SECRET_MASK_STRING = "***********************"
+#####    SECRET_MASK_STRING = "***********************"
 
   end
 

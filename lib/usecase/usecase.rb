@@ -95,6 +95,14 @@ module SafeDb
 
     end
 
+
+    # This parental behaviour sets up common ubiquitous chapter and verse data structures
+    # and indices.
+    def setup_verse()
+
+    end
+
+
     # Get the master database. This behaviour can only complete
     # correctly if a successful login precedes this call either
     # in this or an ancestral shell environment.

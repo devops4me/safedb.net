@@ -2,8 +2,8 @@
 	
 module SafeDb
 
-  # Any {UseCase} class wishing to edit a safe verse can make use of the functionality
-  # in this parent by exposing an edit_verse() method.
+  # Any {UseCase} class wishing to query a safe verse can make use of the functionality
+  # in this parent by exposing an query_verse() method.
   #
   # Classes extending this class will have access to
   #
@@ -14,15 +14,12 @@ module SafeDb
   # - a <tt>@verse_id</tt> **string** index
   # - a <tt>@has_verse</tt> **boolean** indicator
   #
-  # After the edit method completes the amended chapter data structure will be encrypted
-  # and streamed to a ciphertext file.
-  class EditVerse < UseCase
+  # The query_verse() method is not succeeded by any behaviour in the parent. Chilc classes
+  # must do their own output management.
+  class QueryVerse < UseCase
 
     # This parental behaviour sets up common ubiquitous chapter and verse data structures
-    # and indices. It then calls the child's query_verse() behaviour and once that is complete
-    # it encrypts and persists an (updated) BookIndex and the amended chapter.
-    #
-    # The streaming process also deletes the current (old) BookIndex and chapter crypts.
+    # and indices.
     def execute
 
       # Before calling the edit_verse() method we perform some
@@ -43,13 +40,7 @@ module SafeDb
 
       # This is the expected edit() method that will do and deliver
       # the intented core contracted value proposition.
-      edit_verse()
-
-
-      content_header = create_header()
-      Content.unlock_chapter( master_db[ @chapter_id ], @chapter_data.to_json, content_header )
-      BookIndex.write( content_header, master_db )
-      Show.new.flow_of_events
+      query_verse()
 
     end
 

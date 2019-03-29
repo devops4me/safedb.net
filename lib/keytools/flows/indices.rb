@@ -80,6 +80,9 @@ module SafeDb
     # The expected length of the tty token environment variable
     TOKEN_VARIABLE_SIZE = 152
 
+    # Character (randomly) repeated to mask credentials
+    # Asterices, hyphens, plus and equal signs are common alternatives.
+    SECRET_MASK_STRING = "*" * rand( 7 .. 17 )
 
   end
 

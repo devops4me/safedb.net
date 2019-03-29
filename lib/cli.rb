@@ -217,13 +217,13 @@ class CLI < Thor
   # Put a secret with an id like login/username and a value like joebloggs into the
   # context (eg work/laptop) that was opened with the open command.
   #
-  # @param secret_id [String] the id of the secret to put into the opened context
-  # @param secret_value [String] the value of the secret to put into the opened context
-  def put secret_id, secret_value
+  # @param credential_id [String] the id of the secret to put into the opened context
+  # @param credential_value [String] the value of the secret to put into the opened context
+  def put credential_id, credential_value
     log.info(x) { "[usecase] ~> put key/value pair into dictionary at open chapter and verse." }
     put_uc = SafeDb::Put.new
-    put_uc.secret_id = secret_id
-    put_uc.secret_value = secret_value
+    put_uc.credential_id = credential_id
+    put_uc.credential_value = credential_value
     put_uc.flow_of_events
   end
 
