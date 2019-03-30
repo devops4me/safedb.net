@@ -27,21 +27,12 @@ module SafeDb
         return
       end
 
-############## Call [[ KeyApi.is_logged_in? ]] - then print msg and skip password collection below
-############## Call [[ KeyApi.is_logged_in? ]] - then print msg and skip password collection below
-############## Call [[ KeyApi.is_logged_in? ]] - then print msg and skip password collection below
-############## Call [[ KeyApi.is_logged_in? ]] - then print msg and skip password collection below
-############## Call [[ KeyApi.is_logged_in? ]] - then print msg and skip password collection below
-############## Call [[ KeyApi.is_logged_in? ]] - then print msg and skip password collection below
+# @todo usecase => if logged in skip the password collection and do_login() function
 
       book_password = KeyPass.password_from_shell( false ) if @password.nil?
       book_password = @password unless @password.nil?
 
-############## Use [[ KeyApi.valid_password? ]] and give error if not valid
-############## Use [[ KeyApi.valid_password? ]] and give error if not valid
-############## Use [[ KeyApi.valid_password? ]] and give error if not valid
-############## Use [[ KeyApi.valid_password? ]] and give error if not valid
-############## Use [[ KeyApi.valid_password? ]] and give error if not valid
+# @todo usecase => if password is correct - if not print out an error.
 
       book_keys = KeyMap.new( MASTER_INDEX_LOCAL_FILE )
       book_keys.use( @book_id )
