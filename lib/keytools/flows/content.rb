@@ -138,10 +138,10 @@ module SafeDb
       book_id = KeyMap.new( session_indices_file ).read( Indices::SESSION_DATA, Indices::CURRENT_SESSION_BOOK_ID )
 
       content_id = key_store[ Indices::CONTENT_IDENTIFIER ]
-      crypt_path = FileTree.session_crypts_filepath( book_id, session_id, content_id )
       crypt_key = Key.from_char64( key_store[ Indices::CHAPTER_KEY_CRYPT ] )
       random_iv = KeyIV.in_binary( key_store[ Indices::CONTENT_RANDOM_IV ] )
 
+      crypt_path = FileTree.session_crypts_filepath( book_id, session_id, content_id )
       return KeyStore.from_json( unlock_it( crypt_path, crypt_key, random_iv ) )
 
     end

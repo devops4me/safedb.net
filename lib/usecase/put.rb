@@ -12,19 +12,10 @@ module SafeDb
   #
   # == Put Pre-Conditions
   #
-  # When the put use case is called - the below conditions ring true.
+  # At the point of calling the put use case
   #
-  # - the <b>folder path</b> ending in ../../my must exist
-  # - a session id, filename and encryption key ( in workstation config )
-  #
-  # == Observable Value
-  #
-  # The observable value delivered by +put+ boils down to
-  #
-  # - a new <b>friends.xyz123abc.os.txt</b> file if this is the first put.
-  # - a new group_name/key_name (like monica/surname) entry is added if required
-  # - a secret value is added against the key or updated if it already exists
-  # - a new session id and encryption key is generated and used to re-encrypt
+  # - the safe must be <b>logged in</b> and a chapter and verse opened
+  # - the key / value pair being put must pass minimum standards
   class Put < EditVerse
 
     attr_writer :credential_id, :credential_value
