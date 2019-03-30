@@ -276,7 +276,7 @@ class CLI < Thor
   # @param file_key [String] the key that the file was ingested against
   def eject file_key
     log.info(x) { "[usecase] ~> eject file at chapter/verse against specified key." }
-    eject_uc = SafeDb::Eject.new
+    eject_uc = SafeDb::Eject.new()
     eject_uc.file_key = file_key
     eject_uc.to_dir = options[:to_dir] if options[:to_dir]
     eject_uc.flow_of_events
@@ -284,18 +284,18 @@ class CLI < Thor
 
 
 
-  # Description of the delete command.
-  desc "delete <entity_id>", "delete a line (key/value pair), or a verse, chapter and even a book"
+  # Description of the remove command.
+  desc "remove <line_id>", "remove a line (key/value pair), or a verse, chapter and even a book"
 
-  # The <b>delete use case</b> can delete a single line (key/value pair), or
+  # The <b>remove use case</b> can remove a single line (key/value pair), or
   # a verse, chapter and even a book
   #
-  # @param entity_id [String] the ID of the entity to delete (line, verse, chapter or book)
-  def delete entity_id
-    log.info(x) { "[usecase] ~> delete a safe entity with a key id [#{entity_id}]." }
-    delete_uc = SafeDb::DeleteMe.new
-    delete_uc.entity_id = entity_id
-    delete_uc.flow_of_events
+  # @param line_id [String] the ID of the entity to remove (line, verse, chapter or book)
+  def remove line_id
+    log.info(x) { "[usecase] ~> remove a safe entity with a key id [#{line_id}]." }
+    remove_uc = SafeDb::Remove.new()
+    remove_uc.line_id = line_id
+    remove_uc.flow_of_events
   end
 
 
