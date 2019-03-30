@@ -96,9 +96,36 @@ module SafeDb
     end
 
 
-    # This parental behaviour sets up common ubiquitous chapter and verse data structures
-    # and indices.
-    def setup_verse()
+    # This parental behaviour decrypts and reads the ubiquitous chapter and verse
+    # data structures and indices.
+    def read_verse()
+
+      return unless ops_key_exists?
+      master_db = BookIndex.read()
+      return if unopened_envelope?( master_db )
+
+      @chapter_id = ENVELOPE_KEY_PREFIX + master_db[ ENV_PATH ]
+      @has_chapter = db_envelope_exists?( master_db[ @chapter_id ] )
+      @chapter_data = Content.unlock_chapter( master_db[ @chapter_id ] ) if @has_chapter
+      @chapter_data = KeyStore.new() unless @has_chapter
+
+      @verse_id = master_db[ KEY_PATH ]
+      @has_verse = @has_chapter && @chapter_data.has_key?( @verse_id )
+      @verse_data = @chapter_data[ @verse_id ] if @has_verse
+      master_db[ @chapter_id ] = {} unless @has_chapter
+
+    end
+
+
+    # This parental behaviour encrypts and writes out the in-play chapter
+    # and verse data. This behaviour also deletes the crypt file belonging
+    # to the now superceeded chapter state.
+    def update_verse()
+
+      content_header = create_header()
+      Content.unlock_chapter( master_db[ @chapter_id ], @chapter_data.to_json, content_header )
+      BookIndex.write( content_header, master_db )
+      Show.new.flow_of_events
 
     end
 

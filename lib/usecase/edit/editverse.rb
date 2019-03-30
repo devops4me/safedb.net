@@ -27,6 +27,9 @@ module SafeDb
 
       # Before calling the edit_verse() method we perform some
       # preparatory activities that check, validate and setup.
+      read_verse()
+
+=begin
       return unless ops_key_exists?
       master_db = BookIndex.read()
       return if unopened_envelope?( master_db )
@@ -40,16 +43,17 @@ module SafeDb
       @has_verse = @has_chapter && @chapter_data.has_key?( @verse_id )
       @verse_data = @chapter_data[ @verse_id ] if @has_verse
       master_db[ @chapter_id ] = {} unless @has_chapter
+=end
 
       # This is the expected edit() method that will do and deliver
       # the intented core contracted value proposition.
       edit_verse()
 
+      # Now encrypt the changed verse and then write it out to a
+      # chapter crypt file whilst garbage collecting the now spurious
+      # and superceded script.
+      update_verse()
 
-      content_header = create_header()
-      Content.unlock_chapter( master_db[ @chapter_id ], @chapter_data.to_json, content_header )
-      BookIndex.write( content_header, master_db )
-      Show.new.flow_of_events
 
     end
 
