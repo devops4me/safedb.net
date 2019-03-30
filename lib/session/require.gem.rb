@@ -88,7 +88,7 @@ module OpenSession
       require_relative "../usecase/usecase"
       require_relative "../usecase/admin/access"
       require_relative "../usecase/edit/editverse"
-      require_relative "../usecase/edit/queryverse"
+      require_relative "../usecase/query/queryverse"
 
       gem_basepath = File.expand_path "..", gem_filepath
 
