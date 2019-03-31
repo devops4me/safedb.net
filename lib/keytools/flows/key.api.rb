@@ -85,15 +85,6 @@ module SafeDb
     end
 
 
-
-
-    private
-
-
-    APP_KEY_DB_BREAD_CRUMBS = "openkey.bread.crumbs"
-    LOGGED_IN_APP_SESSION_ID = "logged.in.app.session.id"
-    SESSION_LOGOUT_DATETIME = "session.logout.datetime"
-
   end
 
 

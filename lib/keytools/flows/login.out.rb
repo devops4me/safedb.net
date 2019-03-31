@@ -100,40 +100,10 @@ module SafeDb
     #    are logging out of from the shell on this machine.
     def self.do_logout( domain_name )
 
-      # --> @todo - user should ONLY type in logout | without domain name
-      # --> @todo - user should ONLY type in logout | without domain name
-      # --> @todo - user should ONLY type in logout | without domain name
-      # --> @todo - user should ONLY type in logout | without domain name
-      # --> @todo - user should ONLY type in logout | without domain name
-
-
-      # --> ######################
-      # --> Login / Logout Time
-      # --> ######################
-      # -->
-      # --> During login you create a section heading same as the session ID
-      # -->    You then put the intra-key ciphertext there (from locking power key)
-      # -->    To check if a login has occurred we ensure this session's ID exists as a header in crumbs DB
-      # -->    On logout we remove the session ID and all the subsection crumbs (intra key ciphertext)
-      # -->    Logout makes it impossible to access the power key (now only by seret delivery and the inter key ciphertext)
-      # -->
-
-
-      # --
-      # -- Get the breadcrumbs trail.
-      # --
-      crumbs_db = get_crumbs_db_from_domain_name( domain_name )
-
-
-      # --
-      # -- Set the (ciphertext) breadcrumbs for re-acquiring the
-      # -- content encryption (power) key during (inside) this
-      # -- shell session.
-      # --
-      unique_id = Identifier.derive_universal_id( domain_name )
-      crumbs_db.use( unique_id )
-      crumbs_db.set( Indices::INTRA_SESSION_KEY_CRYPT, intra_txt )
-      crumbs_db.set( SESSION_LOGOUT_DATETIME, KeyNow.fetch() )
+# @todo usecase => logout logic that deletes session and allows nested book to bubble up
+# @todo usecase => if logging out when book changed (set one of two flags) - ERROR if flags not provided
+# @todo usecase => safe logout --commit    OR
+# @todo usecase => safe logout --ignore    OR
 
     end
 
@@ -156,20 +126,16 @@ module SafeDb
     #    application instance on this machine has logged in. Subverting this
     #    return value only serves to evoke disgraceful degradation.
     def self.is_logged_in?( domain_name )
-############## Write this code.
-############## Write this code.
-############## Write this code.
-############## Write this code.
-############## Write this code.
-############## Write this code.
-############## Write this code.
-      return false unless File.exists?( frontend_keystore_file() )
+
+# @todo usecase => write code saying you are already logged into book (state time).
+
+      return false unless File.exists?( XXXXXXXXXXX )
 
       crumbs_db = KeyMap.new( frontend_keystore_file() )
-      crumbs_db.use( APP_KEY_DB_BREAD_CRUMBS )
-      return false unless crumbs_db.contains?( LOGGED_IN_APP_SESSION_ID )
+      crumbs_db.use( XXXXXXXXXXXXX )
+      return false unless crumbs_db.contains?( XXXXXXXXXXXXXXX )
 
-      recorded_id = crumbs_db.get( LOGGED_IN_APP_SESSION_ID )
+      recorded_id = crumbs_db.get( XXXXXXXXXXXXXXXXX )
       return recorded_id.eql?( @uni_id )
 
     end
