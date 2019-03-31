@@ -9,7 +9,19 @@ module SafeDb
 
 
     # The short url name of the safe personal database.
-    SAFEDB_URL_NAME = "safedb.net"
+    SAFE_URL_NAME = "safedb.net"
+
+    # The fully qualified domain name of the safedb home website
+    SAFE_GEM_WEBSITE = "https://www.#{SAFE_URL_NAME}"
+
+    # The safe database github clonable url for the ruby software
+    SAFE_GITHUB_URL = "https://github.com/devops4me/#{SAFE_URL_NAME}"
+
+    # The opened chapter id/name in the current book
+    OPENED_CHAPTER_NAME = "opened.chapter.name"
+
+    # The opened verse id/name in the current book
+    OPENED_VERSE_NAME = "opened.verse.name"
 
     # The name ofthe master crypts folder.
     MASTER_CRYPTS_FOLDER_NAME = "safedb-master-crypts"

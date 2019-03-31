@@ -4,14 +4,47 @@ module SafeDb
 
   # The book index is pretty much like the index at the front of a book!
   #
-  # With a real book the index tells you the page number of a chapter. Here the index
-  # tells us <b>contend id</b> of a chapter crypt file as well as the encryption key
-  # and the random initialization vector required to decrypt the chapter's ciphertext.
+  # With a real book the index tells you the page number of a chapter. Our BookIndex
+  # knows about and behaves with concepts like
   #
-  # Most use cases will use this index to create, read, update and delete chapter
-  # (and verse) data.
+  # - the list of chapters in the book including the chapter names
+  # - attributes like book name, creation and last accessed dates
+  # - book scoped configuration directives and their values
+  # - chapter keys including file content ids and encryption keys
+  #
+  # Parental use cases in the background will use this index to encrypt, decrypt
+  # create, read, update and delete chapter encased credentials.
+  #
   class BookIndex
 
+
+    # Initialize the book index data structure from the session state file
+    # and the current session identifier.
+    #
+    # We assume that something else created the very first book index so we
+    # never check whether it exists, instead we assume that one does exist.
+    def initialize
+
+      @session_id = Identifier.derive_session_id( ShellSession.to_token() )
+      session_indices_file = FileTree.session_indices_filepath( @session_id )
+      @session_keys = KeyMap.new( session_indices_file )
+      @book_id = @session_keys.read( Indices::SESSION_DATA, Indices::CURRENT_SESSION_BOOK_ID )
+      @session_keys.use( @book_id )
+      @content_id = @session_keys.get( Indices::CONTENT_IDENTIFIER )
+
+      intra_key_ciphertext = @session_keys.get( Indices::INTRA_SESSION_KEY_CRYPT )
+      intra_key = KeyDerivation.regenerate_shell_key( ShellSession.to_token() )
+      @crypt_key = intra_key.do_decrypt_key( intra_key_ciphertext )
+
+      read()
+
+    end
+
+
+    # Construct a BookIndex object that extends the KeyStore data structure
+    # which in turns extens the Ruby hash object. The parental objects know
+    # how to manipulate (store, delete, read etc the data structures).
+    #
     # To read the book index we first find the appropriate shell key and the
     # appropriate book index ciphertext, one decrypts the other to produce the master
     # database decryption key which in turn reveals the JSON representation of the
@@ -33,18 +66,11 @@ module SafeDb
     # @return [String]
     #    decode, decrypt and hen return the plain text content that was written
     #    to a file by the {write_content} method.
-    def self.read()
+    def read()
 
-      session_id = Identifier.derive_session_id( ShellSession.to_token() )
-      session_indices_file = FileTree.session_indices_filepath( session_id )
-      session_keys = KeyMap.new( session_indices_file )
-      book_id = session_keys.read( Indices::SESSION_DATA, Indices::CURRENT_SESSION_BOOK_ID )
-      session_keys.use( book_id )
-      content_id = session_keys.get( Indices::CONTENT_IDENTIFIER )
-      random_iv = KeyIV.in_binary( session_keys.get( Indices::CONTENT_RANDOM_IV ) )
-      crypt_path = FileTree.session_crypts_filepath( book_id, session_id, content_id )
-      crypt_key = content_crypt_key( session_keys )
-      return KeyStore.from_json( Content.unlock_it( crypt_path, crypt_key, random_iv ) )
+      read_crypt_path = FileTree.session_crypts_filepath( @book_id, @session_id, @content_id )
+      random_iv = KeyIV.in_binary( @session_keys.get( Indices::CONTENT_RANDOM_IV ) )
+      @book_index = KeyStore.from_json( Content.unlock_it( read_crypt_path, @crypt_key, random_iv ) )
 
     end
 
@@ -71,40 +97,38 @@ module SafeDb
     # content id are overwritten with the new values, and the old book
     # index crypt file is deleted.
     #
-    # @param content_header [String]
-    #    the string that will top the ciphertext content when it is written
-    #
-    # @param app_database [KeyStore]
-    #    this key database class will be streamed using its {Hash.to_json}
-    #    method and the resulting content will be encrypted and written to
-    #    the file at path {content_ciphertxt_file_from_session_token}.
-    #
-    #    This method's mirror is {read_master_db}.
-    def self.write( content_header, app_database )
+    def write()
 
-      session_id = Identifier.derive_session_id( ShellSession.to_token() )
-      session_indices_file = FileTree.session_indices_filepath( session_id )
-      session_keys = KeyMap.new( session_indices_file )
-      book_id = session_keys.read( Indices::SESSION_DATA, Indices::CURRENT_SESSION_BOOK_ID )
+      old_crypt_path = FileTree.session_crypts_filepath( @book_id, @session_id, @content_id )
 
-      session_keys.use( book_id )
+      @content_id = Identifier.get_random_identifier( Indices::CONTENT_ID_LENGTH )
+      @session_keys.set( Indices::CONTENT_IDENTIFIER, @content_id )
+      write_crypt_path = FileTree.session_crypts_filepath( @book_id, @session_id, @content_id )
 
-      old_content_id = session_keys.get( Indices::CONTENT_IDENTIFIER ) if session_keys.contains?( Indices::CONTENT_IDENTIFIER )
-
-      new_content_id = Identifier.get_random_identifier( Indices::CONTENT_ID_LENGTH )
-      session_keys.set( Indices::CONTENT_IDENTIFIER, new_content_id )
-      new_crypt_path = FileTree.session_crypts_filepath( book_id, session_id, new_content_id )
-      crypt_key = content_crypt_key( session_keys )
       iv_base64 = KeyIV.new().for_storage()
-      session_keys.set( Indices::CONTENT_RANDOM_IV, iv_base64 )
+      @session_keys.set( Indices::CONTENT_RANDOM_IV, iv_base64 )
       random_iv = KeyIV.in_binary( iv_base64 )
 
-      Content.lock_it( new_crypt_path, crypt_key, random_iv, app_database.to_json, content_header )
+      Content.lock_it( write_crypt_path, @crypt_key, random_iv, @book_index.to_json, crypt_header() )
+      File.delete( old_crypt_path ) if File.exists? old_crypt_path
 
-      unless old_content_id.nil?
-        old_crypt_path = FileTree.session_crypts_filepath( book_id, session_id, old_content_id )
-        File.delete( old_crypt_path )
-      end
+    end
+
+
+    # Return true if this book has been opened at a chapter and verse location.
+    # This method uses {print_open_help} to print out a helpful message detailing
+    # how to open a chapter and verse.
+    #
+    # Note that an open chapter need not contain any data. The same goes for an
+    # open verse. In these cases the {open_chapter} and {open_verse} methods both
+    # return empty data structures.
+    def unopened_chapter_verse()
+
+      has_open_chapter? = @book_index.has_key?( Indices::OPENED_CHAPTER_NAME )
+      has_open_verse?   = @book_index.has_key?( Indices::OPENED_VERSE_NAME   )
+      return if has_open_chapter? and has_open_verse?
+
+      print_open_help()
 
     end
 
@@ -112,11 +136,53 @@ module SafeDb
     private
 
 
-    def self.content_crypt_key( session_keys )
+    # Construct the header for the ciphertext content files written out
+    # onto the filesystem including information such as the application version
+    # and human readable time.
+    def crypt_header()
 
-      intra_key_ciphertext = session_keys.get( Indices::INTRA_SESSION_KEY_CRYPT )
-      intra_key = KeyDerivation.regenerate_shell_key( ShellSession.to_token() )
-      return intra_key.do_decrypt_key( intra_key_ciphertext )
+      <<-CRYPT_HEADER
+      @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      #{Indices::SAFE_URL_NAMEj} ciphertext block
+      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      Safe Book Id := #{@book_id}
+      Time Created := #{KeyNow.readable()}
+      Safe Version := safedb v#{SafeDb::VERSION}
+      Safe Website := #{Indices::SAFE_GEM_WEBSITE}
+      RubyGems.org := https://rubygems.org/gems/safedb
+      CRYPT_HEADER
+
+    end
+
+
+    def print_open_help()
+
+      <<-UNOPENED_MESSAGE
+
+      Please open a chapter and verse to put, edit or query data.
+
+          #{COMMANDMENT} open contacts monica
+
+       then add monica's contact details
+
+          #{COMMANDMENT} put email monica.lewinsky@gmail.com
+          #{COMMANDMENT} put phone +1-357-246-8901
+          #{COMMANDMENT} put twitter @monica_x
+          #{COMMANDMENT} put skype.id 6363430539
+          #{COMMANDMENT} put birthday \"1st April 1978\"
+
+       also hilary's
+
+          #{COMMANDMENT} open contacts hilary
+          #{COMMANDMENT} put email hilary@whitehouse.gov
+
+       then save the changes to your book and logout."
+
+          #{COMMANDMENT} commit"
+          #{COMMANDMENT} logout"
+
+      UNOPENED_MESSAGE
 
     end
 
