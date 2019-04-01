@@ -80,7 +80,8 @@ module SafeDb
       initial_db = KeyStore.new()
       initial_db.store( Indices::SAFE_BOOK_INITIALIZE_TIME, KeyNow.readable() )
       initial_db.store( Indices::SAFE_BOOK_NAME, @book_name )
-      initial_db.store( Indices::SAFE_BOOK_APP_VERSION, Indices::SAFE_VERSION_STRING )
+      initial_db.store( Indices::SAFE_BOOK_INIT_VERSION, Indices::SAFE_VERSION_STRING )
+      initial_db.store( Indices::SAFE_BOOK_CHAPTER_KEYS, {} )
 
       return initial_db.to_json
 

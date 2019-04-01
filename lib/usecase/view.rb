@@ -26,30 +26,35 @@ module SafeDb
       book_index = BookIndex.new()
 
       puts ""
-      puts "@@   Book Birthday := #{Indices::SAFE_BOOK_INITIALIZE_TIME}\n"
-      puts "@@       Book Name := #{Indices::SAFE_BOOK_NAME}\n"
-      puts "@@     App Version := #{Indices::SAFE_BOOK_INIT_APP_VERSION}\n"
-      puts "---\n"
-      puts "@@  Opened Chapter := #{book_index.chapter_name()}\n" if book_index.has_open_chapter?()
-      puts "@@  + Opened Verse := #{book_index.verse_name()}\n"   if book_index.has_open_verse?()
-      puts "---\n"
+      puts ""
+      puts "   Book Birthday := #{book_index.init_time()}\n"
+      puts "       Book Name := #{book_index.book_name()}\n"
+      puts "     App Version := #{book_index.init_version()}\n"
+      puts "    Open Chapter := #{book_index.chapter_name()}\n" if book_index.has_open_chapter?()
+      puts "      Open Verse := #{book_index.verse_name()}\n"   if book_index.has_open_verse?()
+      puts ""
 
       goto_location = 1
-      envelope_dictionaries = KeyApi.to_matching_dictionary( master_db, ENVELOPE_KEY_PREFIX )
-      envelope_dictionaries.each_pair do | envelope_name, crumb_dictionary |
-        is_opened_chapter = envelope_name.eql?( open_envelope )
+
+      book_index.chapter_keys().each_pair do | chapter_key, crumb_dictionary |
+
+        is_opened_chapter = chapter_key.eql?( open_envelope )
         envelope_content = KeyStore.from_json( Lock.content_unlock( crumb_dictionary ) )
+
         envelope_content.each_key do | envelope_key |
+
           is_opened_verse = envelope_key.eql?( open_key_path )
           is_open = is_opened_chapter && is_opened_verse
           openend = is_open ? " (( open location ))" : ""
           fixdint = format( "%02d", goto_location )
           goindex = is_open ? "" : "[#{fixdint}] "
           puts "--- --- --------------------------------------" if is_open
-          puts "--- #{goindex}#{envelope_name} ~> #{envelope_key}#{openend}\n"
+          puts "--- #{goindex}#{chapter_key} ~> #{envelope_key}#{openend}\n"
           puts "--- --- --------------------------------------" if is_open
           goto_location += 1
+
         end
+
       end
 
       puts ""

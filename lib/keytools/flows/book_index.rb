@@ -160,6 +160,34 @@ module SafeDb
     end
 
 
+    # Returns the human readable date/time denoting when the book was
+    # first initialized.
+    def init_time()
+      return @book_index[ Indices::SAFE_BOOK_INITIALIZE_TIME ]
+    end
+
+
+    # Returns the name of the safe book.
+    def book_name()
+      return @book_index[ Indices::SAFE_BOOK_NAME ]
+    end
+
+
+    # Returns the safedb application software version at the time that the
+    # safe book was initialized.
+    def init_version()
+      return @book_index[ Indices::SAFE_BOOK_INIT_VERSION ]
+    end
+
+
+    # Returns a map of chapter keys that exist within this book.
+    # An empty map will be returned if no data has been added as
+    # yet to the book.
+    def chapter_keys()
+      return @book_index[ Indices::SAFE_BOOK_CHAPTER_KEYS ]
+    end
+
+
     private
 
 

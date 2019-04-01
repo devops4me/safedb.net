@@ -97,10 +97,13 @@ module SafeDb
     SAFE_BOOK_NAME = "safe.book.name"
 
     # The application version that oversaw this book's initialization.
-    SAFE_BOOK_APP_VERSION = "safe.book.app.version"
+    SAFE_BOOK_INIT_VERSION = "safe.book.init.version"
 
     # The application version that oversaw this book's initialization.
     SAFE_BOOK_CURRENT_VERSION = "safe.book.current.version"
+
+    # The handle to the chapter keys inside the book index.
+    SAFE_BOOK_CHAPTER_KEYS = "safe.book.chapter.keys"
 
     # The opened chapter id/name in the current book
     OPENED_CHAPTER_NAME = "opened.chapter.name"
