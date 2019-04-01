@@ -17,7 +17,7 @@ module SafeDb
       <<-CRYPT_HEADER
       @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      #{Indices::SAFE_URL_NAMEj} ciphertext block
+      #{Indices::SAFE_URL_NAME} ciphertext block
       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       Safe Book Id := #{book_id}
       Time Created := #{KeyNow.readable()}

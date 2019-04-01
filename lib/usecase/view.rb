@@ -23,8 +23,7 @@ module SafeDb
 
     def execute
 
-      return unless ops_key_exists?
-      master_db = BookIndex.read()
+      book_index = BookIndex.new()
 
       open_envelope = "(none)" if master_db[ ENV_PATH ].nil?
       open_envelope = master_db[ ENV_PATH ] unless master_db[ ENV_PATH ].nil?
@@ -36,8 +35,8 @@ module SafeDb
 ##      puts "--- The Book Name ~> #{KeyApi.to_db_domain_name(master_db)}\n"
 ##      puts "--- The Book (Id) ~> #{KeyApi.to_db_domain_id(master_db)}\n"
       puts "---\n"
-      puts "--- Chapter ~> #{open_envelope}\n"
-      puts "--- + Verse ~> #{open_key_path}\n"
+      puts "--- Chapter := #{open_envelope}\n"
+      puts "--- + Verse := #{open_key_path}\n"
       puts "---\n"
 
       goto_location = 1
