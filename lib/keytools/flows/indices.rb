@@ -17,12 +17,6 @@ module SafeDb
     # The safe database github clonable url for the ruby software
     SAFE_GITHUB_URL = "https://github.com/devops4me/#{SAFE_URL_NAME}"
 
-    # The opened chapter id/name in the current book
-    OPENED_CHAPTER_NAME = "opened.chapter.name"
-
-    # The opened verse id/name in the current book
-    OPENED_VERSE_NAME = "opened.verse.name"
-
     # The name ofthe master crypts folder.
     MASTER_CRYPTS_FOLDER_NAME = "safedb-master-crypts"
 
@@ -72,7 +66,7 @@ module SafeDb
     SESSION_DATA = "session.data"
 
     # The time of the first book login within this shell session
-    SESSION_FIRST_LOG_IN_POINT = "session.first.log.in.point"
+    SESSION_INITIAL_LOGIN_TIME = "session.initial.login.time"
 
     # The most recent time that any book of this session was accessed
     SESSION_LAST_ACCESSED_TIME = "session.last.accessed.time"
@@ -95,6 +89,28 @@ module SafeDb
     # Character (randomly) repeated to mask credentials
     # Asterices, hyphens, plus and equal signs are common alternatives.
     SECRET_MASK_STRING = "*" * rand( 7 .. 17 )
+
+    # The birthday (initialization time) of this safe book.
+    SAFE_BOOK_INITIALIZE_TIME = "safe.book.initialize.time"
+
+    # The name of this safe book.
+    SAFE_BOOK_NAME = "safe.book.name"
+
+    # The application version that oversaw this book's initialization.
+    SAFE_BOOK_APP_VERSION = "safe.book.app.version"
+
+    # The application version that oversaw this book's initialization.
+    SAFE_BOOK_CURRENT_VERSION = "safe.book.current.version"
+
+    # The opened chapter id/name in the current book
+    OPENED_CHAPTER_NAME = "opened.chapter.name"
+
+    # The opened verse id/name in the current book
+    OPENED_VERSE_NAME = "opened.verse.name"
+
+    # The application version that oversaw this book's initialization.
+    SAFE_VERSION_STRING = "safedb-v#{SafeDb::VERSION}"
+
 
   end
 

@@ -4,43 +4,6 @@ module SafeDb
 
   class KeyApi
 
-    # Return a date/time string detailing when the master database was first created.
-    #
-    # @param the_master_db [Hash]
-    #    the master database to inspect = REFACTOR convert methods into a class instance
-    #
-    # @return [String]
-    #    return a date/time string representation denoting when the master database
-    #    was first created.
-    def self.to_db_create_date( the_master_db )
-      return the_master_db[ DB_CREATE_DATE ]
-    end
-
-
-    # Return the domain name of the master database.
-    #
-    # @param the_master_db [Hash]
-    #    the master database to inspect = REFACTOR convert methods into a class instance
-    #
-    # @return [String]
-    #    return the domain name of the master database.
-    def self.to_db_domain_name( the_master_db )
-      return the_master_db[ DB_DOMAIN_NAME ]
-    end
-
-
-    # Return the domain ID of the master database.
-    #
-    # @param the_master_db [Hash]
-    #    the master database to inspect = REFACTOR convert methods into a class instance
-    #
-    # @return [String]
-    #    return the domain ID of the master database.
-    def self.to_db_domain_id( the_master_db )
-      return the_master_db[ DB_DOMAIN_ID ]
-    end
-
-
     # Return a dictionary containing a string key and the corresponding master database
     # value whenever the master database key starts with the parameter string.
     #

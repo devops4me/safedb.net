@@ -21,7 +21,7 @@ module SafeDb
       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       Safe Book Id := #{book_id}
       Time Created := #{KeyNow.readable()}
-      Safe Version := safedb v#{SafeDb::VERSION}
+      Safe Version := #{Indices::SAFE_VERSION_STRING}
       Safe Website := #{Indices::SAFE_GEM_WEBSITE}
       RubyGems.org := https://rubygems.org/gems/safedb
       CRYPT_HEADER

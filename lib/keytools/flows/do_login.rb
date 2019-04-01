@@ -158,18 +158,18 @@ module SafeDb
     #
     # @param book_id [String] the book identifier this session is about
     # @param session_id [String] the identifier pertaining to this session
-    # @param master_book_keys [KeyMap] keys from the book's master line
+    # @param master_keys [KeyMap] keys from the book's master line
     # @param crypt_key [Key] symmetric session content encryption key
     #
-    def self.clone_book_into_session( book_id, session_id, master_book_keys, crypt_key )
+    def self.clone_book_into_session( book_id, session_id, master_keys, crypt_key )
 
       FileUtils.mkdir_p( FileTree.session_crypts_folder( book_id, session_id ) )
       FileUtils.copy_entry( FileTree.master_crypts_folder( book_id ), FileTree.session_crypts_folder( book_id, session_id ) )
       session_keys = create_session_indices( book_id, session_id )
 
-      session_keys.set( Indices::CONTENT_IDENTIFIER, master_book_keys.get( Indices::CONTENT_IDENTIFIER ) )
-      session_keys.set( Indices::CONTENT_RANDOM_IV,  master_book_keys.get( Indices::CONTENT_RANDOM_IV  ) )
-      session_keys.set( Indices::SESSION_COMMIT_ID,  master_book_keys.get( Indices::MASTER_COMMIT_ID   ) )
+      session_keys.set( Indices::CONTENT_IDENTIFIER, master_keys.get( Indices::CONTENT_IDENTIFIER ) )
+      session_keys.set( Indices::CONTENT_RANDOM_IV,  master_keys.get( Indices::CONTENT_RANDOM_IV  ) )
+      session_keys.set( Indices::SESSION_COMMIT_ID,  master_keys.get( Indices::MASTER_COMMIT_ID   ) )
 
       session_key = KeyDerivation.regenerate_shell_key( ShellSession.to_token() )
       key_ciphertext = session_key.do_encrypt_key( crypt_key )
@@ -189,7 +189,7 @@ module SafeDb
       session_exists = File.exists? FileTree.session_indices_filepath( session_id )
       session_keys = KeyMap.new( FileTree.session_indices_filepath( session_id ) )
       session_keys.use( Indices::SESSION_DATA )
-      session_keys.set( Indices::SESSION_FIRST_LOG_IN_POINT, KeyNow.readable() ) unless session_exists
+      session_keys.set( Indices::SESSION_INITIAL_LOGIN_TIME, KeyNow.readable() ) unless session_exists
       session_keys.set( Indices::SESSION_LAST_ACCESSED_TIME, KeyNow.readable() )
       session_keys.set( Indices::CURRENT_SESSION_BOOK_ID, book_id )
 

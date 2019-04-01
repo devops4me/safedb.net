@@ -52,7 +52,7 @@ module SafeDb
         @book_id,
         book_secret,
         master_keys,
-        virgin_content()
+        virginal_book_index()
       )
 
       print_success_initializing
@@ -69,20 +69,18 @@ module SafeDb
 
       keypairs = KeyMap.new( MASTER_INDEX_LOCAL_FILE )
       keypairs.use( @book_id )
-      keypairs.set( "book.creation.time", KeyNow.readable() )
-      keypairs.set( Indices::MASTER_COMMIT_ID,  Identifier.get_random_identifier( 16 ) )
-
+      keypairs.set( Indices::SAFE_BOOK_INITIALIZE_TIME, KeyNow.readable() )
+      keypairs.set( Indices::MASTER_COMMIT_ID, Identifier.get_random_identifier( 16 ) )
 
     end
 
 
-    def virgin_content()
+    def virginal_book_index()
 
       initial_db = KeyStore.new()
-      initial_db.store( BOOK_CREATED_DATE, KeyNow.readable() )
-      initial_db.store( BOOK_NAME, @book_name )
-      initial_db.store( BOOK_ID, @book_id )
-      initial_db.store( BOOK_CREATOR_VERSION, SafeDb::VERSION )
+      initial_db.store( Indices::SAFE_BOOK_INITIALIZE_TIME, KeyNow.readable() )
+      initial_db.store( Indices::SAFE_BOOK_NAME, @book_name )
+      initial_db.store( Indices::SAFE_BOOK_APP_VERSION, Indices::SAFE_VERSION_STRING )
 
       return initial_db.to_json
 

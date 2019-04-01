@@ -26,9 +26,9 @@ module SafeDb
       book_index = BookIndex.new()
 
       puts ""
-      puts "@@   Book Birthday := #{KeyApi.to_db_create_date(master_db)}\n"
-      puts "@@       Book Name := #{KeyApi.to_db_domain_name(master_db)}\n"
-      puts "@@       Book (Id) := #{KeyApi.to_db_domain_id(master_db)}\n"
+      puts "@@   Book Birthday := #{Indices::SAFE_BOOK_INITIALIZE_TIME}\n"
+      puts "@@       Book Name := #{Indices::SAFE_BOOK_NAME}\n"
+      puts "@@     App Version := #{Indices::SAFE_BOOK_INIT_APP_VERSION}\n"
       puts "---\n"
       puts "@@  Opened Chapter := #{book_index.chapter_name()}\n" if book_index.has_open_chapter?()
       puts "@@  + Opened Verse := #{book_index.verse_name()}\n"   if book_index.has_open_verse?()
