@@ -25,18 +25,13 @@ module SafeDb
 
       book_index = BookIndex.new()
 
-      open_envelope = "(none)" if master_db[ ENV_PATH ].nil?
-      open_envelope = master_db[ ENV_PATH ] unless master_db[ ENV_PATH ].nil?
-      open_key_path = "(none)" if master_db[ KEY_PATH ].nil?
-      open_key_path = master_db[ KEY_PATH ] unless master_db[ KEY_PATH ].nil?
-
       puts ""
-##      puts "--- Book Birthday ~> #{KeyApi.to_db_create_date(master_db)}\n"
-##      puts "--- The Book Name ~> #{KeyApi.to_db_domain_name(master_db)}\n"
-##      puts "--- The Book (Id) ~> #{KeyApi.to_db_domain_id(master_db)}\n"
+      puts "@@   Book Birthday := #{KeyApi.to_db_create_date(master_db)}\n"
+      puts "@@       Book Name := #{KeyApi.to_db_domain_name(master_db)}\n"
+      puts "@@       Book (Id) := #{KeyApi.to_db_domain_id(master_db)}\n"
       puts "---\n"
-      puts "--- Chapter := #{open_envelope}\n"
-      puts "--- + Verse := #{open_key_path}\n"
+      puts "@@  Opened Chapter := #{book_index.chapter_name()}\n" if book_index.has_open_chapter?()
+      puts "@@  + Opened Verse := #{book_index.verse_name()}\n"   if book_index.has_open_verse?()
       puts "---\n"
 
       goto_location = 1

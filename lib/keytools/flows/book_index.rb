@@ -123,13 +123,40 @@ module SafeDb
     # open verse. In these cases the {open_chapter} and {open_verse} methods both
     # return empty data structures.
     def unopened_chapter_verse()
-
-      has_open_chapter = @book_index.has_key?( Indices::OPENED_CHAPTER_NAME )
-      has_open_verse   = @book_index.has_key?( Indices::OPENED_VERSE_NAME   )
-      return if has_open_chapter and has_open_verse
-
+      return if has_open_chapter?() and has_open_verse?()
       print_open_help()
+    end
 
+
+    # Returns true if this book index has a chapter name specified to be the
+    # open chapter. True is returned even if the open chapter data structure
+    # is empty.
+    def has_open_chapter?()
+      return @book_index.has_key?( Indices::OPENED_CHAPTER_NAME )
+    end
+
+
+    # Returns true if this book index has a verse name specified to be the
+    # open verse. True is returned even if the open verse data structure is
+    # empty.
+    def has_open_verse?()
+      return @book_index.has_key?( Indices::OPENED_VERSE_NAME )
+    end
+
+
+    # Returns the name of the chapter that this book has been opened at.
+    # If has_open_chapter?() returns false this method will throw an exception.
+    def chapter_name()
+      abort "No chapter has been opened." unless has_open_chapter?()
+      return @book_index[ Indices::OPENED_CHAPTER_NAME ]
+    end
+
+
+    # Returns the name of the verse that this book has been opened at.
+    # If has_open_verse?() returns false this method will throw an exception.
+    def verse_name()
+      abort "No verse has been opened." unless has_open_verse?()
+      return @book_index[ Indices::OPENED_VERSE_NAME ]
     end
 
 
