@@ -114,8 +114,7 @@ module SafeDb
     # to the now superceeded chapter state.
     def update_verse()
 
-      content_header = create_header()
-      Content.lock_chapter( @master_db[ @chapter_id ], @chapter_data.to_json, content_header )
+      Content.lock_chapter( @master_db[ @chapter_id ], @chapter_data.to_json )
       @book_index.write()
       Show.new.flow_of_events
 
@@ -272,53 +271,6 @@ module SafeDb
 
     end
 
-
-=begin
-
-# @todo usecase => header methods are duplicated in book EEndex so DELETE from here after Content
-
-    def create_header()
-
-      return format_header(
-        SafeDb::VERSION,
-        APPLICATION_GEM_NAME,
-        APPLICATION_GITHUB_URL,
-        @book_id
-      )
-
-    end
-
-# @todo usecase => delete these 3 vars - only used for header formatting
-
-    APPLICATION_GEM_NAME = "safedb.net"
-    APPLICATION_GEM_WEBSITE = "https://www.safedb.net"
-    APPLICATION_GITHUB_URL = "https://github.com/devops4me/safedb.net"
-
-    # Construct the header for the ciphertext content files written out
-    # onto the filesystem including information such as the application version
-    # and human readable time.
-    #
-    # @param gem_version [String] the current version number of the calling gem
-    # @param gem_name [String] the current name of the calling gem
-    # @param gem_site [String] the current website of the calling gem
-    # @param book_id [String] the identifier of the book in play
-    def format_header( gem_version, gem_name, gem_site, book_id )
-
-      line1 = "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n"
-      line2 = "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
-      line3 = "#{gem_name} ciphertext block\n"
-      line4 = "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
-      line5 = "Safe Book Id := #{book_id}\n"
-      line6 = "Time Created := #{KeyNow.readable()}\n"
-      line7 = "Safe Version := safedb v#{gem_version}\n"
-      line8 = "Safe Website := #{gem_site}\n"
-      line9 = "RubyGems.org := https://rubygems.org/gems/safedb\n"
-
-      return line1 + line2 + line3 + line4 + line5 + line6 + line7 + line8 + line9
-
-    end
-
-=end
 
     def ops_key_exists?
 

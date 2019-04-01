@@ -33,7 +33,7 @@ module SafeDb
     SESSION_CRYPTS_FOLDER_NAME = "safedb-session-crypts"
 
     # The file-system location of the safe database tree
-    SAFE_DATABASE_FOLDER   = File.join( Dir.home, ".#{SAFEDB_URL_NAME}" )
+    SAFE_DATABASE_FOLDER = File.join( Dir.home, ".#{SAFE_URL_NAME}" )
 
     # The desired length of a content identifier
     CONTENT_ID_LENGTH  = 14

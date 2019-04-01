@@ -109,7 +109,7 @@ module SafeDb
       @session_keys.set( Indices::CONTENT_RANDOM_IV, iv_base64 )
       random_iv = KeyIV.in_binary( iv_base64 )
 
-      Content.lock_it( write_crypt_path, @crypt_key, random_iv, @book_index.to_json, crypt_header() )
+      Content.lock_it( write_crypt_path, @crypt_key, random_iv, @book_index.to_json, TextChunk.crypt_header( @book_id ) )
       File.delete( old_crypt_path ) if File.exists? old_crypt_path
 
     end
@@ -124,9 +124,9 @@ module SafeDb
     # return empty data structures.
     def unopened_chapter_verse()
 
-      has_open_chapter? = @book_index.has_key?( Indices::OPENED_CHAPTER_NAME )
-      has_open_verse?   = @book_index.has_key?( Indices::OPENED_VERSE_NAME   )
-      return if has_open_chapter? and has_open_verse?
+      has_open_chapter = @book_index.has_key?( Indices::OPENED_CHAPTER_NAME )
+      has_open_verse   = @book_index.has_key?( Indices::OPENED_VERSE_NAME   )
+      return if has_open_chapter and has_open_verse
 
       print_open_help()
 
@@ -134,26 +134,6 @@ module SafeDb
 
 
     private
-
-
-    # Construct the header for the ciphertext content files written out
-    # onto the filesystem including information such as the application version
-    # and human readable time.
-    def crypt_header()
-
-      <<-CRYPT_HEADER
-      @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      #{Indices::SAFE_URL_NAMEj} ciphertext block
-      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      Safe Book Id := #{@book_id}
-      Time Created := #{KeyNow.readable()}
-      Safe Version := safedb v#{SafeDb::VERSION}
-      Safe Website := #{Indices::SAFE_GEM_WEBSITE}
-      RubyGems.org := https://rubygems.org/gems/safedb
-      CRYPT_HEADER
-
-    end
 
 
     def print_open_help()

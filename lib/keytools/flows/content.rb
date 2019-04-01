@@ -23,8 +23,7 @@ module SafeDb
     # @param crypt_key [Key] the key used to (symmetrically) encrypt the content provided
     # @param key_store [KeyMap] either KeyMap or KeyStore containing the content id and random iv
     # @param content_body [String] content to encryt and the ciphertext will be stored
-    # @param content_header [String] string that tops and tails the content's ciphertext
-    def self.lock_master( book_id, crypt_key, key_store, content_body, content_header )
+    def self.lock_master( book_id, crypt_key, key_store, content_body )
 
       content_id = Identifier.get_random_identifier( Indices::CONTENT_ID_LENGTH )
       key_store.set( Indices::CONTENT_IDENTIFIER, content_id )
@@ -33,7 +32,7 @@ module SafeDb
       key_store.set( Indices::CONTENT_RANDOM_IV, iv_base64 )
       random_iv = KeyIV.in_binary( iv_base64 )
 
-      lock_it( master_crypt_path, crypt_key, random_iv, content_body, content_header )
+      lock_it( master_crypt_path, crypt_key, random_iv, content_body, TextChunk.crypt_header( book_id ) )
 
     end
 
@@ -45,12 +44,11 @@ module SafeDb
     # key-value map (hash).
     #
     # The content ciphertext derived from encrypting the body is stored
-    # in a file underneath the provided content header.
+    # in a file.
     #
     # @param key_store [KeyMap] either KeyMap or KeyStore containing the content id and random iv
     # @param content_body [String] content to encryt and the ciphertext will be stored
-    # @param content_header [String] string that tops and tails the content's ciphertext
-    def self.lock_chapter( key_store, content_body, content_header )
+    def self.lock_chapter( key_store, content_body )
 
       session_id = Identifier.derive_session_id( ShellSession.to_token() )
       session_indices_file = FileTree.session_indices_filepath( session_id )
@@ -70,7 +68,7 @@ module SafeDb
       crypt_key = Key.from_random()
       key_store.store( Indices::CHAPTER_KEY_CRYPT, crypt_key.to_char64() )
 
-      lock_it( new_chapter_crypt_path, crypt_key, random_iv, content_body, content_header )
+      lock_it( new_chapter_crypt_path, crypt_key, random_iv, content_body, TextChunk.crypt_header( book_id ) )
 
       unless old_content_id.nil?
         old_chapter_crypt_path = FileTree.session_crypts_filepath( book_id, session_id, old_content_id )
@@ -96,11 +94,11 @@ module SafeDb
     # @param crypt_key [Key] the key used to (symmetrically) encrypt the content provided
     # @param random_iv [String] the random initialization vector for the encryption
     # @param content_body [String] content to encryt and the ciphertext will be stored
-    # @param content_header [String] string that tops and tails the content's ciphertext
-    def self.lock_it( crypt_path, crypt_key, random_iv, content_body, content_header )
+    # @param crypt_header [String] string that tops and tails the content's ciphertext
+    def self.lock_it( crypt_path, crypt_key, random_iv, content_body, crypt_header )
 
       binary_ctext = crypt_key.do_encrypt_text( random_iv, content_body )
-      binary_to_write( crypt_path, content_header, binary_ctext )
+      binary_to_write( crypt_path, crypt_header, binary_ctext )
 
     end
 
@@ -169,12 +167,12 @@ module SafeDb
     private
 
 
-    def self.binary_to_write( to_filepath, content_header, binary_ciphertext )
+    def self.binary_to_write( to_filepath, crypt_header, binary_ciphertext )
 
       base64_ciphertext = Base64.encode64( binary_ciphertext )
 
       content_to_write =
-        content_header +
+        crypt_header +
         Indices::CONTENT_BLOCK_DELIMITER +
         Indices::CONTENT_BLOCK_START_STRING +
         base64_ciphertext +

@@ -64,17 +64,14 @@ module SafeDb
     #    The key ring only stores the salts. This means the secret text based key can
     #    only be regenerated at the next login, which explains the inter-session label.
     #
-    # @param content_header [String]
-    #    the content header tops the ciphertext storage file with details of how where
-    #    and why the file came to be.
-    def self.do_login( book_keys, secret, content_header  )
+    def self.do_login( book_keys, secret )
 
       the_book_id = book_keys.section()
 
       old_human_key = KdfApi.regenerate_from_salts( secret, book_keys )
       old_crypt_key = old_human_key.do_decrypt_key( book_keys.get( Indices::INTER_SESSION_KEY_CRYPT ) )
       plain_content = Content.unlock_master( old_crypt_key, book_keys )
-      new_crypt_key = KeyCycle.recycle( the_book_id, secret, book_keys, content_header, plain_content )
+      new_crypt_key = KeyCycle.recycle( the_book_id, secret, book_keys, plain_content )
 
       session_id = Identifier.derive_session_id( ShellSession.to_token() )
       clone_book_into_session( the_book_id, session_id, book_keys, new_crypt_key )

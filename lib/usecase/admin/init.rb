@@ -52,7 +52,6 @@ module SafeDb
         @book_id,
         book_secret,
         master_keys,
-        create_header(),
         virgin_content()
       )
 
