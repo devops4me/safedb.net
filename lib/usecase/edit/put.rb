@@ -24,7 +24,8 @@ module SafeDb
     # its value into the chapter and verse location, overwriting if need be.
     def edit_verse()
 
-      @chapter_data.create_entry( @verse_id, @credential_id, @credential_value )
+######################      @chapter_data.create_entry( @verse_id, @credential_id, @credential_value )
+      @verse.store( @credential_id, @credential_value )
 
     end
 

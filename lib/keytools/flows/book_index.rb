@@ -215,16 +215,14 @@ module SafeDb
     end
 
 
-    # Persist the parameter data structure as the data for the book's open chapter.
+    # Persist the instantiated chapter data structure including all its verses.
     # It doesn't make sense to persist an empty data structure so an exception is
     # raised in this circumstance. Nor can a data structure be persisted if no name
     # is set for the open chapter.
-    # @param chapter_data [KeyStore] the non-empty chapter data structure to persist
-    def set_open_chapter_data( chapter_data )
+    def set_open_chapter_data()
       abort "Cannot persist the data with no open chapter name." unless has_open_chapter_name?()
-      abort "Cannot persist a nil or empty data structure." if chapter_data.nil?() or chapter_data.empty?()
-      Content.lock_chapter( get_chapter_keys(), chapter_data.to_json )
-      @chapter_data = chapter_data
+      abort "Cannot persist a nil or empty data structure." if @chapter_data.nil?() or @chapter_data.empty?()
+      Content.lock_chapter( get_chapter_keys(), @chapter_data.to_json() )
     end
 
 
@@ -248,6 +246,35 @@ module SafeDb
     def get_open_verse_data()
       get_open_chapter_data()[ get_open_verse_name() ] = KeyStore.new() unless has_open_verse_data?()
       return get_open_chapter_data()[ get_open_verse_name() ]
+    end
+
+
+    # Is the chapter name in the parameter the book's open chapter? An exception
+    # is thrown if the parameter chapter name is nil.
+    # @param this_chapter_name [String] the name of the chapter to test
+    def is_open_chapter?( this_chapter_name )
+      abort "Cannot test a nil chapter name." if this_chapter_name.nil?()
+      return false unless has_open_chapter_name?()
+      return this_chapter_name.eql?( get_open_chapter_name() )
+    end
+
+
+    # Is the verse name in the parameter the book's open verse? An exception
+    # is thrown if the parameter verse name is nil.
+    # @param this_verse_name [String] the name of the verse to test
+    def is_open_verse?( this_verse_name )
+      abort "Cannot test a nil verse name." if this_verse_name.nil?()
+      return false unless has_open_verse_name?()
+      return this_verse_name.eql?( get_open_verse_name() )
+    end
+
+
+    # Are both the chapter and verse names in the parameters open? An exception
+    # is thrown if any of the parameters are nil.
+    # @param chapter_name [String] the name of the chapter to test
+    # @param verse_name [String] the name of the verse to test
+    def is_open?( chapter_name, verse_name )
+      return ( is_open_chapter?( chapter_name ) and is_open_verse?( verse_name ) )
     end
 
 

@@ -7,46 +7,38 @@ module SafeDb
   #
   # If no dictionary exists at the opened chapter and verse a suitable
   # message is pushed out to the console.
-  class Show < UseCase
+  class Show < QueryVerse
 
-    def execute
+    # We expect the book to be opened at a given chapter and verse location. This
+    # use case simply (sensitively) shows the pertinent data lines contained within
+    # the opened verse.
+    def query_verse()
 
-      return unless ops_key_exists?
-      master_db = BookIndex.read()
-      return if unopened_envelope?( master_db )
-
-      @chapter_id = ENVELOPE_KEY_PREFIX + master_db[ ENV_PATH ]
-      @has_chapter = db_envelope_exists?( master_db[ @chapter_id ] )
-      @chapter_data = Content.unlock_chapter( master_db[ @chapter_id ] ) if @has_chapter
-      @chapter_data = KeyStore.new() unless @has_chapter
-
-      @verse_id = master_db[ KEY_PATH ]
-      @has_verse = @has_chapter && @chapter_data.has_key?( @verse_id )
-      @verse_data = @chapter_data[ @verse_id ] if @has_verse
-      master_db[ @chapter_id ] = {} unless @has_chapter
+      bcv_name = "#{@book_index.book_name()}/#{@book_index.get_open_chapter_name()}/#{@book_index.get_open_verse_name()}"
 
       puts ""
-      puts "### ##################################\n"
-      puts "### chapter :=> #{@chapter_id}\n"
-      puts "### & verse :=> #{@verse_id}\n"
-      puts "### # lines :=> #{@verse_data.length}\n" unless @verse_data.nil?
-      puts "### ##################################\n"
-      puts "--- ----------------------------------\n"
+#########      puts "book/chapter/verse := #{bcv_name} (#{@verse.length()})\n"
+
+      puts "book/chapter/verse\n"
+      puts "#{bcv_name} (#{@verse.length()})\n"
       puts ""
 
-      if @verse_data.nil?
-        puts "There is no data in this chapter/verse."
-        puts "Use the put command to add a key/value pair."
+      if @verse.empty?()
+
+        puts "There are no data lines in this verse."
+        puts "Use the put command to add some."
         puts ""
         puts "safe put name \"Joe Bloggs\""
         puts "safe put email joe@safedb.net"
         puts "safe show"
         puts ""
+
         return
+
       end
 
       showable_content = {}
-      @verse_data.each do | key_str, value_object |
+      @verse.each do | key_str, value_object |
 
         is_file = key_str.start_with? FILE_KEY_PREFIX
         value_object.store( FILE_CONTENT_KEY, Indices::SECRET_MASK_STRING ) if is_file
@@ -61,8 +53,6 @@ module SafeDb
       end
 
       puts JSON.pretty_generate( showable_content )
-      puts "--- ----------------------------------\n"
-      puts "### ##################################\n"
       puts ""
 
     end

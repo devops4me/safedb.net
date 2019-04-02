@@ -94,6 +94,7 @@ module SafeDb
       @book_index = BookIndex.new()
 ##############################      @master_db = BookIndex.read()
       return if @book_index.unopened_chapter_verse()
+      @verse = @book_index.get_open_verse_data()
 
 =begin
       @chapter_id = ENVELOPE_KEY_PREFIX + @master_db[ ENV_PATH ]
@@ -114,7 +115,7 @@ module SafeDb
     # to the now superceeded chapter state.
     def update_verse()
 
-      @book_index.set_open_chapter_data( @chapter_data )
+      @book_index.set_open_chapter_data()
       @book_index.write()
       Show.new.flow_of_events
 

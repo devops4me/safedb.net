@@ -15,7 +15,7 @@ module SafeDb
     # and print its corresponding value without a line feed or return.
     def query_verse()
 
-      print @chapter_data[ @verse_id ][ @key_name ]
+      print @verse[ @key_name ]
 
     end
 
