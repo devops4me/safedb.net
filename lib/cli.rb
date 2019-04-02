@@ -191,8 +191,8 @@ class CLI < Thor
   def open chapter, verse
     log.info(x) { "[usecase] ~> open a chapter and verse to read from or write to." }
     open_uc = SafeDb::Open.new
-    open_uc.env_path = chapter
-    open_uc.key_path = verse
+    open_uc.chapter = chapter
+    open_uc.verse = verse
     open_uc.flow_of_events
   end
 

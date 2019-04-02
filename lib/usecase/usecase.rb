@@ -114,7 +114,7 @@ module SafeDb
     # to the now superceeded chapter state.
     def update_verse()
 
-      Content.lock_chapter( @master_db[ @chapter_id ], @chapter_data.to_json )
+      @book_index.set_open_chapter_data( @chapter_data )
       @book_index.write()
       Show.new.flow_of_events
 

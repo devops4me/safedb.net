@@ -25,8 +25,6 @@ module SafeDb
       @verse_data = @chapter_data[ @verse_id ] if @has_verse
       master_db[ @chapter_id ] = {} unless @has_chapter
 
-
-
       puts ""
       puts "### ##################################\n"
       puts "### chapter :=> #{@chapter_id}\n"
@@ -69,9 +67,6 @@ module SafeDb
 
     end
 
-    private
-
-#####    SECRET_MASK_STRING = "***********************"
 
   end
 

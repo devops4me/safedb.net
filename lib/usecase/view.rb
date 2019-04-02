@@ -30,8 +30,8 @@ module SafeDb
       puts "   Book Birthday := #{book_index.init_time()}\n"
       puts "       Book Name := #{book_index.book_name()}\n"
       puts "     App Version := #{book_index.init_version()}\n"
-      puts "    Open Chapter := #{book_index.chapter_name()}\n" if book_index.has_open_chapter?()
-      puts "      Open Verse := #{book_index.verse_name()}\n"   if book_index.has_open_verse?()
+      puts "    Open Chapter := #{book_index.get_open_chapter_name()}\n" if book_index.has_open_chapter_name?()
+      puts "      Open Verse := #{book_index.get_open_verse_name()}\n"   if book_index.has_open_verse_name?()
       puts ""
 
       goto_location = 1

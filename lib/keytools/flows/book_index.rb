@@ -123,7 +123,7 @@ module SafeDb
     # open verse. In these cases the {open_chapter} and {open_verse} methods both
     # return empty data structures.
     def unopened_chapter_verse()
-      return if has_open_chapter?() and has_open_verse?()
+      return if has_open_chapter_name?() and has_open_verse_name?()
       print_open_help()
     end
 
@@ -131,7 +131,8 @@ module SafeDb
     # Returns true if this book index has a chapter name specified to be the
     # open chapter. True is returned even if the open chapter data structure
     # is empty.
-    def has_open_chapter?()
+    # @return [Boolean] true if an open chapter name has been set for this book
+    def has_open_chapter_name?()
       return @book_index.has_key?( Indices::OPENED_CHAPTER_NAME )
     end
 
@@ -139,35 +140,127 @@ module SafeDb
     # Returns true if this book index has a verse name specified to be the
     # open verse. True is returned even if the open verse data structure is
     # empty.
-    def has_open_verse?()
+    # @return [Boolean] true if an open verse name has been set for this book
+    def has_open_verse_name?()
       return @book_index.has_key?( Indices::OPENED_VERSE_NAME )
     end
 
 
     # Returns the name of the chapter that this book has been opened at.
-    # If has_open_chapter?() returns false this method will throw an exception.
-    def chapter_name()
-      abort "No chapter has been opened." unless has_open_chapter?()
+    # If has_open_chapter_name?() returns false this method will throw an exception.
+    # @return [String] the name of the chapter that this book is opened at
+    def get_open_chapter_name()
+      abort "No chapter has been opened." unless has_open_chapter_name?()
       return @book_index[ Indices::OPENED_CHAPTER_NAME ]
     end
 
 
     # Returns the name of the verse that this book has been opened at.
-    # If has_open_verse?() returns false this method will throw an exception.
-    def verse_name()
-      abort "No verse has been opened." unless has_open_verse?()
+    # If has_open_verse_name?() returns false this method will throw an exception.
+    # @return [String] the name of the verse that this book is opened at
+    def get_open_verse_name()
+      abort "No verse has been opened." unless has_open_verse_name?()
       return @book_index[ Indices::OPENED_VERSE_NAME ]
+    end
+
+
+    # Sets the name of the chapter that this book is to be opened at. This method
+    # overwrites the currently open chapter name if there is one.
+    # @param chapter_name [String] the name of the chapter to open
+    def set_open_chapter_name( chapter_name )
+      @book_index[ Indices::OPENED_CHAPTER_NAME ] = chapter_name
+    end
+
+
+    # Sets the name of the verse that this book is to be opened at. This method
+    # overwrites the currently open verse name if there is one.
+    # @param verse_name [String] the name of the verse to open
+    def set_open_verse_name( verse_name )
+      @book_index[ Indices::OPENED_VERSE_NAME ] = verse_name
+    end
+
+
+    # Returns true if this book index has a chapter name specified to be the
+    # open chapter. True is returned even if the open chapter data structure
+    # is empty.
+    # @return [Boolean] true if an open chapter name has been set for this book
+    def has_open_chapter_data?()
+      abort "Cannot check chapter data availability as no chapter is open." unless has_open_chapter_name?()
+      return @book_index[ Indices::SAFE_BOOK_CHAPTER_KEYS ].has_key?( get_open_chapter_name() )
+    end
+
+
+    # If chapter keys exist for the open chapter this method returns them. If not,
+    # it creates an in-place empty map and returns that.
+    #
+    # If no chapter in this book has been opened, signalled by has_open_chapter_name?()
+    # an exception is thrown.
+    # @return [KeyStore] the chapter keys for the chapter this book is opened at
+    def get_chapter_keys()
+      abort "Cannot get chapter keys as no chapter is open." unless has_open_chapter_name?()
+      @book_index[ Indices::SAFE_BOOK_CHAPTER_KEYS ][ get_open_chapter_name() ] = KeyStore.new() unless has_open_chapter_data?()
+      return @book_index[ Indices::SAFE_BOOK_CHAPTER_KEYS ][ get_open_chapter_name() ]
+    end
+
+
+    # Returns the data structure corresponding to the book's open chapter.
+    # If has_open_chapter_name?() returns false this method will throw an exception.
+    # @return [KeyStore] the data of the chapter that this book is opened at
+    def get_open_chapter_data()
+      abort "Cannot read data as no chapter is open." unless has_open_chapter_name?()
+      return @chapter_data unless @chapter_data.nil?()
+      @chapter_data = KeyStore.new unless has_open_chapter_data?()
+      @chapter_data = Content.unlock_chapter( get_chapter_keys() ) if has_open_chapter_data?()
+      return @chapter_data
+    end
+
+
+    # Persist the parameter data structure as the data for the book's open chapter.
+    # It doesn't make sense to persist an empty data structure so an exception is
+    # raised in this circumstance. Nor can a data structure be persisted if no name
+    # is set for the open chapter.
+    # @param chapter_data [KeyStore] the non-empty chapter data structure to persist
+    def set_open_chapter_data( chapter_data )
+      abort "Cannot persist the data with no open chapter name." unless has_open_chapter_name?()
+      abort "Cannot persist a nil or empty data structure." if chapter_data.nil?() or chapter_data.empty?()
+      Content.lock_chapter( get_chapter_keys(), chapter_data.to_json )
+      @chapter_data = chapter_data
+    end
+
+
+    # Returns true if this book index has a verse name specified to be the
+    # open verse. True is returned even if the open verse data structure
+    # is empty.
+    # @return [Boolean] true if an open verse name has been set for this book
+    def has_open_verse_data?()
+      abort "Cannot check verse data availability as no chapter is open." unless has_open_chapter_name?()
+      abort "Cannot check verse data availability as no verse is open." unless has_open_verse_name?()
+      chapter_data = get_open_chapter_data()
+      return false if chapter_data.empty?()
+      return chapter_data.has_key?( get_open_verse_name() )
+    end
+
+
+    # Returns the data structure corresponding to the book's open verse within
+    # the book's open chapter. Both the open chapter and verse names have to be
+    # set otherwise an exception will be thrown.
+    # @return [KeyStore] the data of the verse that this book is opened at
+    def get_open_verse_data()
+      get_open_chapter_data()[ get_open_verse_name() ] = KeyStore.new() unless has_open_verse_data?()
+      return get_open_chapter_data()[ get_open_verse_name() ]
     end
 
 
     # Returns the human readable date/time denoting when the book was
     # first initialized.
+    # @return [String] the time that this book was first initialized
     def init_time()
       return @book_index[ Indices::SAFE_BOOK_INITIALIZE_TIME ]
     end
 
 
     # Returns the name of the safe book.
+    # @return [String] the name of this book
     def book_name()
       return @book_index[ Indices::SAFE_BOOK_NAME ]
     end
@@ -175,14 +268,16 @@ module SafeDb
 
     # Returns the safedb application software version at the time that the
     # safe book was initialized.
+    # @return [String] the software version that initialized this book
     def init_version()
       return @book_index[ Indices::SAFE_BOOK_INIT_VERSION ]
     end
 
 
     # Returns a map of chapter keys that exist within this book.
-    # An empty map will be returned if no data has been added as
-    # yet to the book.
+    # An empty map will be returned if no data has been added as yet
+    # to the book.
+    # @return [KeyStore] the data structure holding chapter key data
     def chapter_keys()
       return @book_index[ Indices::SAFE_BOOK_CHAPTER_KEYS ]
     end
