@@ -12,36 +12,37 @@ module SafeDb
 
     def execute
 
-      return unless ops_key_exists?
-      master_db = BookIndex.read()
+      book_index = BookIndex.new()
 
       puts ""
       puts "### #############################################################\n"
-      puts "### Book Birthday =>> #{KeyApi.to_db_create_date(master_db)}\n"
-      puts "### The Book Name =>> #{KeyApi.to_db_domain_name(master_db)}\n"
-      puts "### The Book (Id) =>> #{KeyApi.to_db_domain_id(master_db)}\n"
-      puts "### #############################################################\n"
       puts "--- --------------------------------------------------------------\n"
+      puts ""
+      puts " The Birthday := #{book_index.init_time()}\n"
+      puts " Book Name    := #{book_index.book_name()}\n"
+      puts " Book Id      := #{book_index.book_id()}\n"
+      puts " Open Chapter := #{book_index.get_open_chapter_name()}\n" if book_index.has_open_chapter_name?()
+      puts " Open Verse   := #{book_index.get_open_verse_name()}\n"   if book_index.has_open_verse_name?()
+      puts ""
 
-      chapters = KeyApi.to_matching_dictionary( master_db, ENVELOPE_KEY_PREFIX )
-      export_filename = "safedb.#{KeyApi.read_app_id()}.#{KeyNow.yyjjj_hhmm_ss_nanosec()}.json"
+      export_filename = "safedb.#{book_index.book_id()}.#{KeyNow.yyjjj_hhmm_ss_nanosec()}.json"
       export_filepath = File.join( Dir.pwd, export_filename )
 
       exported_struct = {}
       verse_count = 0
 
-      chapters.each_pair do | chapter_name, crumb_dictionary |
+      book_index.chapter_keys().each_pair do | chapter_name, chapter_keys |
 
-        chapter_struct = KeyStore.from_json( Lock.content_unlock( crumb_dictionary ) )
-        verse_count += chapter_struct.length
-        exported_struct.store( chapter_name, chapter_struct )
+        chapter_data = Content.unlock_chapter( chapter_keys )
+        verse_count += chapter_data.length
+        exported_struct.store( chapter_name, chapter_data )
 
       end
 
       File.write( export_filepath, JSON.pretty_generate( exported_struct ) )
 
       puts ""
-      puts "Number of chapters exported >> #{chapters.length}"
+      puts "Number of chapters exported >> #{book_index.chapter_count()}"
       puts "Number of verses exported >> #{verse_count}"
       puts "The export filename is #{export_filename}"
       puts "The Present Working Directory is #{Dir.pwd}"

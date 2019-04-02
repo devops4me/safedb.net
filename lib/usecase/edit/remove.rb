@@ -17,8 +17,8 @@ module SafeDb
     # wants to delete only one line (key/value pair).
     def edit_verse()
 
-      @chapter_data.delete_entry( @verse_id, @line_id )
-      @chapter_data.delete_entry( @verse_id, "#{FILE_KEY_PREFIX}#{@line_id}" )
+      @verse.delete( @line_id )
+      @verse.delete( "#{FILE_KEY_PREFIX}#{@line_id}" )
 
     end
 

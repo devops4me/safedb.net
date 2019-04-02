@@ -249,6 +249,13 @@ module SafeDb
     end
 
 
+    # Get the number of chapters nestled within this book.
+    # @return [Numeric] the number of chapters within this book
+    def chapter_count()
+      return chapter_keys().length
+    end
+
+
     # Is the chapter name in the parameter the book's open chapter? An exception
     # is thrown if the parameter chapter name is nil.
     # @param this_chapter_name [String] the name of the chapter to test
@@ -290,6 +297,13 @@ module SafeDb
     # @return [String] the name of this book
     def book_name()
       return @book_index[ Indices::SAFE_BOOK_NAME ]
+    end
+
+
+    # Returns the id number of the safe book.
+    # @return [String] the id of this safe book
+    def book_id()
+      return @book_id
     end
 
 
