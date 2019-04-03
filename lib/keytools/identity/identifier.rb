@@ -133,9 +133,7 @@ module SafeDb
       digested_bits = Key.from_binary( Digest::SHA512.digest( source.strip() ) ).to_s +
                       Key.from_binary( Digest::SHA512.digest( source.strip().reverse() ) ).to_s
 
-      puts "digested bits are #{digested_bits} with length #{digested_bits.length()}"
       digest_string = Key64.from_bits( digested_bits[ 0 .. ( 1020 - 1 ) ] ).to_alphanumeric
-      puts "ID character pool ::= #{digest_string}"
       filtered_digest = ergonomic_filter( digest_string, id_length )
       return filtered_digest.insert( id_length/2, SEGMENT_CHAR )
 
