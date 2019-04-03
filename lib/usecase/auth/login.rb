@@ -20,7 +20,7 @@ module SafeDb
 
     def execute
 
-      @book_id = Identifier.derive_app_instance_identifier( @book_name )
+      @book_id = Identifier.derive_ergonomic_identifier( @book_name, Indices::SAFE_BOOK_ID_LENGTH )
 
       unless ( is_book_initialized?() )
         print_not_initialized

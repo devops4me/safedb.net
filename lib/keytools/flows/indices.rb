@@ -11,6 +11,9 @@ module SafeDb
     # The short url name of the safe personal database.
     SAFE_URL_NAME = "safedb.net"
 
+    # The desired length of a safe book ergonomic identifier.
+    SAFE_BOOK_ID_LENGTH = 12
+
     # The fully qualified domain name of the safedb home website
     SAFE_GEM_WEBSITE = "https://www.#{SAFE_URL_NAME}"
 

@@ -87,7 +87,7 @@ module OpenSession
 
       require_relative "../version"
       require_relative "../usecase/usecase"
-      require_relative "../usecase/admin/access"
+      require_relative "../usecase/auth/access"
       require_relative "../usecase/edit/editverse"
       require_relative "../usecase/query/queryverse"
 

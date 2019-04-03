@@ -43,6 +43,15 @@ module SafeDb
   #
   class Identifier
 
+    # The ergonomic list of 24 characters highly suited for use within
+    # human readable and likable identifier strings.
+    ERGONOMIC_LIST = [
+      "b", "c", "d", "e", "h", "k",
+      "m", "n", "r", "t", "v", "w",
+      "x", "z", "0", "1", "2", "3",
+      "4", "5", "6", "7", "8", "9"
+    ]
+
 
     # The identity chunk length is set at four (4) which means each of the
     # fabricated identifiers comprises of four character segments divided by
@@ -57,6 +66,118 @@ module SafeDb
     # into chunks of four (4) as per the {IDENTITY_CHUNK_LENGTH} constant.
     SEGMENT_CHAR = "-"
 
+    ID_TRI_CHUNK_LEN = IDENTITY_CHUNK_LENGTH * 3
+    ID_TRI_TOTAL_LEN = ID_TRI_CHUNK_LEN + 2
+
+
+    # Get an ergonomic identifier that is a <b>one to one mapping</b> for the
+    # parameter string. In as far as is possible, two different input strings
+    # should never produce the same output identifier, nor should one input
+    # string be ambiguously mapped to two output identifiers.
+    #
+    # This algorithm must be brute force tested to verify the above assertions.
+    #
+    # <tt>The 24 Ergonomic Characters</tt>
+    #
+    # The returned identifier is ergonomic in that its characters come from a
+    # pool of 24 of the most suitable ID characters - pleasant to see, easy to
+    # digest and simple to convey.
+    #
+    # <b>How to Derive the Ergonomic Identifier</b>
+    #
+    # We pass the parameter string through a SHA512 digest algorithm and truncate
+    # the final 2 binary digits because 510 is a multiple of six and perfect for
+    # the transformation to a Base64 string.
+    #
+    # The Base64 transform gives us 85 characters from which we remove any non
+    # alphanumerics. We repeat all the above again with the parameter reversed
+    # and append the two resultants together.
+    #
+    # This harvests roughly 160 characters from which we downcase and walk
+    # through picking out a selection of just 24 ergonomic characters.
+    #
+    # @param source [String]
+    #    the source string whose characters we digest and filter to produce a
+    #    high quality, pleasing ergonomic identifier
+    #
+    #    Before processing any leading or trailing whitespace is removed from
+    #    the input string.
+    #
+    # @param id_length [Numeric]
+    #    the number of identifier characters to return. This parameter must be
+    #    even and divisible by 3 in case it needs to be split (for readability)
+    #    into two or three segments.
+    #
+    #    There is a logical maximum above which it is foolish to venture. The
+    #    max is about two-thirds of a sixth of a thousand characters which is
+    #    slightly over 100.
+    #
+    # @return [String]
+    #    An identifier that is guaranteed to be the same whenever the same
+    #    input string is provided.
+    #
+    #    This algorithms quality is predicated on the premise that two different
+    #    input strings should never produce the same output, nor should one input
+    #    string be ambiguously mapped to two output identifiers.
+    #
+    #    The default behaviour is to split the output identifier into 2 segments
+    #    separated by a hyphen.
+    def self.derive_ergonomic_identifier( source, id_length )
+
+      abort "The source string cannot be nil or empty." if source.nil?() or source.empty?()
+      abort "The source cannot consist only of whitespace." if source.strip().empty?()
+      abort "The ID length must not be less than 2." unless id_length > 1
+      abort "The ID length must be a multiple of 2." unless id_length % 2 == 0
+      abort "Prudent identifiers do not exceed 80 characters." unless id_length < 80
+
+      digested_bits = Key.from_binary( Digest::SHA512.digest( source.strip() ) ).to_s +
+                      Key.from_binary( Digest::SHA512.digest( source.strip().reverse() ) ).to_s
+
+      puts "digested bits are #{digested_bits} with length #{digested_bits.length()}"
+      digest_string = Key64.from_bits( digested_bits[ 0 .. ( 1020 - 1 ) ] ).to_alphanumeric
+      puts "ID character pool ::= #{digest_string}"
+      filtered_digest = ergonomic_filter( digest_string, id_length )
+      return filtered_digest.insert( id_length/2, SEGMENT_CHAR )
+
+    end
+
+
+    # This ergonomic filter produces a pleasing readable identifier that is
+    # down cased and does not contain characters like o, l, s, a, i, or u.
+    #
+    # Swear words can pop up so most vowels are removed to save your blushes.
+    #
+    # @param raw_digest [String]
+    #    the source string whose characters we filter in order to produce a
+    #    high quality, pleasing ergonomic identifier
+    #
+    # @param id_length [Numeric]
+    #    the number of identifier characters to return. This parameter must be
+    #    even and divisible by 3 in case it needs to be split (for readability)
+    #    into two or three segments.
+    #
+    # @return [String]
+    #    The filtered identifier containing only the 24 desirable characters.
+    #
+    def self.ergonomic_filter( raw_digest, id_length )
+
+      id_characters = ""
+      raw_digest.downcase().each_char() do | digest_char |
+        id_characters.concat( digest_char ) if ERGONOMIC_LIST.include?( digest_char )
+        break if id_characters.length() == id_length
+      end
+
+      return id_characters
+
+    end
+
+=begin
+    require_relative "../keys/key.64"
+    require_relative "../keys/key"
+    input1 = "apollo@akora"
+    output1 = Identifier.derive_ergonomic_identifier( input1, 90 )
+    puts "Input #{input1} produced output #{output1}"
+=end
 
     # This method produces a soft random identifier by grabbing a secure
     # random binary string, transforming it to base64, removing any and all
@@ -76,106 +197,6 @@ module SafeDb
       require 'securerandom'
       random_ref = SecureRandom.urlsafe_base64( id_length ).delete("-_").downcase
       return random_ref[ 0 .. ( id_length - 1 ) ]
-
-    end
-
-
-    # Get an identifier that is <b>always the same</b> for the parameter
-    # application reference <b>regardless of the machine or shell</b> or
-    # even the machine user, coming together to make the request.
-    #
-    # The returned identifier will consist only of alphanumeric characters
-    # and one hyphen, plus it always starts and ends with an alphanumeric.
-    #
-    # @param app_instance_ref [String]
-    #    the string reference of the application instance (or shard) that
-    #    is in play and needs to be digested into a unique but not-a-secret
-    #    identifier.
-    #
-    # @return [String]
-    #    An identifier that is guaranteed to be the same whenever the
-    #    same application reference is provided on any machine, using any
-    #    user through any shell interface or command prompt.
-    #
-    #    It must be different for any other application reference.
-    def self.derive_app_instance_identifier( app_instance_ref )
-      return derive_identifier( app_instance_ref )
-    end
-
-
-    # Get an identifier that is <b>always the same</b> for the application
-    # instance (with reference given in parameter) on <b>this machine</b>
-    # and is always different when either/or or both the application ref
-    # and machine are different.
-    #
-    # The returned identifier will consist of only alphanumeric characters
-    # and hyphens - it will always start and end with an alphanumeric.
-    #
-    # This behaviour draws a fine line around the concept of machine, virtual
-    # machine, <b>workstation</b> and/or <b>compute element</b>.
-    #
-    # <b>(aka) The AIM ID</b>
-    #
-    # Returned ID is aka the <b>Application Instance Machine (AIM)</b> Id.
-    #
-    # @param app_ref [String]
-    #    the string reference of the application instance (or shard) that
-    #    is being used.
-    #
-    # @return [String]
-    #    an identifier that is guaranteed to be the same whenever the
-    #    same application reference is provided on this machine.
-    #
-    #    it must be different on another machine even when the same
-    #    application reference is provided.
-    #
-    #    It will also be different on this workstation if the application
-    #    instance identifier provided is different.
-    def self.derive_app_instance_machine_id( app_ref )
-      return derive_identifier( app_ref + MachineId.derive_user_machine_id() )
-    end
-
-
-    # The <b>32 character</b> <b>universal identifier</b> bonds a digested
-    # <b>application state identifier</b> with the <b>shell identifier</b>.
-    # This method gives <b>dual double guarantees</b> to the effect that
-    #
-    # - a change in one, or in the other,  or in both returns a different universal id
-    # - the same app state identifier in the same shell produces the same universal id
-    #
-    # <b>The 32 Character Universal Identifier</b>
-    #
-    # The universal identifier is an amalgam of two digests which can be individually
-    # retrieved from other methods in this class. An example is
-    #
-    #       universal id => hg2x0-g3uslf-pa2bl5-09xvbd-n4wcq
-    #       the shell id => g3uslf-pa2bl5-09xvbd
-    #       app state id => hg2x0-n4wcq
-    #
-    # The 32 character universal identifier comprises of 18 session identifier
-    # characters (see {derive_session_id}) <b>sandwiched between</b>
-    # ten (10) digested application identifier characters, five (5) in front and
-    # five (5) at the back - all segmented by four (4) hyphens.
-    #
-    # @param app_reference [String]
-    #    the chosen plaintext application reference identifier that
-    #    is the input to the digesting (hashing) algorithm.
-    #
-    # @param session_token [String]
-    #    a triply segmented (and one liner) text token
-    #
-    # @return [String]
-    #    a 32 character string that cannot feasibly be repeated due to the use
-    #    of one way functions within its derivation. The returned identifier bonds
-    #    the application state reference with the present session.
-    def self.derive_universal_id( app_reference, session_token )
-
-      shellid = derive_session_id( session_token )
-      app_ref = derive_identifier( app_reference + shellid )
-      chunk_1 = app_ref[ 0 .. IDENTITY_CHUNK_LENGTH ]
-      chunk_3 = app_ref[ ( IDENTITY_CHUNK_LENGTH + 1 ) .. -1 ]
-
-      return "#{chunk_1}#{shellid}#{SEGMENT_CHAR}#{chunk_3}".downcase
 
     end
 
@@ -227,53 +248,7 @@ module SafeDb
     end
 
 
-    # This method returns a <b>10 character</b> digest of the parameter
-    # <b>reference</b> string.
-    #
-    # <b>How to Derive the 10 Character Identifier</b>
-    #
-    # So how are the 10 characters derived from the reference provided in
-    # the first parameter. The algorithm is this.
-    #
-    # - reverse the reference and feed it to a 256 bit digest
-    # - chop away the rightmost digits so that 252 bits are left
-    # - convert the one-zero bit str to 42 (YACHT64) characters
-    # - remove the (on average 1.5) non-alphanumeric characters
-    # - cherry pick and return <b>spread out 8 characters</b>
-    #
-    # @param reference [String]
-    #    the plaintext reference input to the digest algorithm
-    #
-    # @return [String]
-    #    a 10 character string that is a digest of the reference string
-    #    provided in the parameter.
-    def self.derive_identifier( reference )
-
-      bitstr_256 = Key.from_binary( Digest::SHA256.digest( reference.reverse ) ).to_s
-      bitstr_252 = bitstr_256[ 0 .. ( BIT_LENGTH_252 - 1 ) ]
-      id_err_msg = "The ID digest needs #{BIT_LENGTH_252} not #{bitstr_252.length} chars."
-      raise RuntimeError, id_err_msg unless bitstr_252.length == BIT_LENGTH_252
-
-      id_chars_pool = Key64.from_bits( bitstr_252 ).to_alphanumeric
-      undivided_str = Methods.cherry_picker( ID_TWO_CHUNK_LEN, id_chars_pool )
-      id_characters = undivided_str.insert( IDENTITY_CHUNK_LENGTH, SEGMENT_CHAR )
-
-      min_size_msg = "Id length #{id_characters.length} is not #{(ID_TWO_CHUNK_LEN + 1)} chars."
-      raise RuntimeError, min_size_msg unless id_characters.length == ( ID_TWO_CHUNK_LEN + 1 )
-
-      return id_characters.downcase
-
-    end
-
-
     private
-
-
-    ID_TWO_CHUNK_LEN = IDENTITY_CHUNK_LENGTH * 2
-    ID_TRI_CHUNK_LEN = IDENTITY_CHUNK_LENGTH * 3
-    ID_TRI_TOTAL_LEN = ID_TRI_CHUNK_LEN + 2
-
-    BIT_LENGTH_252 = 252
 
 
     def self.assert_session_token_size session_token
