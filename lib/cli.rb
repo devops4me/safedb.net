@@ -211,6 +211,21 @@ class CLI < Thor
 
 
 
+  # Description of the import use case command.
+  desc "import", "imports the contents of the parameter json file into this book."
+
+  # The <b>import use case</b> takes a filepath parameter in order to pull in
+  # a <em>json</em> formatted data structure.
+  # @param import_filepath [String] the path to the JSON file that we will import
+  def import import_filepath
+    log.info(x) { "[usecase] ~> importing into current book from file #{import_filepath}." }
+    import_uc = SafeDb::Import.new
+    import_uc.import_filepath = import_filepath
+    import_uc.flow_of_events    
+  end
+
+
+
   # Description of the put secret command.
   desc "put <key> <value>", "put key/value pair into dictionary at open chapter and verse"
 

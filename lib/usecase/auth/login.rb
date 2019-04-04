@@ -20,6 +20,8 @@ module SafeDb
 
     def execute
 
+# @todo usecase => in parent class Auth validate the book name
+
       @book_id = Identifier.derive_ergonomic_identifier( @book_name, Indices::SAFE_BOOK_ID_LENGTH )
 
       unless ( is_book_initialized?() )
@@ -28,6 +30,8 @@ module SafeDb
       end
 
 # @todo usecase => if logged in skip the password collection and do_login() function
+
+# @todo usecase => search for password in environment variable
 
       book_password = KeyPass.password_from_shell( false ) if @password.nil?
       book_password = @password unless @password.nil?
