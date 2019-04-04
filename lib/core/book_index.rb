@@ -259,7 +259,8 @@ module SafeDb
 
 
     # Import and persist the parameter data structure into this book with the
-    # parameter chapter name.
+    # parameter chapter name using a deep merge that recursively seeks to preserve
+    # all non-duplicate records in both the source and destination structures.
     #
     # <tt>Chapter Alreay Exists</tt>
     #
@@ -291,9 +292,9 @@ module SafeDb
       chapter_keys = @book_index[ Indices::SAFE_BOOK_CHAPTER_KEYS ][ chapter_name ]
       new_chapter = Content.unlock_chapter( chapter_keys ) if chapter_exists
       new_chapter = KeyStore.new() unless chapter_exists
-      new_chapter.merge!( chpater_data )
 
-      Content.lock_chapter( chapter_keys, new_chapter.to_json() )
+      merged_data = new_chapter.recursive_merge( chapter_data )
+      Content.lock_chapter( chapter_keys, merged_data.to_json() )
 
     end
 
