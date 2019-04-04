@@ -1,0 +1,42 @@
+{
+    "school.name" : "SafeDb Boys School",
+    "school.location" : "East Acacia Avenue",
+    "year.1" :
+    {
+
+	"class.1" :
+	{
+	    "pupil.1" : "Joe Bloggs",
+	    "pupil.2" : "Stefan Peterson",
+	    "pupil.3" : "Robert Beefsted",
+	    "teachers" :
+	    {
+		"maths" : "Mrs Mathematics",
+		"music" : "Mr Trombone",
+		"p.e" : "Miss Cartwright"
+	    }
+	},
+
+	"class.special" :
+	{
+	    "pupil.1" : "Nought Noughtiest"
+	    "teachers" :
+	    {
+		"maths" : "Mr Deescipleen",
+		"emotions" : "Madame Emotionne"
+	    }
+	},
+
+	"class.2" :
+	{
+	    "pupil.1" : "Steve Workshard",
+	    "pupil.2" : "Paul Brainiac",
+	    "teachers" :
+	    {
+		"maths" : "Mrs Mathematics",
+		"music" : "Mr Trombone",
+		"p.e" : "Miss Cartwright"
+	    }
+	}
+    }
+}
