@@ -196,7 +196,7 @@ module SafeDb
     # If no chapter in this book has been opened, signalled by has_open_chapter_name?()
     # an exception is thrown.
     # @return [KeyStore] the chapter keys for the chapter this book is opened at
-    def get_chapter_keys()
+    def get_open_chapter_keys()
       abort "Cannot get chapter keys as no chapter is open." unless has_open_chapter_name?()
       @book_index[ Indices::SAFE_BOOK_CHAPTER_KEYS ][ get_open_chapter_name() ] = KeyStore.new() unless has_open_chapter_data?()
       return @book_index[ Indices::SAFE_BOOK_CHAPTER_KEYS ][ get_open_chapter_name() ]
@@ -210,7 +210,7 @@ module SafeDb
       abort "Cannot read data as no chapter is open." unless has_open_chapter_name?()
       return @chapter_data unless @chapter_data.nil?()
       @chapter_data = KeyStore.new unless has_open_chapter_data?()
-      @chapter_data = Content.unlock_chapter( get_chapter_keys() ) if has_open_chapter_data?()
+      @chapter_data = Content.unlock_chapter( get_open_chapter_keys() ) if has_open_chapter_data?()
       return @chapter_data
     end
 
@@ -222,7 +222,7 @@ module SafeDb
     def set_open_chapter_data()
       abort "Cannot persist the data with no open chapter name." unless has_open_chapter_name?()
       abort "Cannot persist a nil or empty data structure." if @chapter_data.nil?() or @chapter_data.empty?()
-      Content.lock_chapter( get_chapter_keys(), @chapter_data.to_json() )
+      Content.lock_chapter( get_open_chapter_keys(), @chapter_data.to_json() )
     end
 
 
@@ -249,10 +249,59 @@ module SafeDb
     end
 
 
+    # Write data for the open chapter to the configured safe store. Naturally
+    # there must be an open chapter name and the open chapter data cannot be
+    # nil or empty otherwise this write will throw an exception.
+    def write_open_chapter()
+      set_open_chapter_data()
+      write()
+    end
+
+
+    # Import and persist the parameter data structure into this book with the
+    # parameter chapter name.
+    #
+    # <tt>Chapter Alreay Exists</tt>
+    #
+    # What if a chapter of the given name already exists?
+    #
+    # In this case we merge the new (incoming) chapter data into the old chapter
+    # data. Existing verses not declared in the incoming chapter data continue
+    # to live on.
+    #
+    # Duplicates occur when the same keys posses different values at any level
+    # including verse and line (even sub-line levels for assimilated files).The
+    # default is to favour incoming values when duplicates are encountered.
+    #
+    # <tt>Parameter Validation</tt>
+    #
+    # Neither of the parameters should be nil or empty,
+    # nor should the chapter name consist solely of whitespace. Furthermore,
+    # the chapter name should respect the constraints imposed by the safe.
+    #
+    # @param chapter_name [String] the name of the chapter to persist
+    # @param chapter_data [KeyStore] the chapter data structure to persist
+    def import_chapter( chapter_name, chapter_data )
+
+      KeyError.not_new( chapter_name, self )
+      abort "The chapter must not be nil or empty." if( chapter_data.nil?() or chapter_data.empty?() )
+
+      chapter_exists = @book_index[ Indices::SAFE_BOOK_CHAPTER_KEYS ].has_key?( chapter_name )
+      @book_index[ Indices::SAFE_BOOK_CHAPTER_KEYS ][ chapter_name ] = KeyStore.new() unless chapter_exists
+      chapter_keys = @book_index[ Indices::SAFE_BOOK_CHAPTER_KEYS ][ chapter_name ]
+      new_chapter = Content.unlock_chapter( chapter_keys ) if chapter_exists
+      new_chapter = KeyStore.new() unless chapter_exists
+      new_chapter.merge!( chpater_data )
+
+      Content.lock_chapter( chapter_keys, new_chapter.to_json() )
+
+    end
+
+
     # Get the number of chapters nestled within this book.
     # @return [Numeric] the number of chapters within this book
     def chapter_count()
-      return chapter_keys().length
+      return chapter_keys().length()
     end
 
 

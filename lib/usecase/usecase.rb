@@ -52,39 +52,6 @@ module SafeDb
     end
 
 
-    # If the <b>content dictionary is not nil</b> and contains a key named
-    # {Indices::CONTENT_IDENTIFIER} then we return true as we expect the content
-    # ciphertext and its corresponding file to exist.
-    #
-    # This method throws an exception if they key exists but there is no
-    # file at the expected location.
-    #
-    # @param crumbs_map [Hash]
-    #
-    #    we test for the existence of the constant {Indices::CONTENT_IDENTIFIER}
-    #    and if it exists we assert that the content filepath should also
-    #    be present.
-    #
-    def db_envelope_exists?( crumbs_map )
-
-      return false if crumbs_map.nil?
-      return false unless crumbs_map[ Indices::CONTENT_IDENTIFIER ]
-
-      session_id = Identifier.derive_session_id( ShellSession.to_token() )
-      session_indices_file = FileTree.session_indices_filepath( session_id )
-      book_id = KeyMap.new( session_indices_file ).read( Indices::SESSION_DATA, Indices::CURRENT_SESSION_BOOK_ID )
-
-      external_id = crumbs_map[ Indices::CONTENT_IDENTIFIER ]
-      the_filepath = FileTree.session_crypts_filepath( book_id, session_id, external_id )
-
-      error_string = "External ID #{external_id} found but no file at #{the_filepath}"
-      raise RuntimeException, error_string unless File.file?( the_filepath )
-
-      return true
-
-    end
-
-
     # This parental behaviour decrypts and reads the ubiquitous chapter and verse
     # data structures and indices.
     def read_verse()
@@ -92,21 +59,9 @@ module SafeDb
 # @todo usecase => consider doing the book index opening with initializer UNLESS token/admin use case
 
       @book_index = BookIndex.new()
-##############################      @master_db = BookIndex.read()
       return if @book_index.unopened_chapter_verse()
       @verse = @book_index.get_open_verse_data()
 
-=begin
-      @chapter_id = ENVELOPE_KEY_PREFIX + @master_db[ ENV_PATH ]
-      @has_chapter = db_envelope_exists?( @master_db[ @chapter_id ] )
-      @chapter_data = Content.unlock_chapter( @master_db[ @chapter_id ] ) if @has_chapter
-      @chapter_data = KeyStore.new() unless @has_chapter
-
-      @verse_id = @master_db[ KEY_PATH ]
-      @has_verse = @has_chapter && @chapter_data.has_key?( @verse_id )
-      @verse_data = @chapter_data[ @verse_id ] if @has_verse
-      @master_db[ @chapter_id ] = {} unless @has_chapter
-=end
     end
 
 
@@ -115,8 +70,7 @@ module SafeDb
     # to the now superceeded chapter state.
     def update_verse()
 
-      @book_index.set_open_chapter_data()
-      @book_index.write()
+      @book_index.write_open_chapter()
       Show.new.flow_of_events
 
     end
@@ -124,12 +78,11 @@ module SafeDb
 
     # Execute the use cases's flow from beginning when
     # you validate the input and parameters through the
-    # memorize, execute and the final cleanup.
+    # memorize and execute.
     def flow_of_events
 
       check_pre_conditions
       execute
-      cleanup
       check_post_conditions
 
     end
@@ -214,13 +167,6 @@ module SafeDb
     end
 
 
-    # If the use case validation went well, the memorization
-    # went well the 
-    def cleanup
-
-    end
-
-
     private
 
 
@@ -231,30 +177,12 @@ module SafeDb
     FILE_NAME_KEY = "filename"
     COMMANDMENT = "safe"
     ENV_VAR_KEY_NAME = "SAFE_TTY_TOKEN"
-    APP_DIR_NAME = "safedb.net"
 
     SAFE_FLAGSHIP_NAME = "safedb.net"
-    USER_CONFIGURATION_FILE = File.join( Dir.home, ".#{SAFE_FLAGSHIP_NAME}/safedb-user-configuration.ini" )
     MASTER_INDEX_LOCAL_FILE = File.join( Dir.home, ".#{SAFE_FLAGSHIP_NAME}/safedb-master-index-local.ini" )
     ENV_PATH = "env.path"
     KEY_PATH = "key.path"
     ENVELOPE_KEY_PREFIX = "envelope@"
-    BOOK_CREATED_DATE = "book.created.date"
-    BOOK_NAME = "book.name"
-    BOOK_ID = "book.id"
-    BOOK_CREATOR_VERSION = "book.creator.version"
-    LAST_ACCESSED = "last.accessed.time"
-    SESSION_DICT_LOCK_SIZE = 32
-    SESSION_DICT_LOCK_NAME = "crypted.session.dict.lock"
-    ENVELOPE_KEY_SIZE = 32
-    ENVELOPE_KEY_NAME = "crypted.envelope.key"
-    ENVELOPE_ID_SIZE = 16
-    ENVELOPE_ID_NAME = "crypted.envelope.id"
-    SESSION_ID_SIZE = 64
-    SESSION_FILENAME_ID_SIZE = 24
-    SESSION_START_TIMESTAMP_NAME = "session.creation.time"
-    MASTER_LOCK_KEY_NAME = "master.session.lock.key"
-
 
 
     def add_secret_facts fact_db
