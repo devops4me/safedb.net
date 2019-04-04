@@ -347,7 +347,8 @@ module SafeDb
     # @return [String]
     #    the weekday, month day, month, year and the hour minute time.
     def self.readable
-      return "#{Time.now.ctime}"
+      time_with_consecutive_spaces = Time.now.ctime
+      return time_with_consecutive_spaces.gsub( "  ", " " )
     end
 
 
