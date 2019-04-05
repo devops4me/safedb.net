@@ -16,14 +16,16 @@ module SafeDb
     # {Hash.merge()} instance method only performs first level merges which is
     # not ideal if you need to intelligently merge a deep tree.
     #
-    # This behaviour examines duplicate keys (and their values) provided by a
-    # {Hash.merge!} block. If the two values are both {Hash} structures we use
-    # recursion to deep merge them.
+    # <tt>Merge Behaviour</tt>
     #
-    # If merging values that are an array and a string, or a string and a
-    # string, or a hash and an array, the winner is the current (sitting) hash.
-    # The incoming value is rejected and logged.
-    #
+    # Currently this behaviour works only for Hash data structures that have
+    # string keys (only) and either string or Hash values. It is interesting
+    # only when duplicate keys are encountered at the same level. If the
+    # duplicate key's value is
+    # 
+    # 1. a String - the incoming value is rejected and logged
+    # 2. a Hash - the method is recalled with these nested Hashes as parameters
+    # 
     # @param struct_1 [Hash] the current receiving hash data structure
     # @param struct_2 [Hash] the incoming hash data structure to merge
     def self.recursively_merge!( struct_1, struct_2 )
@@ -34,13 +36,22 @@ module SafeDb
         are_both_str = value_1.kind_of?( String ) && value_2.kind_of?( String )
         not_the_same = are_both_str && ( value_1 != value_2 )
 
-        puts "Refusing to let { #{key} => #{value_2} } overwrite { #{key} => #{value_1} }" if not_the_same
+        reject_message( key, value_1, value_2 ) if not_the_same
         recursively_merge!( value_1, value_2 ) if is_mergeable
         value_1
 
       end
 
 
+    end
+
+
+    private
+
+
+    def self.reject_message( key, value_1, value_2 )
+      the_message = "Refused to allow { #{key} => #{value_2} } to overwrite { #{key} => #{value_1} }"
+      puts ""; puts the_message
     end
 
 =begin
