@@ -27,7 +27,7 @@ module SafeDb
 
       @session_id = Identifier.derive_session_id( ShellSession.to_token() )
       session_indices_file = FileTree.session_indices_filepath( @session_id )
-      @session_keys = KeyMap.new( session_indices_file )
+      @session_keys = DataMap.new( session_indices_file )
       @book_id = @session_keys.read( Indices::SESSION_DATA, Indices::CURRENT_SESSION_BOOK_ID )
       @session_keys.use( @book_id )
       @content_id = @session_keys.get( Indices::CONTENT_IDENTIFIER )
@@ -50,7 +50,7 @@ module SafeDb
     # database decryption key which in turn reveals the JSON representation of the
     # master database.
     #
-    # The {KeyMap} book index JSON is streamed into one of the crypt files denoted by
+    # The {DataMap} book index JSON is streamed into one of the crypt files denoted by
     # a content identifier - this file is decrypted and the data structure deserialized
     # into a {Hash} and returned.
     #

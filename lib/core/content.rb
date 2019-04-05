@@ -21,7 +21,7 @@ module SafeDb
     #
     # @param book_id [String] used to determine the book's master crypt folder
     # @param crypt_key [Key] the key used to (symmetrically) encrypt the content provided
-    # @param key_store [KeyMap] either KeyMap or KeyStore containing the content id and random iv
+    # @param key_store [DataMap] either DataMap or KeyStore containing the content id and random iv
     # @param content_body [String] content to encryt and the ciphertext will be stored
     def self.lock_master( book_id, crypt_key, key_store, content_body )
 
@@ -46,13 +46,13 @@ module SafeDb
     # The content ciphertext derived from encrypting the body is stored
     # in a file.
     #
-    # @param key_store [KeyMap] either KeyMap or KeyStore containing the content id and random iv
+    # @param key_store [DataMap] either DataMap or KeyStore containing the content id and random iv
     # @param content_body [String] content to encryt and the ciphertext will be stored
     def self.lock_chapter( key_store, content_body )
 
       session_id = Identifier.derive_session_id( ShellSession.to_token() )
       session_indices_file = FileTree.session_indices_filepath( session_id )
-      book_id = KeyMap.new( session_indices_file ).read( Indices::SESSION_DATA, Indices::CURRENT_SESSION_BOOK_ID )
+      book_id = DataMap.new( session_indices_file ).read( Indices::SESSION_DATA, Indices::CURRENT_SESSION_BOOK_ID )
 
       old_content_id = key_store[ Indices::CONTENT_IDENTIFIER ] if key_store.has_key?(Indices::CONTENT_IDENTIFIER)
 
@@ -106,10 +106,10 @@ module SafeDb
 
     # Use the content's external id to find the ciphertext file that is to be unlocked.
     # Then use the unlock key from the parameter along with the random IV that is inside
-    # the {KeyMap} or {KeyStore} to decrypt and return the ciphertext.
+    # the {DataMap} or {KeyStore} to decrypt and return the ciphertext.
     #
     # @param unlock_key [Key] symmetric key that was used to encrypt the ciphertext
-    # @param key_store [KeyMap] either {KeyMap} or {KeyStore} containing content id and random iv
+    # @param key_store [DataMap] either {DataMap} or {KeyStore} containing content id and random iv
     # @return [String] the resulting decrypted text that was encrypted with the parameter key
     def self.unlock_master( unlock_key, key_store )
 
@@ -124,16 +124,16 @@ module SafeDb
 
     # Use the content's external id to find the ciphertext file that is to be unlocked.
     # Then use the unlock key from the parameter along with the random IV that is inside
-    # the {KeyMap} or {KeyStore} to decrypt and return the ciphertext.
+    # the {DataMap} or {KeyStore} to decrypt and return the ciphertext.
     #
     # @param unlock_key [Key] symmetric key that was used to encrypt the ciphertext
-    # @param key_store [KeyMap] either {KeyMap} or {KeyStore} containing content id and random iv
+    # @param key_store [DataMap] either {DataMap} or {KeyStore} containing content id and random iv
     # @return [String] the resulting decrypted text that was encrypted with the parameter key
     def self.unlock_chapter( key_store )
 
       session_id = Identifier.derive_session_id( ShellSession.to_token() )
       session_indices_file = FileTree.session_indices_filepath( session_id )
-      book_id = KeyMap.new( session_indices_file ).read( Indices::SESSION_DATA, Indices::CURRENT_SESSION_BOOK_ID )
+      book_id = DataMap.new( session_indices_file ).read( Indices::SESSION_DATA, Indices::CURRENT_SESSION_BOOK_ID )
 
       content_id = key_store[ Indices::CONTENT_IDENTIFIER ]
       crypt_key = Key.from_char64( key_store[ Indices::CHAPTER_KEY_CRYPT ] )
@@ -148,7 +148,7 @@ module SafeDb
 
     # Use the content's external id to find the ciphertext file that is to be unlocked.
     # Then use the unlock key from the parameter along with the random IV that is inside
-    # the {KeyMap} or {KeyStore} to decrypt and return the ciphertext.
+    # the {DataMap} or {KeyStore} to decrypt and return the ciphertext.
     #
     # @param crypt_path [File] path to the crypt file holding the encrypted ciphertext
     # @param unlock_key [Key] symmetric key that was used to encrypt the ciphertext

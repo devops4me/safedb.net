@@ -50,7 +50,7 @@ module SafeDb
       book_secret = KeyPass.password_from_shell( true ) if @password.nil?
       book_secret = @password unless @password.nil?
 
-      master_keys = KeyMap.new( MASTER_INDEX_LOCAL_FILE )
+      master_keys = DataMap.new( MASTER_INDEX_LOCAL_FILE )
       master_keys.use( @book_id )
 
       KeyCycle.recycle(
@@ -72,7 +72,7 @@ module SafeDb
 
       FileUtils.mkdir_p( FileTree.master_crypts_folder( @book_id ) )
 
-      keypairs = KeyMap.new( MASTER_INDEX_LOCAL_FILE )
+      keypairs = DataMap.new( MASTER_INDEX_LOCAL_FILE )
       keypairs.use( @book_id )
       keypairs.set( Indices::SAFE_BOOK_INITIALIZE_TIME, KeyNow.readable() )
       keypairs.set( Indices::MASTER_COMMIT_ID, Identifier.get_random_identifier( 16 ) )

@@ -38,7 +38,7 @@ module SafeDb
 
 # @todo usecase => if password is correct - if not print out an error.
 
-      book_keys = KeyMap.new( MASTER_INDEX_LOCAL_FILE )
+      book_keys = DataMap.new( MASTER_INDEX_LOCAL_FILE )
       book_keys.use( @book_id )
 
       LoginOut.do_login( book_keys, book_password )

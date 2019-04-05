@@ -21,7 +21,7 @@ module SafeDb
 
       KeyError.not_new( @book_name, self )
       return false unless File.exists?( MASTER_INDEX_LOCAL_FILE )
-      key_map = KeyMap.new( MASTER_INDEX_LOCAL_FILE )
+      key_map = DataMap.new( MASTER_INDEX_LOCAL_FILE )
       return false unless key_map.has_section?( @book_id )
       key_map.use( @book_id )
 

@@ -43,8 +43,8 @@ module SafeDb
     # state of the master book. A login acts like a stack push in that it wrests control from
     # the current book only to cede it back during logout.
 
-    # @param book_keys [KeyMap]
-    #    the {KeyMap} contains the salts for key rederivation seeing as we have the
+    # @param book_keys [DataMap]
+    #    the {DataMap} contains the salts for key rederivation seeing as we have the
     #    book password and the rederived key will be able to unlock the ciphertext
     #    along with the random initialization vector (iv) also in the key map.
     #
@@ -128,7 +128,7 @@ module SafeDb
 
       return false unless File.exists?( XXXXXXXXXXX )
 
-      crumbs_db = KeyMap.new( frontend_keystore_file() )
+      crumbs_db = DataMap.new( frontend_keystore_file() )
       crumbs_db.use( XXXXXXXXXXXXX )
       return false unless crumbs_db.contains?( XXXXXXXXXXXXXXX )
 
@@ -158,7 +158,7 @@ module SafeDb
     #
     # @param book_id [String] the book identifier this session is about
     # @param session_id [String] the identifier pertaining to this session
-    # @param master_keys [KeyMap] keys from the book's master line
+    # @param master_keys [DataMap] keys from the book's master line
     # @param crypt_key [Key] symmetric session content encryption key
     #
     def self.clone_book_into_session( book_id, session_id, master_keys, crypt_key )
@@ -178,16 +178,16 @@ module SafeDb
     end
 
 
-    # Create and return the session indices {KeyMap} pertaining to both the current
+    # Create and return the session indices {DataMap} pertaining to both the current
     # book and session whose ids are given in the first and second parameters.
     #
     # @param book_id [String] the book identifier this session is about
     # @param session_id [String] the identifier pertaining to this session
-    # @return [KeyMap] return the keys pertaining to this session and book
+    # @return [DataMap] return the keys pertaining to this session and book
     def self.create_session_indices( book_id, session_id )
 
       session_exists = File.exists? FileTree.session_indices_filepath( session_id )
-      session_keys = KeyMap.new( FileTree.session_indices_filepath( session_id ) )
+      session_keys = DataMap.new( FileTree.session_indices_filepath( session_id ) )
       session_keys.use( Indices::SESSION_DATA )
       session_keys.set( Indices::SESSION_INITIAL_LOGIN_TIME, KeyNow.readable() ) unless session_exists
       session_keys.set( Indices::SESSION_LAST_ACCESSED_TIME, KeyNow.readable() )
