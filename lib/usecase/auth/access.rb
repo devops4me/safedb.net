@@ -21,20 +21,20 @@ module SafeDb
 
       KeyError.not_new( @book_name, self )
       return false unless File.exists?( MASTER_INDEX_LOCAL_FILE )
-      key_map = DataMap.new( MASTER_INDEX_LOCAL_FILE )
-      return false unless key_map.has_section?( @book_id )
-      key_map.use( @book_id )
+      data_map = DataMap.new( MASTER_INDEX_LOCAL_FILE )
+      return false unless data_map.has_section?( @book_id )
+      data_map.use( @book_id )
 
-      return contains_all_master_book_indices( key_map )
+      return contains_all_master_book_indices( data_map )
 
     end
 
 
-    def contains_all_master_book_indices( key_map )
-      return false unless key_map.contains?( Indices::CONTENT_RANDOM_IV )
-      return false unless key_map.contains?( Indices::CONTENT_IDENTIFIER )
-      return false unless key_map.contains?( Indices::INTER_SESSION_KEY_CRYPT )
-      return false unless key_map.contains?( Indices::MASTER_COMMIT_ID )
+    def contains_all_master_book_indices( data_map )
+      return false unless data_map.contains?( Indices::CONTENT_RANDOM_IV )
+      return false unless data_map.contains?( Indices::CONTENT_IDENTIFIER )
+      return false unless data_map.contains?( Indices::INTER_SESSION_KEY_CRYPT )
+      return false unless data_map.contains?( Indices::MASTER_COMMIT_ID )
       return true
     end
 

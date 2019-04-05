@@ -128,7 +128,7 @@ module SafeDb
 
       return false unless File.exists?( XXXXXXXXXXX )
 
-      crumbs_db = DataMap.new( frontend_keystore_file() )
+      crumbs_db = DataMap.new( blah_blah_blah_filepath() )
       crumbs_db.use( XXXXXXXXXXXXX )
       return false unless crumbs_db.contains?( XXXXXXXXXXXXXXX )
 

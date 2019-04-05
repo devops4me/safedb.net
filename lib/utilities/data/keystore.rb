@@ -9,11 +9,11 @@ module SafeDb
   # (put, add etc) <b>after reading and then decrypting it</b> from a
   # file and <b>before encrypting and then writing it</b> to a file.
   #
-  # == Difference Between KeyStore and DataStore
+  # == Difference Between DataStore and DataStore
   #
   # The DataStore is a JSON backed store that streams to and from INI formatted
   # data.
-  # The KeyStore  is preferred for human readable data which is
+  # The DataStore  is preferred for human readable data which is
   # precisely 2 dimensional. The streamed DataMap is JSON which
   # at scale isn't human readable but the data structure is
   # N dimensional and it supports nested structures such as
@@ -47,7 +47,7 @@ module SafeDb
   # - other hashes
   # - booleans
   # - integers and floats
-  class KeyStore < Hash
+  class DataStore < Hash
 
     # Return a key database data structure that is instantiated from
     # the parameter JSON string.
@@ -56,12 +56,12 @@ module SafeDb
     #    this json formatted data structure will be converted into a
     #    a Ruby hash (map) data structure and returned.
     #
-    # @return [KeyStore]
+    # @return [DataStore]
     #    a hash data structure that has been instantiated as per the
     #    parameter json string content.
     def self.from_json( db_json_string )
 
-      data_db = KeyStore.new()
+      data_db = DataStore.new()
       data_db.merge!( JSON.parse( db_json_string ) )
       return data_db
 

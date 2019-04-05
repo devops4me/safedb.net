@@ -41,7 +41,7 @@ module SafeDb
     end
 
 
-    # Construct a BookIndex object that extends the KeyStore data structure
+    # Construct a BookIndex object that extends the DataStore data structure
     # which in turns extens the Ruby hash object. The parental objects know
     # how to manipulate (store, delete, read etc the data structures).
     #
@@ -70,7 +70,7 @@ module SafeDb
 
       read_crypt_path = FileTree.session_crypts_filepath( @book_id, @session_id, @content_id )
       random_iv = KeyIV.in_binary( @session_keys.get( Indices::CONTENT_RANDOM_IV ) )
-      @book_index = KeyStore.from_json( Content.unlock_it( read_crypt_path, @crypt_key, random_iv ) )
+      @book_index = DataStore.from_json( Content.unlock_it( read_crypt_path, @crypt_key, random_iv ) )
 
     end
 
@@ -195,21 +195,21 @@ module SafeDb
     #
     # If no chapter in this book has been opened, signalled by has_open_chapter_name?()
     # an exception is thrown.
-    # @return [KeyStore] the chapter keys for the chapter this book is opened at
+    # @return [DataStore] the chapter keys for the chapter this book is opened at
     def get_open_chapter_keys()
       abort "Cannot get chapter keys as no chapter is open." unless has_open_chapter_name?()
-      @book_index[ Indices::SAFE_BOOK_CHAPTER_KEYS ][ get_open_chapter_name() ] = KeyStore.new() unless has_open_chapter_data?()
+      @book_index[ Indices::SAFE_BOOK_CHAPTER_KEYS ][ get_open_chapter_name() ] = DataStore.new() unless has_open_chapter_data?()
       return @book_index[ Indices::SAFE_BOOK_CHAPTER_KEYS ][ get_open_chapter_name() ]
     end
 
 
     # Returns the data structure corresponding to the book's open chapter.
     # If has_open_chapter_name?() returns false this method will throw an exception.
-    # @return [KeyStore] the data of the chapter that this book is opened at
+    # @return [DataStore] the data of the chapter that this book is opened at
     def get_open_chapter_data()
       abort "Cannot read data as no chapter is open." unless has_open_chapter_name?()
       return @chapter_data unless @chapter_data.nil?()
-      @chapter_data = KeyStore.new unless has_open_chapter_data?()
+      @chapter_data = DataStore.new unless has_open_chapter_data?()
       @chapter_data = Content.unlock_chapter( get_open_chapter_keys() ) if has_open_chapter_data?()
       return @chapter_data
     end
@@ -242,9 +242,9 @@ module SafeDb
     # Returns the data structure corresponding to the book's open verse within
     # the book's open chapter. Both the open chapter and verse names have to be
     # set otherwise an exception will be thrown.
-    # @return [KeyStore] the data of the verse that this book is opened at
+    # @return [DataStore] the data of the verse that this book is opened at
     def get_open_verse_data()
-      get_open_chapter_data()[ get_open_verse_name() ] = KeyStore.new() unless has_open_verse_data?()
+      get_open_chapter_data()[ get_open_verse_name() ] = DataStore.new() unless has_open_verse_data?()
       return get_open_chapter_data()[ get_open_verse_name() ]
     end
 
@@ -281,17 +281,17 @@ module SafeDb
     # the chapter name should respect the constraints imposed by the safe.
     #
     # @param chapter_name [String] the name of the chapter to persist
-    # @param chapter_data [KeyStore] the chapter data structure to persist
+    # @param chapter_data [DataStore] the chapter data structure to persist
     def import_chapter( chapter_name, chapter_data )
 
       KeyError.not_new( chapter_name, self )
       abort "The chapter must not be nil or empty." if( chapter_data.nil?() or chapter_data.empty?() )
 
       chapter_exists = @book_index[ Indices::SAFE_BOOK_CHAPTER_KEYS ].has_key?( chapter_name )
-      @book_index[ Indices::SAFE_BOOK_CHAPTER_KEYS ][ chapter_name ] = KeyStore.new() unless chapter_exists
+      @book_index[ Indices::SAFE_BOOK_CHAPTER_KEYS ][ chapter_name ] = DataStore.new() unless chapter_exists
       chapter_keys = @book_index[ Indices::SAFE_BOOK_CHAPTER_KEYS ][ chapter_name ]
       new_chapter = Content.unlock_chapter( chapter_keys ) if chapter_exists
-      new_chapter = KeyStore.new() unless chapter_exists
+      new_chapter = DataStore.new() unless chapter_exists
 
       merged_data = Struct.recursively_merge!( new_chapter, chapter_data )
       Content.lock_chapter( chapter_keys, merged_data.to_json() )
@@ -368,7 +368,7 @@ module SafeDb
     # Returns a map of chapter keys that exist within this book.
     # An empty map will be returned if no data has been added as yet
     # to the book.
-    # @return [KeyStore] the data structure holding chapter key data
+    # @return [DataStore] the data structure holding chapter key data
     def chapter_keys()
       return @book_index[ Indices::SAFE_BOOK_CHAPTER_KEYS ]
     end

@@ -21,15 +21,15 @@ module SafeDb
     #
     # @param book_id [String] used to determine the book's master crypt folder
     # @param crypt_key [Key] the key used to (symmetrically) encrypt the content provided
-    # @param key_store [DataMap] either DataMap or KeyStore containing the content id and random iv
+    # @param data_store [DataMap] either DataMap or DataStore containing the content id and random iv
     # @param content_body [String] content to encryt and the ciphertext will be stored
-    def self.lock_master( book_id, crypt_key, key_store, content_body )
+    def self.lock_master( book_id, crypt_key, data_store, content_body )
 
       content_id = Identifier.get_random_identifier( Indices::CONTENT_ID_LENGTH )
-      key_store.set( Indices::CONTENT_IDENTIFIER, content_id )
+      data_store.set( Indices::CONTENT_IDENTIFIER, content_id )
       master_crypt_path = FileTree.master_crypts_filepath( book_id, content_id )
       iv_base64 = KeyIV.new().for_storage()
-      key_store.set( Indices::CONTENT_RANDOM_IV, iv_base64 )
+      data_store.set( Indices::CONTENT_RANDOM_IV, iv_base64 )
       random_iv = KeyIV.in_binary( iv_base64 )
 
       lock_it( master_crypt_path, crypt_key, random_iv, content_body, TextChunk.crypt_header( book_id ) )
@@ -46,27 +46,27 @@ module SafeDb
     # The content ciphertext derived from encrypting the body is stored
     # in a file.
     #
-    # @param key_store [DataMap] either DataMap or KeyStore containing the content id and random iv
+    # @param data_store [DataMap] either DataMap or DataStore containing the content id and random iv
     # @param content_body [String] content to encryt and the ciphertext will be stored
-    def self.lock_chapter( key_store, content_body )
+    def self.lock_chapter( data_store, content_body )
 
       session_id = Identifier.derive_session_id( ShellSession.to_token() )
       session_indices_file = FileTree.session_indices_filepath( session_id )
       book_id = DataMap.new( session_indices_file ).read( Indices::SESSION_DATA, Indices::CURRENT_SESSION_BOOK_ID )
 
-      old_content_id = key_store[ Indices::CONTENT_IDENTIFIER ] if key_store.has_key?(Indices::CONTENT_IDENTIFIER)
+      old_content_id = data_store[ Indices::CONTENT_IDENTIFIER ] if data_store.has_key?(Indices::CONTENT_IDENTIFIER)
 
       new_content_id = Identifier.get_random_identifier( Indices::CONTENT_ID_LENGTH )
-      key_store.store( Indices::CONTENT_IDENTIFIER, new_content_id )
+      data_store.store( Indices::CONTENT_IDENTIFIER, new_content_id )
 
       new_chapter_crypt_path = FileTree.session_crypts_filepath( book_id, session_id, new_content_id )
 
       iv_base64 = KeyIV.new().for_storage()
-      key_store.store( Indices::CONTENT_RANDOM_IV, iv_base64 )
+      data_store.store( Indices::CONTENT_RANDOM_IV, iv_base64 )
       random_iv = KeyIV.in_binary( iv_base64 )
 
       crypt_key = Key.from_random()
-      key_store.store( Indices::CHAPTER_KEY_CRYPT, crypt_key.to_char64() )
+      data_store.store( Indices::CHAPTER_KEY_CRYPT, crypt_key.to_char64() )
 
       lock_it( new_chapter_crypt_path, crypt_key, random_iv, content_body, TextChunk.crypt_header( book_id ) )
 
@@ -106,16 +106,16 @@ module SafeDb
 
     # Use the content's external id to find the ciphertext file that is to be unlocked.
     # Then use the unlock key from the parameter along with the random IV that is inside
-    # the {DataMap} or {KeyStore} to decrypt and return the ciphertext.
+    # the {DataMap} or {DataStore} to decrypt and return the ciphertext.
     #
     # @param unlock_key [Key] symmetric key that was used to encrypt the ciphertext
-    # @param key_store [DataMap] either {DataMap} or {KeyStore} containing content id and random iv
+    # @param data_store [DataMap] either {DataMap} or {DataStore} containing content id and random iv
     # @return [String] the resulting decrypted text that was encrypted with the parameter key
-    def self.unlock_master( unlock_key, key_store )
+    def self.unlock_master( unlock_key, data_store )
 
-      book_id = key_store.section()
-      crypt_path = FileTree.master_crypts_filepath( book_id, key_store.get( Indices::CONTENT_IDENTIFIER ) )
-      random_iv = KeyIV.in_binary( key_store.get( Indices::CONTENT_RANDOM_IV ) )
+      book_id = data_store.section()
+      crypt_path = FileTree.master_crypts_filepath( book_id, data_store.get( Indices::CONTENT_IDENTIFIER ) )
+      random_iv = KeyIV.in_binary( data_store.get( Indices::CONTENT_RANDOM_IV ) )
       return unlock_it( crypt_path, unlock_key, random_iv )
 
     end
@@ -124,23 +124,23 @@ module SafeDb
 
     # Use the content's external id to find the ciphertext file that is to be unlocked.
     # Then use the unlock key from the parameter along with the random IV that is inside
-    # the {DataMap} or {KeyStore} to decrypt and return the ciphertext.
+    # the {DataMap} or {DataStore} to decrypt and return the ciphertext.
     #
     # @param unlock_key [Key] symmetric key that was used to encrypt the ciphertext
-    # @param key_store [DataMap] either {DataMap} or {KeyStore} containing content id and random iv
+    # @param data_store [DataMap] either {DataMap} or {DataStore} containing content id and random iv
     # @return [String] the resulting decrypted text that was encrypted with the parameter key
-    def self.unlock_chapter( key_store )
+    def self.unlock_chapter( data_store )
 
       session_id = Identifier.derive_session_id( ShellSession.to_token() )
       session_indices_file = FileTree.session_indices_filepath( session_id )
       book_id = DataMap.new( session_indices_file ).read( Indices::SESSION_DATA, Indices::CURRENT_SESSION_BOOK_ID )
 
-      content_id = key_store[ Indices::CONTENT_IDENTIFIER ]
-      crypt_key = Key.from_char64( key_store[ Indices::CHAPTER_KEY_CRYPT ] )
-      random_iv = KeyIV.in_binary( key_store[ Indices::CONTENT_RANDOM_IV ] )
+      content_id = data_store[ Indices::CONTENT_IDENTIFIER ]
+      crypt_key = Key.from_char64( data_store[ Indices::CHAPTER_KEY_CRYPT ] )
+      random_iv = KeyIV.in_binary( data_store[ Indices::CONTENT_RANDOM_IV ] )
 
       crypt_path = FileTree.session_crypts_filepath( book_id, session_id, content_id )
-      return KeyStore.from_json( unlock_it( crypt_path, crypt_key, random_iv ) )
+      return DataStore.from_json( unlock_it( crypt_path, crypt_key, random_iv ) )
 
     end
 
@@ -148,7 +148,7 @@ module SafeDb
 
     # Use the content's external id to find the ciphertext file that is to be unlocked.
     # Then use the unlock key from the parameter along with the random IV that is inside
-    # the {DataMap} or {KeyStore} to decrypt and return the ciphertext.
+    # the {DataMap} or {DataStore} to decrypt and return the ciphertext.
     #
     # @param crypt_path [File] path to the crypt file holding the encrypted ciphertext
     # @param unlock_key [Key] symmetric key that was used to encrypt the ciphertext

@@ -34,7 +34,7 @@ module SafeDb
       # key/value mini-dictionary breadcrumbs sitting
       # within the master database at the section labelled
       # envelope@<<actual_chapter_id>>.
-      chapter_data = KeyStore.from_json( Lock.content_unlock( master_db[ chapter_id ] ) )
+      chapter_data = DataStore.from_json( Lock.content_unlock( master_db[ chapter_id ] ) )
 
 
       # Unlock the file content by supplying the

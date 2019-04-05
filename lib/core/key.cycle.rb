@@ -79,16 +79,16 @@ module SafeDb
     #
     # @param book_id [String] the identifier of the book whose keys we are cycling
     # @param human_secret [String] this secret is sourced into key derivation functions
-    # @param key_map [Hash] book related key/value data that will be populated as appropriate
+    # @param data_map [Hash] book related key/value data that will be populated as appropriate
     # @param content_body [String] this content is encrypted and the ciphertext output stored
     # @return [Key] the generated random high entropy key that the content is locked with
     #
-    def self.recycle( book_id, human_secret, key_map, content_body )
+    def self.recycle( book_id, human_secret, data_map, content_body )
 
       high_entropy_key = Key.from_random
-      Content.lock_master( book_id, high_entropy_key, key_map, content_body )
-      derived_key = KdfApi.generate_from_password( human_secret, key_map )
-      key_map.set( Indices::INTER_SESSION_KEY_CRYPT, derived_key.do_encrypt_key( high_entropy_key ) )
+      Content.lock_master( book_id, high_entropy_key, data_map, content_body )
+      derived_key = KdfApi.generate_from_password( human_secret, data_map )
+      data_map.set( Indices::INTER_SESSION_KEY_CRYPT, derived_key.do_encrypt_key( high_entropy_key ) )
       return high_entropy_key
 
     end

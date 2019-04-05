@@ -82,12 +82,12 @@ module SafeDb
     #
     # <b>Example | Derive Key from Password</b>
     #
-    #    key_store = DataMap.new( "/path/to/kdf-salt-data.ini" )
-    #    key_store.use( "peter-pan" )
-    #    human_key = KdfApi.generate_from_password( "my_s3cr3t", key_store )
+    #    data_store = DataMap.new( "/path/to/kdf-salt-data.ini" )
+    #    data_store.use( "peter-pan" )
+    #    human_key = KdfApi.generate_from_password( "my_s3cr3t", data_store )
     #
     #    strong_key = Key.from_random()
-    #    human_key.encrypt_key( strong_key, key_store )
+    #    human_key.encrypt_key( strong_key, data_store )
     #
     #    strong_key.encrypt_file "/path/to/file-to-encrypt.pdf"
     #    strong_key.encrypt_text "I am the text to encrypt."
@@ -149,7 +149,7 @@ module SafeDb
     #    dictionary word or name is the way to generate a powerful key
     #    that has embedded a near 100% entropy rating.
     #
-    # @param key_map [DataMap]
+    # @param data_map [DataMap]
     #    The DataMap storage service must have been initialized and a
     #    section specified using {DataMap.use} thus allowing this method
     #    to <b>write key-value pairs</b> representing the BCrypt and
@@ -158,13 +158,13 @@ module SafeDb
     # @return [Key]
     #    the 256 bit symmetric encryption key derived from a human password
     #    and passed through two cryptographic workhorses.
-    def self.generate_from_password human_secret, key_map
+    def self.generate_from_password human_secret, data_map
 
       bcrypt_salt = KdfBCrypt.generate_bcrypt_salt
       pbkdf2_salt = KeyPbkdf2.generate_pbkdf2_salt
 
-      key_map.set( BCRYPT_SALT_KEY_NAME, bcrypt_salt )
-      key_map.set( PBKDF2_SALT_KEY_NAME, pbkdf2_salt )
+      data_map.set( BCRYPT_SALT_KEY_NAME, bcrypt_salt )
+      data_map.set( PBKDF2_SALT_KEY_NAME, pbkdf2_salt )
 
       return derive_and_amalgamate( human_secret, bcrypt_salt, pbkdf2_salt )
 
@@ -175,18 +175,18 @@ module SafeDb
     # generated in the past and with the same salts that were used during
     # the original key derivation process.
     #
-    # @param key_map [Hash]
+    # @param data_map [Hash]
     #    an instantiated and populated hash object containing the salts
     #    which were created in the past during the generation. These are
     #    now vital for a successful regeneration.
     #
     # @return [Key]
     #    the 256 bit symmetric encryption key that was previously generated
-    #    from the secret and the cryptographic salts within the key_map.
-    def self.regenerate_from_salts human_secret, key_map
+    #    from the secret and the cryptographic salts within the data_map.
+    def self.regenerate_from_salts human_secret, data_map
 
-      bcrypt_salt = key_map.get( BCRYPT_SALT_KEY_NAME )
-      pbkdf2_salt = key_map.get( PBKDF2_SALT_KEY_NAME )
+      bcrypt_salt = data_map.get( BCRYPT_SALT_KEY_NAME )
+      pbkdf2_salt = data_map.get( PBKDF2_SALT_KEY_NAME )
 
       return derive_and_amalgamate( human_secret, bcrypt_salt, pbkdf2_salt )
 

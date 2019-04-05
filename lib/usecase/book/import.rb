@@ -31,7 +31,7 @@ module SafeDb
       puts " Import time := #{KeyNow.readable()}\n"
 
       new_verse_count = 0
-      data_store = KeyStore.from_json( File.read( @import_filepath ) )
+      data_store = DataStore.from_json( File.read( @import_filepath ) )
       data_store.each_pair do | chapter_name, chapter_data |
         book_index.import_chapter( chapter_name, chapter_data )
         new_verse_count += chapter_data.length()

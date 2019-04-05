@@ -25,7 +25,7 @@ module SafeDb
       return if unopened_envelope?( master_db )
       chapter_id = ENVELOPE_KEY_PREFIX + master_db[ ENV_PATH ]
       verse_id = master_db[ KEY_PATH ]
-      chapter_data = KeyStore.from_json( Lock.content_unlock( master_db[ chapter_id ] ) )
+      chapter_data = DataStore.from_json( Lock.content_unlock( master_db[ chapter_id ] ) )
 
       base64_content = chapter_data[ verse_id ][ "#{FILE_KEY_PREFIX}#{@file_key}" ][ FILE_CONTENT_KEY ]
       simple_filename = chapter_data[ verse_id ][ "#{FILE_KEY_PREFIX}#{@file_key}" ][ FILE_NAME_KEY ]
