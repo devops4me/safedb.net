@@ -3,7 +3,6 @@
     "school.location" : "East Acacia Avenue",
     "year.1" :
     {
-
 	"class.1" :
 	{
 	    "pupil.1" : "Joe Bloggs",
@@ -12,7 +11,7 @@
 	    "teachers" :
 	    {
 		"maths" : "Mrs Trig",
-		"geography" : "Mr Trombone",
+		"geography" : "Mr Geo-Spatial",
 		"science" : "Dr Doolittle",
 		"p.e" : "Miss Cartwright"
 	    }
@@ -20,12 +19,12 @@
 
 	"class.2" :
 	{
-	    "pupil.1" : "Steve Workshard",
+	    "pupil.1" : "Max Mayhem",
 	    "pupil.2" : "Paul Brainiac",
 	    "teachers" :
 	    {
 		"maths" : "Mrs Mathematics",
-		"music" : "Mr Trombone",
+		"music" : "Ms Flute",
 		"p.e" : "Miss Cartwright"
 	    }
 	},
@@ -39,5 +38,11 @@
 		"chemistry" : "Ms Burnsen"
 	    }
 	}
+    },
+
+    "sixth form" :
+    {
+	"Art" : "Beth Rigby",
+	"Woodwork" : "Patricia Dunwoody"
     }
 }

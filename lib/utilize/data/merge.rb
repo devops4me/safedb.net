@@ -2,52 +2,55 @@
 
 module SafeDb
 
-  # The shell session can access the 152 characters of crypt and salt text
-  # that was set (exported) at the beginning when the shell woke up and typically
-  # executed its .bash_aliases script.
+  # Recursively merge (deep merge) two {Hash} data structures. The core ruby
+  # {Hash.merge()} instance method only performs first level merges which is
+  # not ideal if you need to intelligently merge a deep tree.
   class Merge
 
-
-    # Recursively merge (deep merge) two hash objects. The ruby Hash.merge()
-    # instance method only performs first level merges which is not ideal if
-    # you need to intelligently merge a deep tree.
+    # Recursively merge (deep merge) two {Hash} data structures. The core ruby
+    # {Hash.merge()} instance method only performs first level merges which is
+    # not ideal if you need to intelligently merge a deep tree.
     #
-    # The merge rules state that if two keys have the same value and both
-    # those values are themselves Hashes, they are again recursively merged.
+    # This behaviour examines duplicate keys (and their values) provided by a
+    # {Hash.merge!} block. If the two values are both {Hash} structures we use
+    # recursion to deep merge them.
     #
     # If merging values that are an array and a string, or a string and a
-    # string, or a hash and an array, the winner is the value belonging to
-    # the parameter hash.
+    # string, or a hash and an array, the winner is the current (sitting) hash.
+    # The incoming value is rejected and logged.
     #
-    # @param other_hash [Hash] the parameter hash to merge into ourselves
-    def self.recursively_merge( object_1, object_2 )
+    # @param struct_1 [Hash] the current receiving hash data structure
+    # @param struct_2 [Hash] the incoming hash data structure to merge
+    def self.recursively_merge!( struct_1, struct_2 )
 
-      is_string_merge = object_1.instance_of?( String ) and object_2.instance_of?( String )
-      is_struct_merge = object_1.instance_of?( Hash   ) and object_2.instance_of?( Hash   )
+      struct_1.merge!( struct_2 ) do | key, value_1, value_2 |
 
-      unless is_string_merge or is_struct_merge
-        puts "Cannot merge object of type [#{object_1.class()}] and [#{object_2.class()}]."
-        return object_1
-      end
+        is_mergeable = value_1.kind_of?( Hash   ) && value_2.kind_of?( Hash   )
+        are_both_str = value_1.kind_of?( String ) && value_2.kind_of?( String )
+        not_the_same = are_both_str && ( value_1 != value_2 )
 
-      if is_string_merge
-        puts "Request to merge two strings will simply return the first."
-        return object_1
-      end
-
-      puts "Merging data structures with [#{object_1.length()}] and [#{object_2.length()}] keys."
-      puts "Data structure 1 keys => #{object_1.keys().to_s}"
-      puts "Data structure 2 keys => #{object_2.keys().to_s}"
-
-      object_1.merge!( object_2 ) do | duplicate_key, value_1, value_2 |
-        puts "Both data structures have the key [#{duplicate_key}] at the same level."
-        recursively_merge( value_1, value_2 )
+        puts "Refusing to let { #{key} => #{value_2} } overwrite { #{key} => #{value_1} }" if not_the_same
+        recursively_merge!( value_1, value_2 ) if is_mergeable
         value_1
+
       end
 
 
     end
 
+
+    require 'json'
+    boys_school = JSON.parse( File.read( "merge-boys-school.json" ) )
+    girls_school = JSON.parse( File.read( "merge-girls-school.json" ) )
+
+    puts ""
+    puts "#### #################################################"
+    puts "#### ##### Joined Up Schools #########################"
+    puts "#### #################################################"
+    puts ""
+
+    recursively_merge!( boys_school, girls_school )
+    puts ""; puts JSON.pretty_generate( boys_school )
 
   end
 

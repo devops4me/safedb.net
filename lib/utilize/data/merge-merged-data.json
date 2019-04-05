@@ -1,0 +1,56 @@
+#### #################################################
+#### ##### Joined Up Schools #########################
+#### #################################################
+
+Refusing to let { school.name => SafeDb Girls School } overwrite { school.name => SafeDb Boys School }
+Refusing to let { maths => Mrs Trig } overwrite { maths => Mrs Mathematics }
+Refusing to let { pupil.1 => Max Mayhem } overwrite { pupil.1 => Steve Workshard }
+Refusing to let { music => Ms Flute } overwrite { music => Mr Trombone }
+
+{
+  "school.name": "SafeDb Boys School",
+  "school.location": "East Acacia Avenue",
+  "year.1": {
+    "class.1": {
+      "pupil.1": "Joe Bloggs",
+      "pupil.2": "Stefan Peterson",
+      "pupil.3": "Robert Beefsted",
+      "teachers": {
+        "maths": "Mrs Mathematics",
+        "music": "Mr Trombone",
+        "p.e": "Miss Cartwright",
+        "geography": "Mr Geo-Spatial",
+        "science": "Dr Doolittle"
+      },
+      "pupil.x": "Jeanette Jones",
+      "pupil.y": "Cynthia Roberts"
+    },
+    "class.special": {
+      "pupil.1": "Noughty Noughtiest",
+      "teachers": {
+        "maths": "Mr Deescipleen",
+        "emotions": "Madame Emotionne"
+      }
+    },
+    "class.2": {
+      "pupil.1": "Steve Workshard",
+      "pupil.2": "Paul Brainiac",
+      "teachers": {
+        "maths": "Mrs Mathematics",
+        "music": "Mr Trombone",
+        "p.e": "Miss Cartwright"
+      }
+    },
+    "class.3": {
+      "pupil.x": "Joan Blakesfield",
+      "pupil.y": "Susan Seesdeeir",
+      "teachers": {
+        "chemistry": "Ms Burnsen"
+      }
+    }
+  },
+  "sixth form": {
+    "Art": "Beth Rigby",
+    "Woodwork": "Patricia Dunwoody"
+  }
+}
