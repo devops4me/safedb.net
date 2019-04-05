@@ -293,7 +293,7 @@ module SafeDb
       new_chapter = Content.unlock_chapter( chapter_keys ) if chapter_exists
       new_chapter = KeyStore.new() unless chapter_exists
 
-      merged_data = new_chapter.recursive_merge( chapter_data )
+      merged_data = Struct.recursively_merge!( new_chapter, chapter_data )
       Content.lock_chapter( chapter_keys, merged_data.to_json() )
 
     end

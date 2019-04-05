@@ -2,10 +2,15 @@
 
 module SafeDb
 
+  # Data structure class provides behaviour for holding managing curating
+  # and most important of all, merging, data.
+  #
+  # <tt>How to Merge Data Structures</tt>
+  #
   # Recursively merge (deep merge) two {Hash} data structures. The core ruby
   # {Hash.merge()} instance method only performs first level merges which is
   # not ideal if you need to intelligently merge a deep tree.
-  class Merge
+  class Struct
 
     # Recursively merge (deep merge) two {Hash} data structures. The core ruby
     # {Hash.merge()} instance method only performs first level merges which is
@@ -38,7 +43,7 @@ module SafeDb
 
     end
 
-
+=begin
     require 'json'
     boys_school = JSON.parse( File.read( "merge-boys-school.json" ) )
     girls_school = JSON.parse( File.read( "merge-girls-school.json" ) )
@@ -51,6 +56,7 @@ module SafeDb
 
     recursively_merge!( boys_school, girls_school )
     puts ""; puts JSON.pretty_generate( boys_school )
+=end
 
   end
 
