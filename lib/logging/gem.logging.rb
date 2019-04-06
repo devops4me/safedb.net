@@ -1,5 +1,5 @@
 require "logger"
-require "session/user.home"
+
 
 # [MIXIN] magic is deployed to hand out DevOps quality logging
 # features to any class that includes the logging module.
@@ -22,12 +22,12 @@ require "session/user.home"
 # Refer to the below link for excellent coverage of mixins.
 # @see http://ruby-doc.com/docs/ProgrammingRuby/html/tut_modules.html
 #
-module OpenLogger
+module SafeDb
 
   @@gem_name = "safedb.net"
-  @@gem_base = File.join OpenSession::Home.dir, ".#{@@gem_name}"
-  FileUtils.mkdir_p @@gem_base unless File.exists? @@gem_base
-  @@log_path = File.join @@gem_base, "safedb.net-cli.log"
+  @@gem_base = File.join( Dir.home(), ".#{@@gem_name}" )
+  FileUtils.mkdir_p( @@gem_base unless File.exists? @@gem_base )
+  @@log_path = File.join( @@gem_base, "safedb-activity-journal.log" )
 
 
   # Classes that include (MIXIN) this logging module will

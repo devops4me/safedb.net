@@ -1,7 +1,45 @@
 require "thor"
 require "fileutils"
 
-require "session/time.stamp"
+############### this will be a problem i bet
+############### this will be a problem i bet
+############### this will be a problem i bet
+############### this will be a problem i bet
+############### this will be a problem i bet
+############### this will be a problem i bet
+############### this will be a problem i bet
+############### this will be a problem i bet
+############### this will be a problem i bet
+############### this will be a problem i bet
+############### this will be a problem i bet
+############### this will be a problem i bet
+############### this will be a problem i bet
+############### this will be a problem i bet
+############### this will be a problem i bet
+############### this will be a problem i bet
+############### this will be a problem i bet
+############### this will be a problem i bet
+############### this will be a problem i bet
+############### this will be a problem i bet
+############### this will be a problem i bet
+############### this will be a problem i bet
+############### this will be a problem i bet
+############### this will be a problem i bet
+############### this will be a problem i bet
+############### this will be a problem i bet
+############### this will be a problem i bet
+############### this will be a problem i bet
+############### this will be a problem i bet
+############### this will be a problem i bet
+############### this will be a problem i bet
+############### this will be a problem i bet
+############### this will be a problem i bet
+############### this will be a problem i bet
+############### this will be a problem i bet
+############### this will be a problem i bet
+############### this will be a problem i bet
+############### this will be a problem i bet
+######################  require "session/time.stamp"
 require "logging/gem.logging"
 require "session/require.gem"
 
