@@ -14,7 +14,7 @@ module SafeDb
   # - stating that subsequent commands are for this book and other session books in play are to be set aside
   #
   # The logout process destroys the breadcrumb route back to the re-acquisition of the
-  # content encryption key via the shell session key. It also deletes the session crypts.
+  # content encryption key via the shell key. It also deletes the session crypts.
   #
   # == Login Logout Stack Push Pop
   #
@@ -69,12 +69,12 @@ module SafeDb
       the_book_id = book_keys.section()
 
       old_human_key = KdfApi.regenerate_from_salts( secret, book_keys )
-      old_crypt_key = old_human_key.do_decrypt_key( book_keys.get( Indices::INTER_SESSION_KEY_CRYPT ) )
+      old_crypt_key = old_human_key.do_decrypt_key( book_keys.get( Indices::INTER_BRANCH_KEY_CRYPT ) )
       plain_content = Content.unlock_master( old_crypt_key, book_keys )
       new_crypt_key = KeyCycle.recycle( the_book_id, secret, book_keys, plain_content )
 
-      session_id = Identifier.derive_session_id( ShellSession.to_token() )
-      clone_book_into_session( the_book_id, session_id, book_keys, new_crypt_key )
+      branch_id = Identifier.derive_branch_id( Branch.to_token() )
+      clone_book_into_session( the_book_id, branch_id, book_keys, new_crypt_key )
 
     end
 
@@ -86,11 +86,11 @@ module SafeDb
     # The key logout action is deleting the ciphertext originally produced when
     # the intra-sessionary (shell) key encrypted the content encryption key.
     #
-    # <b>Why Isn't the Session Token Deleted?</b>
+    # <b>Why Isn't the Shell Token Deleted?</b>
     #
-    # The session token is left to <b>die by natural causes</b> so that we don't
+    # The shell token is left to <b>die by natural causes</b> so that we don't
     # interfere with other domain interactions that may be in progress within
-    # this shell session.
+    # this shell.
     #
     # @param domain_name [String]
     #    the string reference that points to the application instance that we
@@ -105,10 +105,10 @@ module SafeDb
     end
 
 
-    # Has the user orchestrating this shell session logged in? Yes or no?
+    # Has the user orchestrating this shell logged in? Yes or no?
     # If yes then they appear to have supplied the correct secret
     #
-    # - in this shell session
+    # - in this shell
     # - on this machine and
     # - for this application instance
     #
@@ -119,7 +119,7 @@ module SafeDb
     # exists only to give a pleasant error message.
     #
     # @return [Boolean]
-    #    return true if a marker denoting that this shell session with this
+    #    return true if a marker denoting that this shell with this
     #    application instance on this machine has logged in. Subverting this
     #    return value only serves to evoke disgraceful degradation.
     def self.is_logged_in?( domain_name )
@@ -157,23 +157,23 @@ module SafeDb
     # the master has moved forward by one or more commits.
     #
     # @param book_id [String] the book identifier this session is about
-    # @param session_id [String] the identifier pertaining to this session
+    # @param branch_id [String] the identifier pertaining to this session
     # @param master_keys [DataMap] keys from the book's master line
     # @param crypt_key [Key] symmetric session content encryption key
     #
-    def self.clone_book_into_session( book_id, session_id, master_keys, crypt_key )
+    def self.clone_book_into_session( book_id, branch_id, master_keys, crypt_key )
 
-      FileUtils.mkdir_p( FileTree.session_crypts_folder( book_id, session_id ) )
-      FileUtils.copy_entry( FileTree.master_crypts_folder( book_id ), FileTree.session_crypts_folder( book_id, session_id ) )
-      session_keys = create_session_indices( book_id, session_id )
+      FileUtils.mkdir_p( FileTree.branch_crypts_folder( book_id, branch_id ) )
+      FileUtils.copy_entry( FileTree.master_crypts_folder( book_id ), FileTree.branch_crypts_folder( book_id, branch_id ) )
+      branch_keys = create_branch_indices( book_id, branch_id )
 
-      session_keys.set( Indices::CONTENT_IDENTIFIER, master_keys.get( Indices::CONTENT_IDENTIFIER ) )
-      session_keys.set( Indices::CONTENT_RANDOM_IV,  master_keys.get( Indices::CONTENT_RANDOM_IV  ) )
-      session_keys.set( Indices::SESSION_COMMIT_ID,  master_keys.get( Indices::MASTER_COMMIT_ID   ) )
+      branch_keys.set( Indices::CONTENT_IDENTIFIER, master_keys.get( Indices::CONTENT_IDENTIFIER ) )
+      branch_keys.set( Indices::CONTENT_RANDOM_IV,  master_keys.get( Indices::CONTENT_RANDOM_IV  ) )
+      branch_keys.set( Indices::BRANCH_COMMIT_ID,  master_keys.get( Indices::MASTER_COMMIT_ID   ) )
 
-      session_key = KeyDerivation.regenerate_shell_key( ShellSession.to_token() )
-      key_ciphertext = session_key.do_encrypt_key( crypt_key )
-      session_keys.set( Indices::INTRA_SESSION_KEY_CRYPT, key_ciphertext )
+      branch_key = KeyDerivation.regenerate_shell_key( Branch.to_token() )
+      key_ciphertext = branch_key.do_encrypt_key( crypt_key )
+      branch_keys.set( Indices::INTRA_BRANCH_KEY_CRYPT, key_ciphertext )
 
     end
 
@@ -182,23 +182,23 @@ module SafeDb
     # book and session whose ids are given in the first and second parameters.
     #
     # @param book_id [String] the book identifier this session is about
-    # @param session_id [String] the identifier pertaining to this session
+    # @param branch_id [String] the identifier pertaining to this session
     # @return [DataMap] return the keys pertaining to this session and book
-    def self.create_session_indices( book_id, session_id )
+    def self.create_branch_indices( book_id, branch_id )
 
-      session_exists = File.exists? FileTree.session_indices_filepath( session_id )
-      session_keys = DataMap.new( FileTree.session_indices_filepath( session_id ) )
-      session_keys.use( Indices::SESSION_DATA )
-      session_keys.set( Indices::SESSION_INITIAL_LOGIN_TIME, KeyNow.readable() ) unless session_exists
-      session_keys.set( Indices::SESSION_LAST_ACCESSED_TIME, KeyNow.readable() )
-      session_keys.set( Indices::CURRENT_SESSION_BOOK_ID, book_id )
+      branch_exists = File.exists? FileTree.branch_indices_filepath( branch_id )
+      branch_keys = DataMap.new( FileTree.branch_indices_filepath( branch_id ) )
+      branch_keys.use( Indices::BRANCH_DATA )
+      branch_keys.set( Indices::BRANCH_INITIAL_LOGIN_TIME, KeyNow.readable() ) unless branch_exists
+      branch_keys.set( Indices::BRANCH_LAST_ACCESSED_TIME, KeyNow.readable() )
+      branch_keys.set( Indices::CURRENT_BRANCH_BOOK_ID, book_id )
 
-      logged_in = session_keys.has_section?( book_id )
-      session_keys.use( book_id )
-      session_keys.set( Indices::BOOK_SESSION_LOGIN_TIME, KeyNow.readable() ) unless logged_in
-      session_keys.set( Indices::BOOK_LAST_ACCESSED_TIME, KeyNow.readable() )
+      logged_in = branch_keys.has_section?( book_id )
+      branch_keys.use( book_id )
+      branch_keys.set( Indices::BOOK_BRANCH_LOGIN_TIME, KeyNow.readable() ) unless logged_in
+      branch_keys.set( Indices::BOOK_LAST_ACCESSED_TIME, KeyNow.readable() )
 
-      return session_keys
+      return branch_keys
 
     end
 

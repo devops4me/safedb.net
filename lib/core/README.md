@@ -116,7 +116,7 @@
 #
 # Command line apps use the derived key to <b>symmetrically encrypt and decrypt</b>
 # one and only one 48 character key and a new key is derived at the beginning
-# of every session.
+# of every branch.
 #
 # At the end of the session <b>all material encrypted by the outgoing key</b>
 # is removed. This aggressive key rotation strategy leaves no stone unturned in

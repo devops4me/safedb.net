@@ -151,12 +151,12 @@ class CLI < Thor
 
 
   # Description of the safe token use case.
-  desc "token", "generate and print out an encrypted (shell bound) session token"
+  desc "token", "generate and print out an encrypted (shell bound) shell token"
 
-  # The<b>token</b> use cases prints out an encrypted session token tied
+  # The<b>token</b> use cases prints out an encrypted shell token tied
   # to the workstation and shell environment.
   def token
-    log.info(x) { "[usecase] ~> generate and print out an encrypted (shell bound) session token" }
+    log.info(x) { "[usecase] ~> generate and print out an encrypted (shell bound) shell token" }
     SafeDb::Token.new.flow_of_events
   end
 
@@ -249,7 +249,7 @@ class CLI < Thor
 
   # The <b>set <em>use case</em></b> is the generic tool for setting book scoped
   # configuration directives. These directives can only be read, written, updated
-  # or removed during a logged in session.
+  # or removed during a logged in branch.
   #
   # @param directive_name [String] the name of the book-scoped configuration directive
   # @param directive_value [String] the value of the book-scoped configuration directive

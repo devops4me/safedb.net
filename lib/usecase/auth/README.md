@@ -12,11 +12,11 @@ These commands handle **book and session creation, instantiation and synchroniza
 | safe command                 | command purpose                                      | cmd summary      |
 |:---------------------------- |:---------------------------------------------------- |:---------------- |
 | **`safe init <BOOK_NAME>`**  | instantiate a new safe database book                 | create book      |
-| **`safe login <BOOK_NAME>`** | create a new shell session for instantiated book     | instantiate book |
+| **`safe login <BOOK_NAME>`** | create a new shell for instantiated book     | instantiate book |
 | **`safe commit`**            | save the state of the book locally (like git commit) | save book        |
-| **`safe logout`**            | delete references to this book and shell session     | delete session   |
-| **`safe use <BOOK_NAME>`**   | switch shell session to using this logged in book    | update session   |
-| **`safe token`**             | creates cryptographic keys for every shell session   | create key       |
+| **`safe logout`**            | delete references to this book and shell     | delete session   |
+| **`safe use <BOOK_NAME>`**   | switch shell to using this logged in book    | update session   |
+| **`safe token`**             | creates cryptographic keys for every shell   | create key       |
 
 
 ## safe database sync commands

@@ -7,13 +7,13 @@ module SafeDb
   # key whose purpose is to <b>lock the application's data key</b> for
   # the duration of the session which is between a login and a logout.
   # 
-  # These keys are unique to only one shell session on one workstation
+  # These keys are unique to only one shell on one workstation
   # and they live lives that are no longer (and mostly shorter) than
   # the life of the parent shell.
   #
   # == The 4 CLI Shell Entities
   #
-  # The four (4) important entities within the shell session are
+  # The four (4) important entities within the shell are
   #
   # - an obfuscator key for locking the shell key during a session
   # - a high entropy randomly generated shell key for locking the app data key
@@ -32,22 +32,22 @@ module SafeDb
     BCRYPT_ITER_COUNT_SIZE = 2
 
 
-    # The session token comprises of 3 segments with fixed lengths.
+    # The shell token comprises of 3 segments with fixed lengths.
     # This triply segmented text token that can be used to decrypt
     # and deliver the shell key.
-    SESSION_TOKEN_SIZE = 128 + 22 + BCRYPT_ITER_COUNT_SIZE
+    SHELL_TOKEN_SIZE = 128 + 22 + BCRYPT_ITER_COUNT_SIZE
 
 
-    # Given a 152 character session token, what is the index that pinpoints
+    # Given a 152 character shell token, what is the index that pinpoints
     # the beginning of the 22 character BCrypt salt? The answer is given
     # by this BCRYPT_SALT_START_INDEX constant.
-    BCRYPT_SALT_START_INDEX = SESSION_TOKEN_SIZE - BCRYPT_SALT_LENGTH - BCRYPT_ITER_COUNT_SIZE
+    BCRYPT_SALT_START_INDEX = SHELL_TOKEN_SIZE - BCRYPT_SALT_LENGTH - BCRYPT_ITER_COUNT_SIZE
 
 
     # What index pinpoints the end of the BCrypt salt itself.
     # This is easy as the final 2 characters are the iteration count
     # so the end index is the length subtract 1 subtract 2.
-    BCRYPT_SALT_END_INDEX = SESSION_TOKEN_SIZE - 1
+    BCRYPT_SALT_END_INDEX = SHELL_TOKEN_SIZE - 1
 
 
     # Initialize the session by generating a random high entropy shell token
@@ -56,9 +56,9 @@ module SafeDb
     # and deliver the shell key as long as the same shell on the same machine
     # is employed to make the call.
     #
-    # <b>The 3 Session Token Segments</b>
+    # <b>The 3 Shell Token Segments</b>
     #
-    # The session token is divided up into 3 segments with a total of 150
+    # The shell token is divided up into 3 segments with a total of 150
     #  characters.
     #
     #   | -------- | ------------ | ------------------------------------- |
@@ -68,7 +68,7 @@ module SafeDb
     #   |    2     | 80 bytes     | Cipher text from Random Key AES crypt |
     #   |    3     | 22 chars     | Salt for obfuscator key derivation    |
     #   | -------- | ------------ | ------------------------------------- |
-    #   |  Total   | 150 chars    | Session Token in Environment Variable |
+    #   |  Total   | 150 chars    | Shell Token in Environment Variable |
     #   | -------- | ------------ | ------------------------------------- |
     #
     # Why is the <b>16 byte salt and the 80 byte BCrypt ciphertext</b> represented
@@ -85,12 +85,12 @@ module SafeDb
     def self.generate_shell_key_and_token
 
       bcrypt_salt_key = KdfBCrypt.generate_bcrypt_salt
-      obfuscator_key = derive_session_crypt_key( bcrypt_salt_key )
+      obfuscator_key = derive_branch_crypt_key( bcrypt_salt_key )
       random_key_ciphertext = obfuscator_key.do_encrypt_key( Key.from_random() )
-      session_token = random_key_ciphertext + bcrypt_salt_key.reverse
-      assert_session_token_size( session_token )
+      shell_token = random_key_ciphertext + bcrypt_salt_key.reverse
+      assert_shell_token_size( shell_token )
 
-      return session_token
+      return shell_token
 
     end
 
@@ -100,16 +100,16 @@ module SafeDb
     #
     # To successfully reacquire the randomly generated (and then locked)
     # shell key we must be provided with five (5) data points, four (4)
-    # of which are embalmed within the 150 character session token
+    # of which are embalmed within the 150 character shell token
     # parameter.
     #
     # <b>What we need to Regenerate the Shell Key</b>
     #
     # Regenerating the shell key is done in two steps when given the
-    # four (4) <b>session token segments</b> described below, and the
+    # four (4) <b>shell token segments</b> described below, and the
     # shell identity key described in the {SafeDb::Identifier} class.
     #
-    # The session token is divided up into 4 segments with a total of 152
+    # The shell token is divided up into 4 segments with a total of 152
     #  characters.
     #
     #   | -------- | ------------ | ------------------------------------- |
@@ -120,25 +120,25 @@ module SafeDb
     #   |    3     | 22 chars     | Salt 4 shell identity key derivation  |
     #   |    4     |  2 chars     | BCrypt iteration parameter (10 to 16) |
     #   | -------- | ------------ | ------------------------------------- |
-    #   |  Total   | 152 chars    | Session Token in Environment Variable |
+    #   |  Total   | 152 chars    | Shell Token in Environment Variable |
     #   | -------- | ------------ | ------------------------------------- |
     #
-    # @param session_token [String]
+    # @param shell_token [String]
     #    a triply segmented (and one liner) text token instantiated by
     #    {self.instantiate_shell_key_and_generate_token} and provided
     #    here ad verbatim.
     #
     # @return [SafeDb::Key]
     #    an extremely high entropy 256 bit key derived (digested) from 48
-    #    random bytes at the beginning of the shell (cli) session.
-    def self.regenerate_shell_key( session_token )
+    #    random bytes at the beginning of the shell (cli) branch.
+    def self.regenerate_shell_key( shell_token )
 
-      assert_session_token_size( session_token )
-      bcrypt_salt = session_token[ BCRYPT_SALT_START_INDEX .. BCRYPT_SALT_END_INDEX ].reverse
+      assert_shell_token_size( shell_token )
+      bcrypt_salt = shell_token[ BCRYPT_SALT_START_INDEX .. BCRYPT_SALT_END_INDEX ].reverse
       assert_bcrypt_salt_size( bcrypt_salt )
 
-      key_ciphertext = session_token[ 0 .. ( BCRYPT_SALT_START_INDEX - 1 ) ]
-      obfuscator_key = derive_session_crypt_key( bcrypt_salt )
+      key_ciphertext = shell_token[ 0 .. ( BCRYPT_SALT_START_INDEX - 1 ) ]
+      obfuscator_key = derive_branch_crypt_key( bcrypt_salt )
       regenerated_key = obfuscator_key.do_decrypt_key( key_ciphertext )
 
       return regenerated_key
@@ -194,7 +194,7 @@ module SafeDb
     #    a digested key suitable for short term (session scoped) use with the
     #    guarantee that the same key will be returned whenever called from within
     #    the same executing shell environment and a different key when not.
-    def self.derive_session_crypt_key bcrypt_salt_key
+    def self.derive_branch_crypt_key bcrypt_salt_key
 
       shell_id_text = MachineId.derive_shell_identifier()
       truncate_text = shell_id_text.length > KdfBCrypt::BCRYPT_MAX_IN_TEXT_LENGTH
@@ -222,9 +222,9 @@ module SafeDb
     # 000000000000000000000000000000000000000000000000000000000000000
 
 
-    def self.assert_session_token_size session_token
-      err_msg = "Session token has #{session_token.length} and not #{SESSION_TOKEN_SIZE} chars."
-      raise RuntimeError, err_msg unless session_token.length == SESSION_TOKEN_SIZE
+    def self.assert_shell_token_size shell_token
+      err_msg = "shell token has #{shell_token.length} and not #{SHELL_TOKEN_SIZE} chars."
+      raise RuntimeError, err_msg unless shell_token.length == SHELL_TOKEN_SIZE
     end
 
 

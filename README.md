@@ -104,7 +104,7 @@ safe | Install and Configure
 
     $ sudo apt-get install ruby-full     # for OpenSSL we need full ruby
     $ sudo gem install safedb            # install the safe ruby gem
-    $ export SAFE_TTY_TOKEN=`safe token` # setup a shell session variable
+    $ export SAFE_TTY_TOKEN=`safe token` # setup a shell variable
     $ safe init joe@abc ~/safedb.creds   # initialize a safe book in folder
     $ safe login joe@abc                 # login with the created password
 
@@ -143,7 +143,7 @@ Advanced users should avoid adding the export command to <tt>~/.bash_profile</tt
 
 When the shell closes the shell token will disappear which is good. You can clear it immediately with these commands.
 
-    $ unset SAFE_TTY_TOKEN        # Delete the shell session token
+    $ unset SAFE_TTY_TOKEN        # Delete the shell token
     $ env | grep SAFE_TTY_TOKEN   # Check SAFE_TTY_TOKEN is deleted
     $ env -i bash                 # Delete every env var created by shell
 
@@ -578,7 +578,7 @@ safe | moving computer
 We travel between laptops, desktops, virtual machines and even docker containers. Always run init the first time you use a domain on a different computer.
 
     $ gem install safe
-    $ export SAFE_TTY_TOKEN=`safe token`        # setup a shell session variable
+    $ export SAFE_TTY_TOKEN=`safe token`        # setup a shell variable
     $ safe init joe@abc /home/joe/credentials   # initialize a secrets domain
     $ safe login joe@abc                        # login to the new domain
 
@@ -801,7 +801,7 @@ If intra key has no value then stealing is not necessary so the existence of the
 
 The Stealing flow of events is to
 
- - copy the directory into a new one for this session named `<<book.id>>.<<timestamp>>.<<session.key>>`
+ - copy the directory into a new one for this session named `<<book.id>>.<<timestamp>>.<<branch.key>>`
  - validate the directory for data consistency (nice to have functionality)
  - collect the password and if invalid stop now
  - grab the lock file and write it to point it to our directory (we are it)

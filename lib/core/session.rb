@@ -2,10 +2,10 @@
 
 module SafeDb
 
-  # The shell session can access the 152 characters of crypt and salt text
+  # The shell can access the 152 characters of crypt and salt text
   # that was set (exported) at the beginning when the shell woke up and typically
   # executed its .bash_aliases script.
-  class ShellSession
+  class Branch
 
     def self.to_token()
 

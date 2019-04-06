@@ -25,15 +25,15 @@ module SafeDb
     # never check whether it exists, instead we assume that one does exist.
     def initialize
 
-      @session_id = Identifier.derive_session_id( ShellSession.to_token() )
-      session_indices_file = FileTree.session_indices_filepath( @session_id )
-      @session_keys = DataMap.new( session_indices_file )
-      @book_id = @session_keys.read( Indices::SESSION_DATA, Indices::CURRENT_SESSION_BOOK_ID )
-      @session_keys.use( @book_id )
-      @content_id = @session_keys.get( Indices::CONTENT_IDENTIFIER )
+      @branch_id = Identifier.derive_branch_id( Branch.to_token() )
+      branch_indices_file = FileTree.branch_indices_filepath( @branch_id )
+      @branch_keys = DataMap.new( branch_indices_file )
+      @book_id = @branch_keys.read( Indices::BRANCH_DATA, Indices::CURRENT_BRANCH_BOOK_ID )
+      @branch_keys.use( @book_id )
+      @content_id = @branch_keys.get( Indices::CONTENT_IDENTIFIER )
 
-      intra_key_ciphertext = @session_keys.get( Indices::INTRA_SESSION_KEY_CRYPT )
-      intra_key = KeyDerivation.regenerate_shell_key( ShellSession.to_token() )
+      intra_key_ciphertext = @branch_keys.get( Indices::INTRA_BRANCH_KEY_CRYPT )
+      intra_key = KeyDerivation.regenerate_shell_key( Branch.to_token() )
       @crypt_key = intra_key.do_decrypt_key( intra_key_ciphertext )
 
       read()
@@ -68,8 +68,8 @@ module SafeDb
     #    to a file by the {write_content} method.
     def read()
 
-      read_crypt_path = FileTree.session_crypts_filepath( @book_id, @session_id, @content_id )
-      random_iv = KeyIV.in_binary( @session_keys.get( Indices::CONTENT_RANDOM_IV ) )
+      read_crypt_path = FileTree.branch_crypts_filepath( @book_id, @branch_id, @content_id )
+      random_iv = KeyIV.in_binary( @branch_keys.get( Indices::CONTENT_RANDOM_IV ) )
       @book_index = DataStore.from_json( Content.unlock_it( read_crypt_path, @crypt_key, random_iv ) )
 
     end
@@ -86,7 +86,7 @@ module SafeDb
     #
     # - deriving filepaths to both the breadcrumb and ciphertext files
     # - creating a random iv and adding its base64 form to the breadcrumbs
-    # - using the session token to derive the (unique to the) shell key
+    # - using the shell token to derive the (unique to the) shell key
     # - using the shell key and (intra) ciphertext to acquire the index key
     # - using the index key and random iv to encrypt and encode the content
     # - writing the resulting ciphertext to a file at the designated path
@@ -99,14 +99,14 @@ module SafeDb
     #
     def write()
 
-      old_crypt_path = FileTree.session_crypts_filepath( @book_id, @session_id, @content_id )
+      old_crypt_path = FileTree.branch_crypts_filepath( @book_id, @branch_id, @content_id )
 
       @content_id = Identifier.get_random_identifier( Indices::CONTENT_ID_LENGTH )
-      @session_keys.set( Indices::CONTENT_IDENTIFIER, @content_id )
-      write_crypt_path = FileTree.session_crypts_filepath( @book_id, @session_id, @content_id )
+      @branch_keys.set( Indices::CONTENT_IDENTIFIER, @content_id )
+      write_crypt_path = FileTree.branch_crypts_filepath( @book_id, @branch_id, @content_id )
 
       iv_base64 = KeyIV.new().for_storage()
-      @session_keys.set( Indices::CONTENT_RANDOM_IV, iv_base64 )
+      @branch_keys.set( Indices::CONTENT_RANDOM_IV, iv_base64 )
       random_iv = KeyIV.in_binary( iv_base64 )
 
       Content.lock_it( write_crypt_path, @crypt_key, random_iv, @book_index.to_json, TextChunk.crypt_header( @book_id ) )

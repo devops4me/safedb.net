@@ -50,16 +50,16 @@ module SafeDb
     # @param content_body [String] content to encryt and the ciphertext will be stored
     def self.lock_chapter( data_store, content_body )
 
-      session_id = Identifier.derive_session_id( ShellSession.to_token() )
-      session_indices_file = FileTree.session_indices_filepath( session_id )
-      book_id = DataMap.new( session_indices_file ).read( Indices::SESSION_DATA, Indices::CURRENT_SESSION_BOOK_ID )
+      branch_id = Identifier.derive_branch_id( Branch.to_token() )
+      branch_indices_file = FileTree.branch_indices_filepath( branch_id )
+      book_id = DataMap.new( branch_indices_file ).read( Indices::BRANCH_DATA, Indices::CURRENT_BRANCH_BOOK_ID )
 
       old_content_id = data_store[ Indices::CONTENT_IDENTIFIER ] if data_store.has_key?(Indices::CONTENT_IDENTIFIER)
 
       new_content_id = Identifier.get_random_identifier( Indices::CONTENT_ID_LENGTH )
       data_store.store( Indices::CONTENT_IDENTIFIER, new_content_id )
 
-      new_chapter_crypt_path = FileTree.session_crypts_filepath( book_id, session_id, new_content_id )
+      new_chapter_crypt_path = FileTree.branch_crypts_filepath( book_id, branch_id, new_content_id )
 
       iv_base64 = KeyIV.new().for_storage()
       data_store.store( Indices::CONTENT_RANDOM_IV, iv_base64 )
@@ -71,7 +71,7 @@ module SafeDb
       lock_it( new_chapter_crypt_path, crypt_key, random_iv, content_body, TextChunk.crypt_header( book_id ) )
 
       unless old_content_id.nil?
-        old_chapter_crypt_path = FileTree.session_crypts_filepath( book_id, session_id, old_content_id )
+        old_chapter_crypt_path = FileTree.branch_crypts_filepath( book_id, branch_id, old_content_id )
         File.delete( old_chapter_crypt_path )
       end
 
@@ -131,15 +131,15 @@ module SafeDb
     # @return [String] the resulting decrypted text that was encrypted with the parameter key
     def self.unlock_chapter( data_store )
 
-      session_id = Identifier.derive_session_id( ShellSession.to_token() )
-      session_indices_file = FileTree.session_indices_filepath( session_id )
-      book_id = DataMap.new( session_indices_file ).read( Indices::SESSION_DATA, Indices::CURRENT_SESSION_BOOK_ID )
+      branch_id = Identifier.derive_branch_id( Branch.to_token() )
+      branch_indices_file = FileTree.branch_indices_filepath( branch_id )
+      book_id = DataMap.new( branch_indices_file ).read( Indices::BRANCH_DATA, Indices::CURRENT_BRANCH_BOOK_ID )
 
       content_id = data_store[ Indices::CONTENT_IDENTIFIER ]
       crypt_key = Key.from_char64( data_store[ Indices::CHAPTER_KEY_CRYPT ] )
       random_iv = KeyIV.in_binary( data_store[ Indices::CONTENT_RANDOM_IV ] )
 
-      crypt_path = FileTree.session_crypts_filepath( book_id, session_id, content_id )
+      crypt_path = FileTree.branch_crypts_filepath( book_id, branch_id, content_id )
       return DataStore.from_json( unlock_it( crypt_path, crypt_key, random_iv ) )
 
     end

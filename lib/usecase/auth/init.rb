@@ -26,7 +26,7 @@ module SafeDb
   # - a secret (if required) is prompted or in --password or SAFE_BOOK_PASSWORD
   # - the strength of the human sourced password is adequate
   # - the book name ( maybe from SAFE_BOOK_NAME ) follows convention
-  # - the shell session must have a SAFE_TTY_TOKEN environment variable
+  # - the shell must have a SAFE_TTY_TOKEN environment variable
   #
   class Init < AccessUc
 

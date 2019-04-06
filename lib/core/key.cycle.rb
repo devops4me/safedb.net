@@ -44,7 +44,7 @@ module SafeDb
   #   key can only be accessed by a login when the password is made available.
   #
   # That is why the index key is locked twice. The shell key opens it mid-session
-  # and the regenerated human key opens it during the login of the next session.
+  # and the regenerated human key opens it during the login of the next branch.
   #
   # == The LifeCycle of each Key
   #
@@ -88,7 +88,7 @@ module SafeDb
       high_entropy_key = Key.from_random
       Content.lock_master( book_id, high_entropy_key, data_map, content_body )
       derived_key = KdfApi.generate_from_password( human_secret, data_map )
-      data_map.set( Indices::INTER_SESSION_KEY_CRYPT, derived_key.do_encrypt_key( high_entropy_key ) )
+      data_map.set( Indices::INTER_BRANCH_KEY_CRYPT, derived_key.do_encrypt_key( high_entropy_key ) )
       return high_entropy_key
 
     end

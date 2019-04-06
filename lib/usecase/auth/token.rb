@@ -2,7 +2,7 @@
 
 module SafeDb
 
-  # The <tt>token use case</tt> prints out an encrypted session token tied
+  # The <tt>token use case</tt> prints out an encrypted shell token tied
   # to the workstation and shell environment. See the root README.md on how
   # to export it and create a simple command alias for it in the ~/.bash_aliases
   # script which is executed when the shell starts.

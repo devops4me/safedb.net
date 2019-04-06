@@ -24,10 +24,10 @@ module SafeDb
     MASTER_CRYPTS_FOLDER_NAME = "safedb-master-crypts"
 
     # The name ofthe session indices folder.
-    SESSION_INDICES_FOLDER_NAME = "safedb-session-indices"
+    BRANCH_INDICES_FOLDER_NAME = "safedb-session-indices"
 
     # The name ofthe session crypts folder.
-    SESSION_CRYPTS_FOLDER_NAME = "safedb-session-crypts"
+    BRANCH_CRYPTS_FOLDER_NAME = "safedb-session-crypts"
 
     # The file-system location of the safe database tree
     SAFE_DATABASE_FOLDER = File.join( Dir.home, ".#{SAFE_URL_NAME}" )
@@ -54,31 +54,31 @@ module SafeDb
     MASTER_COMMIT_ID  = "master.commit.id"
 
     # The session commit id is compared with the master to determine whether a commit (save) is possible
-    SESSION_COMMIT_ID = "session.commit.id"
+    BRANCH_COMMIT_ID = "branch.commit.id"
 
     # The inter session crypt is locked with the human key for retrieval at the next login
-    INTER_SESSION_KEY_CRYPT = "inter.session.key.crypt"
+    INTER_BRANCH_KEY_CRYPT = "inter.branch.key.crypt"
 
     # The intra session crypt is locked with the session key for retrieval at the next command
-    INTRA_SESSION_KEY_CRYPT = "intra.session.key.crypt"
+    INTRA_BRANCH_KEY_CRYPT = "intra.branch.key.crypt"
 
     # The chapter content is locked with the key that is marshalled from the value here
     CHAPTER_KEY_CRYPT = "chapter.key.crypt"
 
     # This is the global section header of the session book index file
-    SESSION_DATA = "session.data"
+    BRANCH_DATA = "branch.data"
 
-    # The time of the first book login within this shell session
-    SESSION_INITIAL_LOGIN_TIME = "session.initial.login.time"
+    # The time of the first book login within this shell
+    BRANCH_INITIAL_LOGIN_TIME = "branch.initial.login.time"
 
     # The most recent time that any book of this session was accessed
-    SESSION_LAST_ACCESSED_TIME = "session.last.accessed.time"
+    BRANCH_LAST_ACCESSED_TIME = "branch.last.accessed.time"
 
     # The ID of the book being currently used by this session
-    CURRENT_SESSION_BOOK_ID = "current.session.book.id"
+    CURRENT_BRANCH_BOOK_ID = "current.branch.book.id"
 
     # The time this book was first logged into during this session
-    BOOK_SESSION_LOGIN_TIME = "book.session.login.time"
+    BOOK_BRANCH_LOGIN_TIME = "book.branch.login.time"
 
     # The time this book was last accessed during this session
     BOOK_LAST_ACCESSED_TIME = "book.last.accessed.time"

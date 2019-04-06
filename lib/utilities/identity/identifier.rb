@@ -200,7 +200,7 @@ module SafeDb
 
 
     # The session ID generated here is a derivative of the 150 character
-    # session token.
+    # shell token.
     #
     # The algorithm for deriving the session ID is as follows.
     #
@@ -217,7 +217,7 @@ module SafeDb
     #
     #       g3sf-pab5-9xvd
     #
-    # @param session_token [String]
+    # @param shell_token [String]
     #    a triply segmented (and one liner) text token
     #
     # @return [String]
@@ -226,10 +226,10 @@ module SafeDb
     #
     #    This method guarantees that the session id will always be the same when
     #    called by commands within the same shell in the same machine.
-    def self.derive_session_id( session_token )
+    def self.derive_branch_id( shell_token )
 
-      assert_session_token_size( session_token )
-      random_length_id_key = Key.from_char64( session_token.to_alphanumeric )
+      assert_shell_token_size( shell_token )
+      random_length_id_key = Key.from_char64( shell_token.to_alphanumeric )
       a_384_bit_key = random_length_id_key.to_384_bit_key()
       a_64_char_str = a_384_bit_key.to_char64()
       base_64_chars = a_64_char_str.to_alphanumeric
@@ -249,9 +249,9 @@ module SafeDb
     private
 
 
-    def self.assert_session_token_size session_token
-      err_msg = "Session token has #{session_token.length} and not #{KeyDerivation::SESSION_TOKEN_SIZE} chars."
-      raise RuntimeError, err_msg unless session_token.length == KeyDerivation::SESSION_TOKEN_SIZE
+    def self.assert_shell_token_size shell_token
+      err_msg = "shell token has #{shell_token.length} and not #{KeyDerivation::SHELL_TOKEN_SIZE} chars."
+      raise RuntimeError, err_msg unless shell_token.length == KeyDerivation::SHELL_TOKEN_SIZE
     end
 
 

@@ -3,7 +3,7 @@
 # coding: utf-8
 
 # opensession contains basic behaviour for managing a client only
-# (serverless) session. Configuration directives are read and written
+# (serverless) branch. Configuration directives are read and written
 # from an INI off the home directory that is created when the session
 # is first initiated.
 module OpenSession

@@ -5,7 +5,7 @@ Safe's behaviour can (by default) be modified in a manner that is scoped in 4 wa
 
 1. a **book global** scope
 2. a **machine local** scope
-3. a **shell session** scope and
+3. a **shell** scope and
 4. a **machine global** scope
 
 The scoping concept is similar to Git's --local and --global but it works in a different way.
@@ -33,11 +33,11 @@ If a directive with a book global scope says "Yes" and the same directive exists
 A book global directive overrides its machine local twin.
 
 
-## 3. Shell Session Scope
+## 3. Shell Scope
 
-The self explanatory **shell session scoped** directives override their siblings be they book global or machine local.
+The self explanatory **shell scoped** directives override their siblings be they book global or machine local.
 
-Alas, their elevated privileges are countered by relatively short lifespans. Shell session directives only last until either a logout is issued or the shell session comes to an end.
+Alas, their elevated privileges are countered by relatively short lifespans. shell directives only last until either a logout is issued or the shell comes to an end.
 
 
 ## 4. Default | Machine Global Scope

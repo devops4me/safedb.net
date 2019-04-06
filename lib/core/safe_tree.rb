@@ -22,20 +22,20 @@ module SafeDb
     end
 
 
-    def self.session_crypts_filepath( book_id, session_id, content_id )
-      return File.join( session_crypts_folder( book_id, session_id ), "safedb.chapter.#{content_id}.txt" )
+    def self.branch_crypts_filepath( book_id, branch_id, content_id )
+      return File.join( branch_crypts_folder( book_id, branch_id ), "safedb.chapter.#{content_id}.txt" )
     end
 
 
-    def self.session_crypts_folder( book_id, session_id )
-      session_crypts_folder = File.join( Indices::SAFE_DATABASE_FOLDER, Indices::SESSION_CRYPTS_FOLDER_NAME  )
-      return File.join( session_crypts_folder, "safedb-session-#{book_id}-#{session_id}" )
+    def self.branch_crypts_folder( book_id, branch_id )
+      branch_crypts_folder = File.join( Indices::SAFE_DATABASE_FOLDER, Indices::BRANCH_CRYPTS_FOLDER_NAME  )
+      return File.join( branch_crypts_folder, "safedb-session-#{book_id}-#{branch_id}" )
     end
 
 
-    def self.session_indices_filepath( session_id )
-      session_indices_folder = File.join( Indices::SAFE_DATABASE_FOLDER, Indices::SESSION_INDICES_FOLDER_NAME )
-      return File.join( session_indices_folder, "safedb-indices-#{session_id}.ini" )
+    def self.branch_indices_filepath( branch_id )
+      branch_indices_folder = File.join( Indices::SAFE_DATABASE_FOLDER, Indices::BRANCH_INDICES_FOLDER_NAME )
+      return File.join( branch_indices_folder, "safedb-indices-#{branch_id}.ini" )
     end
 
 
