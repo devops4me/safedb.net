@@ -210,7 +210,7 @@ module SafeDb
       end
 
       puts ""
-      puts "safe needs you to create a session key."
+      puts "safe needs you to create a branch key."
       puts "To automate this step see the documentation."
       puts "To create the key run the below command."
       puts ""

@@ -752,17 +752,17 @@ This method (theoretially) allows a version 3.428.24952 to restore an export of 
 
 ## Safe's Concurrency Methodology
 
-A safe repository (book) can be changed by one session but read concurrently by multiple sessions.
+A safe repository (book) can be changed by one branch but read concurrently by multiple sessions.
 
 Directory Links are NOT PORTABLE to use to point to the active workspace especially if we the safe root folder is on a USB key.
 A GOOD engough concurrency technique is a lock file in the BOOK's root folder that is named `safe.concurrency.lockfile.<<book.id>>`
 
-The contents of the file will hold the relative directory name (session ID based) that has the lock and the session ID that had it before that (if not first).
+The contents of the file will hold the relative directory name (session ID based) that has the lock and the branch ID that had it before that (if not first).
 
-The <machine.id>.<bootup.id> is used to when the first read/write login session occurs. Subsequent logins for a read/write session will then have 2 choices in this shell.
+The <machine.id>.<bootup.id> is used to when the first read/write login branch occurs. Subsequent logins for a read/write branch will then have 2 choices in this shell.
 
 - safe login ali.baba --steal    # take over the primary read/write session
-- safe login ali.baba --branch   # leave primary session but open one that will not change the price of sugar
+- safe login ali.baba --branch   # leave primary branch but open one that will not change the price of sugar
 - safe login ali.baba --branch=master
 - safe login ali.baba --branch=experimental
 - safe login ali.baba -b experimental
@@ -775,7 +775,7 @@ A third choice arises if we visit the shell holding the directory pointer and lo
 
 Logout NEVER TOUCHES the lock file (it could have moved on multiple times so only login can act on it).
 
-However logout DELETES the cipher.file intra-sessionary ciphertext that can be unlocked by session key to retrieve the content key. This action renders it impossible to read or write any data from logged in book.
+However logout DELETES the cipher.file intra-sessionary ciphertext that can be unlocked by branch key to retrieve the content key. This action renders it impossible to read or write any data from logged in book.
 
 A subsequent login can again re-instate this privilege.
 
@@ -801,7 +801,7 @@ If intra key has no value then stealing is not necessary so the existence of the
 
 The Stealing flow of events is to
 
- - copy the directory into a new one for this session named `<<book.id>>.<<timestamp>>.<<branch.key>>`
+ - copy the directory into a new one for this branch named `<<book.id>>.<<timestamp>>.<<branch.key>>`
  - validate the directory for data consistency (nice to have functionality)
  - collect the password and if invalid stop now
  - grab the lock file and write it to point it to our directory (we are it)

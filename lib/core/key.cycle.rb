@@ -43,7 +43,7 @@ module SafeDb
   # - when the shell dies (or logout is issued) the shell key dies. Now the index
   #   key can only be accessed by a login when the password is made available.
   #
-  # That is why the index key is locked twice. The shell key opens it mid-session
+  # That is why the index key is locked twice. The shell key opens it mid-branch
   # and the regenerated human key opens it during the login of the next branch.
   #
   # == The LifeCycle of each Key

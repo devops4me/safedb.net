@@ -39,9 +39,9 @@ require "fileutils"
 ############### this will be a problem i bet
 ############### this will be a problem i bet
 ############### this will be a problem i bet
-######################  require "session/time.stamp"
-require "logging/gem.logging"
-require "session/require.gem"
+######################  require "branch/time.stamp"
+require "utilities/logs/logger"
+require "usecase/requirer"
 
 
 # Include the logger mixins so that every class can enjoy "import free"
@@ -58,7 +58,7 @@ $stdout.sync = true
 # that this code is executing from. Only use this tool if your library is
 # relatively small but highly interconnected. In these instances it raises
 # productivity and reduces pesky "not found" exceptions.
-OpenSession::RecursivelyRequire.now( __FILE__ )
+SafeDb::Require.gems( __FILE__ )
 
 
 # This command line processor extends the Thor gem CLI tools in order to

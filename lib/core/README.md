@@ -52,10 +52,10 @@
 #                      reference string.
 #
 #     KeyCycle         KeyLifeCycle implements the merry go round that palms off
-#                      responsibility to the intra-session cycle and then back again
-#                      to ever rotary inter-session(ary) cycle.
+#                      responsibility to the intra-branch cycle and then back again
+#                      to ever rotary inter-branch(ary) cycle.
 ###########            Maybe think of a method where we pass in
-###########            2 secrets - 1 human and 1 55 random bytes (session)
+###########            2 secrets - 1 human and 1 55 random bytes (branch)
 ###########
 ###########            1  another 55 random key is created (the actual encryption key)
 ###########            2  then the above key is encrypted TWICE (2 diff salts and keys)
@@ -112,13 +112,13 @@
 # - command line apps do not store the key - they only store the salt
 # - both throw away the original password
 #
-# == One Key | One Session | One Crypt
+# == One Key | One branch | One Crypt
 #
 # Command line apps use the derived key to <b>symmetrically encrypt and decrypt</b>
 # one and only one 48 character key and a new key is derived at the beginning
 # of every branch.
 #
-# At the end of the session <b>all material encrypted by the outgoing key</b>
+# At the end of the branch <b>all material encrypted by the outgoing key</b>
 # is removed. This aggressive key rotation strategy leaves no stone unturned in
 # the quest for ultimate security.
 #
@@ -130,6 +130,6 @@
 #
 # - [1] it does not store the key nor does it store the password
 #
-# - [2] a new master key is generated for every session only to hold the master index file
+# - [2] a new master key is generated for every branch only to hold the master index file
 #
 # - [3] it uses both <b>BCrypt</b> (Blowfish Crypt) and the indefatigable <b>PBKD2</b>

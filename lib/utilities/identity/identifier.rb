@@ -34,7 +34,7 @@ module SafeDb
   # determined the turnover by guesstimating the average invoice amount.
   #
   # Many successful website attacks are owed to a predictable customer ID or a counter
-  # type session ID within the cookies.
+  # type branch ID within the cookies.
   #
   # == Good Identifiers Need Volumes
   #
@@ -199,10 +199,10 @@ module SafeDb
     end
 
 
-    # The session ID generated here is a derivative of the 150 character
+    # The branch ID generated here is a derivative of the 150 character
     # shell token.
     #
-    # The algorithm for deriving the session ID is as follows.
+    # The algorithm for deriving the branch ID is as follows.
     #
     # - convert the 150 characters to an alphanumeric string
     # - convert the result to a bit string and then to a key
@@ -213,7 +213,7 @@ module SafeDb
     # - hiphenate the character positions five (5) and ten (10)
     # - ensure the length of the resultant ID is fourteen (14)
     #
-    # The resulting session id will look something like this
+    # The resulting branch id will look something like this
     #
     #       g3sf-pab5-9xvd
     #
@@ -224,7 +224,7 @@ module SafeDb
     #    a 14 character string that cannot feasibly be repeated
     #    within the keyspace of even a gigantic organisation.
     #
-    #    This method guarantees that the session id will always be the same when
+    #    This method guarantees that the branch id will always be the same when
     #    called by commands within the same shell in the same machine.
     def self.derive_branch_id( shell_token )
 

@@ -18,8 +18,8 @@ module SafeDb
   class BookIndex
 
 
-    # Initialize the book index data structure from the session state file
-    # and the current session identifier.
+    # Initialize the book index data structure from the branch state file
+    # and the current branch identifier.
     #
     # We assume that something else created the very first book index so we
     # never check whether it exists, instead we assume that one does exist.
@@ -58,9 +58,9 @@ module SafeDb
     #
     # Reading up and returning the master database requires a rostra of actions namely
     #
-    # - finding the session data and reading the ID of the book in play
-    # - using the content id, session id and book id to locate the crypt file
-    # - using the session shell key and salt to unlock the content encryption key
+    # - finding the branch data and reading the ID of the book in play
+    # - using the content id, branch id and book id to locate the crypt file
+    # - using the branch shell key and salt to unlock the content encryption key
     # - using the content crypt key and random iv to unlock the file's ciphertext
     #
     # @return [String]
@@ -77,7 +77,7 @@ module SafeDb
 
     # This write content behaviour takes the parameter content, encyrpts and
     # encodes it using the index key, which is itself derived from the shell
-    # key unlocking the intra session ciphertext. The crypted content is
+    # key unlocking the intra branch ciphertext. The crypted content is
     # written to a file whose path is derviced by {content_ciphertxt_file_from_domain_name}.
     #
     # <b>Steps Taken To Write the Content</b>

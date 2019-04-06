@@ -9,12 +9,12 @@ module SafeDb
   #
   # The login process also creates a new workspace consisting of
   # - a clone of the master content crypt files
-  # - a new set of indices allowing for the acquisition of the new content key via a shell-based session key
+  # - a new set of indices allowing for the acquisition of the new content key via a shell-based branch key
   # - a mirrored commit reference that allows commit (save) back to the master if it hasn't moved forward
-  # - stating that subsequent commands are for this book and other session books in play are to be set aside
+  # - stating that subsequent commands are for this book and other branch books in play are to be set aside
   #
   # The logout process destroys the breadcrumb route back to the re-acquisition of the
-  # content encryption key via the shell key. It also deletes the session crypts.
+  # content encryption key via the shell key. It also deletes the branch crypts.
   #
   # == Login Logout Stack Push Pop
   #
@@ -57,12 +57,12 @@ module SafeDb
     #    This text is severely strengthened and morphed into a key using multiple key
     #    derivation functions like <b>PBKDF2, BCrypt</b> and <b>SCrypt</b>.
     #
-    #    The secret text is discarded and the <b>derived inter-session key</b> is used
+    #    The secret text is discarded and the <b>derived inter-branch key</b> is used
     #    only to encrypt the <em>randomly generated super strong <b>index key</b></em>,
     #    <b>before being itself discarded</b>.
     #
     #    The key ring only stores the salts. This means the secret text based key can
-    #    only be regenerated at the next login, which explains the inter-session label.
+    #    only be regenerated at the next login, which explains the inter-branch label.
     #
     def self.do_login( book_keys, secret )
 
@@ -74,17 +74,17 @@ module SafeDb
       new_crypt_key = KeyCycle.recycle( the_book_id, secret, book_keys, plain_content )
 
       branch_id = Identifier.derive_branch_id( Branch.to_token() )
-      clone_book_into_session( the_book_id, branch_id, book_keys, new_crypt_key )
+      clone_book_into_branch( the_book_id, branch_id, book_keys, new_crypt_key )
 
     end
 
 
-    # <b>Logout of the shell key session</b> by making the high entropy content
+    # <b>Logout of the shell key branch</b> by making the high entropy content
     # encryption key <b>irretrievable for all intents and purposes</b> to anyone
     # who does not possess the domain secret.
     #
     # The key logout action is deleting the ciphertext originally produced when
-    # the intra-sessionary (shell) key encrypted the content encryption key.
+    # the intra branch (shell) key encrypted the content encryption key.
     #
     # <b>Why Isn't the Shell Token Deleted?</b>
     #
@@ -97,7 +97,7 @@ module SafeDb
     #    are logging out of from the shell on this machine.
     def self.do_logout( domain_name )
 
-# @todo usecase => logout logic that deletes session and allows nested book to bubble up
+# @todo usecase => logout logic that deletes branch and allows nested book to bubble up
 # @todo usecase => if logging out when book changed (set one of two flags) - ERROR if flags not provided
 # @todo usecase => safe logout --commit    OR
 # @todo usecase => safe logout --ignore    OR
@@ -112,7 +112,7 @@ module SafeDb
     # - on this machine and
     # - for this application instance
     #
-    # Use the crumbs found underneath the universal (session) ID within the
+    # Use the crumbs found underneath the universal (branch) ID within the
     # main breadcrumbs file for this application instance.
     #
     # Note that the system does not rely on this value for its security, it
@@ -138,30 +138,30 @@ module SafeDb
     end
 
 
-    # When we login to a book which may or may not be the first book in the session
+    # When we login to a book which may or may not be the first book in the branch
     # that we have logged into, we are effectively cloning all its master crypts and
     # some of its keys (indices).
     #
-    # To clone a book into a session we
+    # To clone a book into a branch we
     #
-    # - create a session crypts folder and copy all master crypts into it
-    # - we create session indices under general and book_id sections
+    # - create a branch crypts folder and copy all master crypts into it
+    # - we create branch indices under general and book_id sections
     # - we copy the commit reference and content identifier from the master
-    # - lock the content crypt key with the session key and save the ciphertext
+    # - lock the content crypt key with the branch key and save the ciphertext
     #
     # == commit references
     #
-    # We can only commit (save) a session's crypts when the master and session commit
+    # We can only commit (save) a branch's crypts when the master and branch commit
     # references match. The commit process places a new commit reference into both
-    # the master and session indices. Like git's push/pull, this prevents a sync when
+    # the master and branch indices. Like git's push/pull, this prevents a sync when
     # the master has moved forward by one or more commits.
     #
-    # @param book_id [String] the book identifier this session is about
-    # @param branch_id [String] the identifier pertaining to this session
+    # @param book_id [String] the book identifier this branch is about
+    # @param branch_id [String] the identifier pertaining to this branch
     # @param master_keys [DataMap] keys from the book's master line
-    # @param crypt_key [Key] symmetric session content encryption key
+    # @param crypt_key [Key] symmetric branch content encryption key
     #
-    def self.clone_book_into_session( book_id, branch_id, master_keys, crypt_key )
+    def self.clone_book_into_branch( book_id, branch_id, master_keys, crypt_key )
 
       FileUtils.mkdir_p( FileTree.branch_crypts_folder( book_id, branch_id ) )
       FileUtils.copy_entry( FileTree.master_crypts_folder( book_id ), FileTree.branch_crypts_folder( book_id, branch_id ) )
@@ -178,12 +178,12 @@ module SafeDb
     end
 
 
-    # Create and return the session indices {DataMap} pertaining to both the current
-    # book and session whose ids are given in the first and second parameters.
+    # Create and return the branch indices {DataMap} pertaining to both the current
+    # book and branch whose ids are given in the first and second parameters.
     #
-    # @param book_id [String] the book identifier this session is about
-    # @param branch_id [String] the identifier pertaining to this session
-    # @return [DataMap] return the keys pertaining to this session and book
+    # @param book_id [String] the book identifier this branch is about
+    # @param branch_id [String] the identifier pertaining to this branch
+    # @return [DataMap] return the keys pertaining to this branch and book
     def self.create_branch_indices( book_id, branch_id )
 
       branch_exists = File.exists? FileTree.branch_indices_filepath( branch_id )

@@ -23,11 +23,11 @@ module SafeDb
     # The name ofthe master crypts folder.
     MASTER_CRYPTS_FOLDER_NAME = "safedb-master-crypts"
 
-    # The name ofthe session indices folder.
-    BRANCH_INDICES_FOLDER_NAME = "safedb-session-indices"
+    # The name ofthe branch indices folder.
+    BRANCH_INDICES_FOLDER_NAME = "safedb-branch-indices"
 
-    # The name ofthe session crypts folder.
-    BRANCH_CRYPTS_FOLDER_NAME = "safedb-session-crypts"
+    # The name ofthe branch crypts folder.
+    BRANCH_CRYPTS_FOLDER_NAME = "safedb-branch-crypts"
 
     # The file-system location of the safe database tree
     SAFE_DATABASE_FOLDER = File.join( Dir.home, ".#{SAFE_URL_NAME}" )
@@ -53,34 +53,34 @@ module SafeDb
     # The master commit id is synonymous with a git commit hash
     MASTER_COMMIT_ID  = "master.commit.id"
 
-    # The session commit id is compared with the master to determine whether a commit (save) is possible
+    # The branch commit id is compared with the master to determine whether a commit (save) is possible
     BRANCH_COMMIT_ID = "branch.commit.id"
 
-    # The inter session crypt is locked with the human key for retrieval at the next login
+    # The inter branch crypt is locked with the human key for retrieval at the next login
     INTER_BRANCH_KEY_CRYPT = "inter.branch.key.crypt"
 
-    # The intra session crypt is locked with the session key for retrieval at the next command
+    # The intra branch crypt is locked with the branch key for retrieval at the next command
     INTRA_BRANCH_KEY_CRYPT = "intra.branch.key.crypt"
 
     # The chapter content is locked with the key that is marshalled from the value here
     CHAPTER_KEY_CRYPT = "chapter.key.crypt"
 
-    # This is the global section header of the session book index file
+    # This is the global section header of the branch book index file
     BRANCH_DATA = "branch.data"
 
     # The time of the first book login within this shell
     BRANCH_INITIAL_LOGIN_TIME = "branch.initial.login.time"
 
-    # The most recent time that any book of this session was accessed
+    # The most recent time that any book of this branch was accessed
     BRANCH_LAST_ACCESSED_TIME = "branch.last.accessed.time"
 
-    # The ID of the book being currently used by this session
+    # The ID of the book being currently used by this branch
     CURRENT_BRANCH_BOOK_ID = "current.branch.book.id"
 
-    # The time this book was first logged into during this session
+    # The time this book was first logged into during this branch
     BOOK_BRANCH_LOGIN_TIME = "book.branch.login.time"
 
-    # The time this book was last accessed during this session
+    # The time this book was last accessed during this branch
     BOOK_LAST_ACCESSED_TIME = "book.last.accessed.time"
 
     # The name of the safe tty token environment variable

@@ -81,7 +81,7 @@ module SafeDb
 
     # This method returns a plaintext string hat is guaranteed to be the same
     # whenever called within the same shell for the same user on the same
-    # workstation, virtual machine, container or SSH session and different whenever
+    # workstation, virtual machine, container or SSH branch and different whenever
     # a new shell is acquired.
     #
     # What is really important is that the <b>shell identity string changes</b> when
@@ -98,7 +98,7 @@ module SafeDb
     #
     # - the <b>user returns to a command shell</b>
     # - the user <b>switches back to using a domain</b>
-    # - the user exits their <b>remote SSH session</b>
+    # - the user exits their <b>remote SSH branch</b>
     # - <b>sudo is used</b> to execute the commands
     # - the user comes back to their <b>workstation</b>
     # - the clock ticks into another day, month, year ...

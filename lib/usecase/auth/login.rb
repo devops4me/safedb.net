@@ -8,7 +8,7 @@ module SafeDb
   # Here are some key facts about the login command
   #
   # - its domain name parameter is mandatory
-  # - it is called at the start of every session
+  # - it is called at the start of every branch
   # - it is undone by the logout command
   # - it requires the shell token environment variable to be set
   # - you can nest login commands thus using multiple domains

@@ -3,11 +3,11 @@
 module SafeDb
 
   # This class knows the location of the main indices and crypt files
-  # and folders both for the master and session lines.
+  # and folders both for the master and branch lines.
   #
   # More importantly, it knows where the master crypts and indices are
-  # given a book id, and also the session crypts and indices, given a
-  # session id.
+  # given a book id, and also the branch crypts and indices, given a
+  # branch id.
   class FileTree
 
 
@@ -29,7 +29,7 @@ module SafeDb
 
     def self.branch_crypts_folder( book_id, branch_id )
       branch_crypts_folder = File.join( Indices::SAFE_DATABASE_FOLDER, Indices::BRANCH_CRYPTS_FOLDER_NAME  )
-      return File.join( branch_crypts_folder, "safedb-session-#{book_id}-#{branch_id}" )
+      return File.join( branch_crypts_folder, "safedb-branch-#{book_id}-#{branch_id}" )
     end
 
 

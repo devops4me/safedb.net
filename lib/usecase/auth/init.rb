@@ -10,7 +10,7 @@ module SafeDb
   #
   # - folder **`~/.safedb.net/safedb-master-crypts/safedb.book.<BOOK_ID>`** exists
   # - book content file **`safedb.chapter.<CONTENT_ID>.txt`** exists
-  # - **`safedb-user-configuration.ini`** links the session and book ids
+  # - **`safedb-user-configuration.ini`** links the branch and book ids
   # - **`safedb-master-index-local.ini`** has section with [<BOOK_ID>]
   #
   # Within the master index file in the [<BOOK_ID>] section will be

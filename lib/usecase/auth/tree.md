@@ -26,16 +26,16 @@ On disk, the safe database is largely just **crypt files** and **indices** which
                       |--- safedb.chapter.xcvbrt2345.txt
     |
     |
-    |--- safedb-session-crypts
+    |--- safedb-branch-crypts
              |
-             |--- safedb-session-ababab-ababab-xxxxxx-xxxxxx-xxxxxx
+             |--- safedb-branch-ababab-ababab-xxxxxx-xxxxxx-xxxxxx
                       |
                       |--- safedb.chapter.8d04ldabcd.txt
                       |--- safedb.chapter.fl3456asdf.txt
                       |--- safedb.chapter.pw9521pqwo.txt
              |
              |
-             |--- safedb-session-ababab-ababab-xxxxxx-zzzzzz-zzzzzz
+             |--- safedb-branch-ababab-ababab-xxxxxx-zzzzzz-zzzzzz
                       |
                       |--- safedb.chapter.id1234abcd.txt
                       |--- safedb.chapter.id3456asdf.txt
@@ -43,12 +43,12 @@ On disk, the safe database is largely just **crypt files** and **indices** which
 
              |
              |
-             |--- safedb-session-cdcdcd-cdcdcd-ghighi-ghighi-ghighi
+             |--- safedb-branch-cdcdcd-cdcdcd-ghighi-ghighi-ghighi
                       |
                       |--- safedb.chapter.o3wertpoiu.txt
                       |--- safedb.chapter.xcvbrt2345.txt
 
-    |--- safedb-session-indices
+    |--- safedb-branch-indices
              |
              |--- safedb-indices-xxxxxx-xxxxxx-xxxxxx.ini
 ```

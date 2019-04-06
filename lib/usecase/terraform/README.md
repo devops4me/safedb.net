@@ -44,7 +44,7 @@ Now and forever you can return to the chapter and verse and enjoy a secure crede
 
 You can even change directories and run other terraform projects against the opened IAM user. You can also open an IAM user, run commands, open another run commands and then reopen the first and run commands.
 
-As long as you stay within your shell window - your safe login will persist. Once your session is finished you either logout or exit the shell.
+As long as you stay within your shell window - your safe login will persist. Once your branch is finished you either logout or exit the shell.
 
 ### Shortcut Alert
 

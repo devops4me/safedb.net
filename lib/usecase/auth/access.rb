@@ -15,7 +15,7 @@ module SafeDb
     # Return true if the human secret for the parameter application name
     # has been collected, transformed into a key, that key used to lock the
     # power key, then secret and keys deleted, plus a trail of breadcrumbs
-    # sprinkled to allow the <b>inter-sessionary key to be regenerated</b>
+    # sprinkled to allow the <b>branch crypt key to be regenerated</b>
     # at the <b>next login</b>.
     def is_book_initialized?()
 

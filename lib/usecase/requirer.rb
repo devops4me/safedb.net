@@ -1,7 +1,7 @@
 #!/usr/bin/ruby
 # coding: utf-8
 
-module OpenSession
+module SafeDb
 
 
   # Require every file with a dot rb extension that is
@@ -50,7 +50,7 @@ module OpenSession
   # In the plugins hierarchy, you'll notice that the child classes
   # are always below the parents. This strategy works if the +inheritors+
   # are in the same gem as the +inherited+.
-  class RecursivelyRequire
+  class Require
 
     # Require every file with a dot rb extension that is
     # +either in or recursively below+ the file path given
@@ -83,7 +83,7 @@ module OpenSession
     # their extension classes in the lower subdirectories.
     #
     # @param gem_filepath [String] path to callling gem (use <tt>__FILE</tt>)
-    def self.now gem_filepath
+    def self.gems( gem_filepath )
 
       require_relative "../version"
       require_relative "../usecase/usecase"
@@ -93,18 +93,18 @@ module OpenSession
 
       gem_basepath = File.expand_path "..", gem_filepath
 
-      log.info(x) { "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" }
-      log.info(x) { "@@@@ Require Gems In or Under [#{gem_basepath}]" }
-      log.info(x) { "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" }
+      log.debug(x) { "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" }
+      log.debug(x) { "@@@@ Require Gems In or Under [#{gem_basepath}]" }
+      log.debug(x) { "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" }
 
       Dir["#{gem_basepath}/**/*.rb"].each do |gem_path|
 
-        log.info(x) { "@@@@ => #{gem_path}" }
+        log.debug(x) { "@@@@ => #{gem_path}" }
         require gem_path
 
       end
 
-      log.info(x) { "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" }
+      log.debug(x) { "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" }
 
     end
 

@@ -5,7 +5,7 @@ module SafeDb
 
   # The command line interface has a high entropy randomly generated
   # key whose purpose is to <b>lock the application's data key</b> for
-  # the duration of the session which is between a login and a logout.
+  # the duration of the branch which is between a login and a logout.
   # 
   # These keys are unique to only one shell on one workstation
   # and they live lives that are no longer (and mostly shorter) than
@@ -15,10 +15,10 @@ module SafeDb
   #
   # The four (4) important entities within the shell are
   #
-  # - an obfuscator key for locking the shell key during a session
+  # - an obfuscator key for locking the shell key during a branch
   # - a high entropy randomly generated shell key for locking the app data key
   # - one environment variable whose value embodies three (3) data segments
-  # - a session id derived by pushing the env var through a one-way function
+  # - a branch id derived by pushing the env var through a one-way function
   class KeyDerivation
 
 
@@ -50,7 +50,7 @@ module SafeDb
     BCRYPT_SALT_END_INDEX = SHELL_TOKEN_SIZE - 1
 
 
-    # Initialize the session by generating a random high entropy shell token
+    # Initialize the branch by generating a random high entropy shell token
     # and then generate an obfuscator key which we use to lock the shell
     # key and return a triply segmented text token that can be used to decrypt
     # and deliver the shell key as long as the same shell on the same machine
@@ -80,7 +80,7 @@ module SafeDb
     #
     # @return [String]
     #    return a triply segmented text token that can be used to decrypt
-    #    and redeliver the high entropy session shell key on the same machine
+    #    and redeliver the high entropy branch shell key on the same machine
     #    and within the same shell on the same machine.
     def self.generate_shell_key_and_token
 
@@ -146,7 +146,7 @@ module SafeDb
     end
 
 
-    # Derive a <b>short term (session scoped) encryption key</b> from the
+    # Derive a <b>short term (branch scoped) encryption key</b> from the
     # surrounding shell and workstation (machine) environment with an
     # important same/different guarantee.
     #
@@ -157,7 +157,7 @@ module SafeDb
     # - <b>different</b> when the shell and/or workstation are different
     #
     # This method uses a one-way function to return a combinatorial digested
-    # session identification string using a number of distinct parameters that
+    # branch identification string using a number of distinct parameters that
     # deliver the important behaviours of changing in certain circumstances
     # and remaining unchanged in others.
     #
@@ -180,7 +180,7 @@ module SafeDb
     # <b>unchanged</b> when
     #
     # - the <b>user returns to a command shell</b>
-    # - the user exits their <b>remote SSH session</b>
+    # - the user exits their <b>remote SSH branch</b>
     # - <b>sudo is used</b> to execute the commands
     # - the user comes back to their <b>workstation</b>
     # - the clock ticks into another day, month, year ...
@@ -191,7 +191,7 @@ module SafeDb
     #    previously generated salt which must hold 22 printable characters.
     #
     # @return [SafeDb::Key]
-    #    a digested key suitable for short term (session scoped) use with the
+    #    a digested key suitable for short term (branch scoped) use with the
     #    guarantee that the same key will be returned whenever called from within
     #    the same executing shell environment and a different key when not.
     def self.derive_branch_crypt_key bcrypt_salt_key

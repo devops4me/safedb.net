@@ -8,8 +8,8 @@ module SafeDb
   # with infrastructure provisioning and configuraion management.
   #
   # The central idea behind the pattern is to link every infrastructure
-  # object created during a session with a reference accurate to the nearest
-  # centi-second denoting the moment the software runtime (session) began.
+  # object created during a branch with a reference accurate to the nearest
+  # centi-second denoting the moment the software runtime (branch) began.
   class KeyNow
     include Singleton
 

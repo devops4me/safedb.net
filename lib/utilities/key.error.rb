@@ -3,10 +3,10 @@
 module SafeDb
 
 
-  # This class is the parent to all opensession errors
+  # This class is the parent to all openbranch errors
   # that originate from the command line.
   #
-  # All opensession cli originating errors are about
+  # All openbranch cli originating errors are about
   #
   # - a problem with the input or
   # - a problem with the current state or
