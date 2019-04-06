@@ -69,19 +69,19 @@ The gem bump (and release) command bumps up the patch (or major or minor) versio
 
 ### `rake install`
 ### `cucumber`
-### `git checkout -b feature.commit-session-crypts`
+### `git checkout -b feature.commit-branch`
 ### `git add; git commit;`
 ### `git cherry -v origin`
-### `git cherry -v origin feature.commit-session-crypts`
-### `git push -u origin feature.commit-session-crypts`
+### `git cherry -v origin feature.commit-branch`
+### `git push -u origin feature.commit-branch`
 ### `git pull origin master`
-### `git pull origin feature.commit-session-crypts`
+### `git pull origin feature.commit-branch`
 
 ## common git feature merge commands
 
 ### `git checkout master`
 ### `git pull origin master`
-### `git merge feature.commit-session-crypts`
+### `git merge feature.commit-branch`
 ### `git push -u origin master`
 
 

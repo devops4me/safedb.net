@@ -752,16 +752,16 @@ This method (theoretially) allows a version 3.428.24952 to restore an export of 
 
 ## Safe's Concurrency Methodology
 
-A safe repository (book) can be changed by one branch but read concurrently by multiple sessions.
+A safe repository (book) can be changed by one branch but read concurrently by multiple branchs.
 
 Directory Links are NOT PORTABLE to use to point to the active workspace especially if we the safe root folder is on a USB key.
 A GOOD engough concurrency technique is a lock file in the BOOK's root folder that is named `safe.concurrency.lockfile.<<book.id>>`
 
-The contents of the file will hold the relative directory name (session ID based) that has the lock and the branch ID that had it before that (if not first).
+The contents of the file will hold the relative directory name (branch ID based) that has the lock and the branch ID that had it before that (if not first).
 
 The <machine.id>.<bootup.id> is used to when the first read/write login branch occurs. Subsequent logins for a read/write branch will then have 2 choices in this shell.
 
-- safe login ali.baba --steal    # take over the primary read/write session
+- safe login ali.baba --steal    # take over the primary read/write branch
 - safe login ali.baba --branch   # leave primary branch but open one that will not change the price of sugar
 - safe login ali.baba --branch=master
 - safe login ali.baba --branch=experimental
@@ -775,7 +775,7 @@ A third choice arises if we visit the shell holding the directory pointer and lo
 
 Logout NEVER TOUCHES the lock file (it could have moved on multiple times so only login can act on it).
 
-However logout DELETES the cipher.file intra-sessionary ciphertext that can be unlocked by branch key to retrieve the content key. This action renders it impossible to read or write any data from logged in book.
+However logout DELETES the cipher.file branch ciphertext that can be unlocked by branch key to retrieve the content key. This action renders it impossible to read or write any data from logged in book.
 
 A subsequent login can again re-instate this privilege.
 
@@ -790,14 +790,14 @@ The first repo holds the live link.
 
 Subsequent logins must perform two checks
 
-- IS MY DIRECTORY (session) noted as the latest in the lock file (possible if you've logged out of the same shell)
-- (if other directory) - Does the intra-sessionary key within that directory's cipher file have a value
+- IS MY DIRECTORY (branch) noted as the latest in the lock file (possible if you've logged out of the same shell)
+- (if other directory) - Does the branch key within that directory's cipher file have a value
 
 The popup asking the user to STEAL or go READONLY is triggered if the answers above are NO then YES.
 
 ### Safe steal | HowTo
 
-If intra key has no value then stealing is not necessary so the existence of the --steal flag does not change the price of sugar.
+If branch key has no value then stealing is not necessary so the existence of the --steal flag does not change the price of sugar.
 
 The Stealing flow of events is to
 
@@ -805,7 +805,7 @@ The Stealing flow of events is to
  - validate the directory for data consistency (nice to have functionality)
  - collect the password and if invalid stop now
  - grab the lock file and write it to point it to our directory (we are it)
- - create our own intra-sessionary key and write it in within our folder
+ - create our own branch key and write it in within our folder
 
 ### Safe branch | HowTo
 
