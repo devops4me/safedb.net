@@ -25,7 +25,7 @@ module SafeDb
       puts " Open Verse   := #{book_index.get_open_verse_name()}\n"   if book_index.has_open_verse_name?()
       puts ""
 
-      export_filename = "safedb.#{book_index.book_id()}.#{KeyNow.yyjjj_hhmm_ss_nanosec()}.json"
+      export_filename = "safedb.#{KeyNow.yyjjj_hhmm_ss_nanosec()}.#{book_index.book_id()}.json"
       export_filepath = File.join( Dir.pwd, export_filename )
 
       exported_struct = {}
@@ -39,7 +39,7 @@ module SafeDb
 
       end
 
-      File.write( export_filepath, JSON.pretty_generate( exported_struct ) )
+      File.write( export_filepath, JSON.pretty_generate( exported_struct ) + "\n" )
 
       puts ""
       puts "Number of chapters exported >> #{book_index.chapter_count()}"

@@ -29,6 +29,7 @@ module SafeDb
       puts " Book Id     := #{book_index.book_id()}\n"
       puts " Import from := #{@import_filepath}\n"
       puts " Import time := #{KeyNow.readable()}\n"
+      puts ""
 
       new_verse_count = 0
       data_store = DataStore.from_json( File.read( @import_filepath ) )
