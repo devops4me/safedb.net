@@ -2,10 +2,31 @@
 
 module SafeDb
 
-  # The login process recycles the content encryption key by regenerating the human
-  # key from the password text and salts and then accessing the old crypt key, generating
-  # the new one and deftly unlocking the master database with the old and immediately
-  # locking it back up again with the new.
+  # Cycle cycles state indices and content crypt files to and from master and branches.
+  # The need to cycle content occurs during
+  #
+  # - <tt>initialization</tt> - a new master state box is created
+  # - <tt>login</tt> - branch state is created that mirrors master
+  # - <tt>checkin</tt> - transfers state from branch to master
+  # - <tt>checkout</tt> - transfers state from master to branch
+  #
+  # == Book Login
+  #
+  # <tt>Derive the Old</tt>
+  #
+  # The login use case is about <tt>re-generating the key from the password text and salts<tt>
+  # and then accessing the old human crypt key and using it to unlock and access the current strong
+  # random content encryption key. The old ciphertext protecting the book index is also acquired
+  # and unlocked.
+  #
+  # <tt>Generate the New</tt>
+  #
+  # Another strong key is acquired and used to lock the book index. This strong key is itself
+  # locked by the newly generated key (rederived from the source (human) key and the 
+
+
+  # Finding and rederiving the old produces the book index ciphertext which , spinning up a new one and deftly unlocking the master
+  # database with the old and immediately locking it back up again with the new.
   #
   # The login process also creates a new workspace consisting of
   # - a clone of the master content crypt files
