@@ -22,11 +22,11 @@ require "logger"
 # Refer to the below link for excellent coverage of mixins.
 # @see http://ruby-doc.com/docs/ProgrammingRuby/html/tut_modules.html
 #
-module SafeDb
+module LogImpl
 
   @@gem_name = "safedb.net"
   @@gem_base = File.join( Dir.home(), ".#{@@gem_name}" )
-  FileUtils.mkdir_p( @@gem_base unless File.exists? @@gem_base )
+  FileUtils.mkdir_p( @@gem_base ) unless File.exists?( @@gem_base )
   @@log_path = File.join( @@gem_base, "safedb-activity-journal.log" )
 
 
@@ -88,6 +88,7 @@ module SafeDb
   def get_logger
 
     file_logger = Logger.new @@log_path
+    file_logger.level = Logger::INFO
     original_formatter = Logger::Formatter.new
 
     file_logger.formatter = proc { |severity, datetime, progname, msg|

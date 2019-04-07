@@ -46,7 +46,7 @@ require "usecase/requirer"
 
 # Include the logger mixins so that every class can enjoy "import free"
 # logging through pointers to the (extended) log behaviour.
-include OpenLogger
+include LogImpl
 
 
 # This standard out sync command flushes text destined for STDOUT immediately,

@@ -384,25 +384,25 @@ module SafeDb
     #    move method contents into test class
     def self.log_instance_time
 
-      log.info(x) { "[stamp] -------------- => -------------------------------- #" }
-      log.info(x) { "[stamp] eco time stamp => [#{KeyNow.instance.time_now.ctime}]" }
-      log.info(x) { "[stamp] -------------- => -------------------------------- #" }
-      log.info(x) { "[stamp] Univ Time Zone => #{zone}"  }
-      log.info(x) { "[stamp] Month Index is => #{mo}"    }
-      log.info(x) { "[stamp] Month Name is  => #{mmm}"   }
-      log.info(x) { "[stamp] Day Of Week is => #{ddd}"   }
-      log.info(x) { "[stamp] -------------- => -------------------------------- #" }
-      log.info(x) { "[stamp] Two Digit Year => #{yy}"    }
-      log.info(x) { "[stamp] Julian Cal Day => #{jjj}"   }
-      log.info(x) { "[stamp] Yr and Jul Day => #{yyjjj}" }
-      log.info(x) { "[stamp] Hour of Theday => #{hh}"    }
-      log.info(x) { "[stamp] Minute of Hour => #{mm}"    }
-      log.info(x) { "[stamp] Hour + Minute  => #{hhmm}"  }
-      log.info(x) { "[stamp] Second of Min  => #{ss}"    }
-      log.info(x) { "[stamp] 600 Min Slices => #{sst}"   }
-      log.info(x) { "[stamp] -------------- => -------------------------------- #" }
-      log.info(x) { "[stamp] The Time Stamp => #{yyjjj_hhmm_sst}" }
-      log.info(x) { "[stamp] -------------- => -------------------------------- #" }
+      log.debug(x) { "[stamp] -------------- => -------------------------------- #" }
+      log.debug(x) { "[stamp] eco time stamp => [#{KeyNow.instance.time_now.ctime}]" }
+      log.debug(x) { "[stamp] -------------- => -------------------------------- #" }
+      log.debug(x) { "[stamp] Univ Time Zone => #{zone}"  }
+      log.debug(x) { "[stamp] Month Index is => #{mo}"    }
+      log.debug(x) { "[stamp] Month Name is  => #{mmm}"   }
+      log.debug(x) { "[stamp] Day Of Week is => #{ddd}"   }
+      log.debug(x) { "[stamp] -------------- => -------------------------------- #" }
+      log.debug(x) { "[stamp] Two Digit Year => #{yy}"    }
+      log.debug(x) { "[stamp] Julian Cal Day => #{jjj}"   }
+      log.debug(x) { "[stamp] Yr and Jul Day => #{yyjjj}" }
+      log.debug(x) { "[stamp] Hour of Theday => #{hh}"    }
+      log.debug(x) { "[stamp] Minute of Hour => #{mm}"    }
+      log.debug(x) { "[stamp] Hour + Minute  => #{hhmm}"  }
+      log.debug(x) { "[stamp] Second of Min  => #{ss}"    }
+      log.debug(x) { "[stamp] 600 Min Slices => #{sst}"   }
+      log.debug(x) { "[stamp] -------------- => -------------------------------- #" }
+      log.debug(x) { "[stamp] The Time Stamp => #{yyjjj_hhmm_sst}" }
+      log.debug(x) { "[stamp] -------------- => -------------------------------- #" }
 
     end
 

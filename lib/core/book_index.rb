@@ -32,7 +32,7 @@ module SafeDb
       @branch_keys.use( @book_id )
       @content_id = @branch_keys.get( Indices::CONTENT_IDENTIFIER )
 
-      intra_key_ciphertext = @branch_keys.get( Indices::INTRA_BRANCH_KEY_CRYPT )
+      intra_key_ciphertext = @branch_keys.get( Indices::BRANCH_KEY_CRYPT )
       intra_key = KeyDerivation.regenerate_shell_key( Branch.to_token() )
       @crypt_key = intra_key.do_decrypt_key( intra_key_ciphertext )
 

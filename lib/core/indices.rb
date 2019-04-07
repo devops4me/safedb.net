@@ -57,10 +57,10 @@ module SafeDb
     BRANCH_COMMIT_ID = "branch.commit.id"
 
     # The inter branch crypt is locked with the human key for retrieval at the next login
-    INTER_BRANCH_KEY_CRYPT = "inter.branch.key.crypt"
+    MASTER_KEY_CRYPT = "master.key.crypt"
 
     # The intra branch crypt is locked with the branch key for retrieval at the next command
-    INTRA_BRANCH_KEY_CRYPT = "intra.branch.key.crypt"
+    BRANCH_KEY_CRYPT = "branch.key.crypt"
 
     # The chapter content is locked with the key that is marshalled from the value here
     CHAPTER_KEY_CRYPT = "chapter.key.crypt"
@@ -94,25 +94,25 @@ module SafeDb
     SECRET_MASK_STRING = "*" * rand( 7 .. 17 )
 
     # The birthday (initialization time) of this safe book.
-    SAFE_BOOK_INITIALIZE_TIME = "safe.book.initialize.time"
+    SAFE_BOOK_INITIALIZE_TIME = "book.initialize.time"
 
     # The name of this safe book.
-    SAFE_BOOK_NAME = "safe.book.name"
+    SAFE_BOOK_NAME = "book.name"
 
     # The application version that oversaw this book's initialization.
-    SAFE_BOOK_INIT_VERSION = "safe.book.init.version"
+    SAFE_BOOK_INIT_VERSION = "book.init.version"
 
     # The application version that oversaw this book's initialization.
-    SAFE_BOOK_CURRENT_VERSION = "safe.book.current.version"
+    SAFE_BOOK_CURRENT_VERSION = "book.current.version"
 
     # The handle to the chapter keys inside the book index.
-    SAFE_BOOK_CHAPTER_KEYS = "safe.book.chapter.keys"
+    SAFE_BOOK_CHAPTER_KEYS = "book.chapter.keys"
 
     # The opened chapter id/name in the current book
-    OPENED_CHAPTER_NAME = "opened.chapter.name"
+    OPENED_CHAPTER_NAME = "book.open.chapter"
 
     # The opened verse id/name in the current book
-    OPENED_VERSE_NAME = "opened.verse.name"
+    OPENED_VERSE_NAME = "book.open.verse"
 
     # The application version that oversaw this book's initialization.
     SAFE_VERSION_STRING = "safedb-v#{SafeDb::VERSION}"

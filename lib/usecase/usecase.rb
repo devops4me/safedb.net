@@ -96,9 +96,7 @@ module SafeDb
     def check_pre_conditions
 
       begin
-
         pre_validation
-
       rescue OpenError::CliError => e
 
         puts ""
@@ -129,9 +127,7 @@ module SafeDb
     def check_post_conditions
 
       begin
-
         post_validation
-
       rescue OpenError::CliError => e
 
         puts ""
@@ -227,18 +223,18 @@ module SafeDb
 
     def log_env()
 
-      log.info(x) { "Gem Root Folder    => #{Gem.dir()}" }
-      log.info(x) { "Gem Config File    => #{Gem.config_file()}" }
-      log.info(x) { "Gem Binary Path    => #{Gem.default_bindir()}" }
-      log.info(x) { "Gem Host Path      => #{Gem.host()}" }
-      log.info(x) { "Gem Caller Folder  => #{Gem.location_of_caller()}" }
-      log.info(x) { "Gem Paths List     => #{Gem.path()}" }
-      log.info(x) { "Gem Platforms      => #{Gem.platforms()}" }
-      log.info(x) { "Gem Ruby Version X => #{Gem.ruby()}" }
-      log.info(x) { "Gem Ruby Version Y => #{Gem::VERSION}" }
-      log.info(x) { "Gem Ruby Version Z => #{Gem.latest_rubygems_version()}" }
-      log.info(x) { "Gem User Folder    => #{Gem.user_dir()}" }
-      log.info(x) { "Gem User Home      => #{Gem.user_home()}" }
+      log.debug(x) { "Gem Root Folder    => #{Gem.dir()}" }
+      log.debug(x) { "Gem Config File    => #{Gem.config_file()}" }
+      log.debug(x) { "Gem Binary Path    => #{Gem.default_bindir()}" }
+      log.debug(x) { "Gem Host Path      => #{Gem.host()}" }
+      log.debug(x) { "Gem Caller Folder  => #{Gem.location_of_caller()}" }
+      log.debug(x) { "Gem Paths List     => #{Gem.path()}" }
+      log.debug(x) { "Gem Platforms      => #{Gem.platforms()}" }
+      log.debug(x) { "Gem Ruby Version X => #{Gem.ruby()}" }
+      log.debug(x) { "Gem Ruby Version Y => #{Gem::VERSION}" }
+      log.debug(x) { "Gem Ruby Version Z => #{Gem.latest_rubygems_version()}" }
+      log.debug(x) { "Gem User Folder    => #{Gem.user_dir()}" }
+      log.debug(x) { "Gem User Home      => #{Gem.user_home()}" }
 
       return
 

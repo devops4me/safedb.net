@@ -69,7 +69,7 @@ module SafeDb
       the_book_id = book_keys.section()
 
       old_human_key = KdfApi.regenerate_from_salts( secret, book_keys )
-      old_crypt_key = old_human_key.do_decrypt_key( book_keys.get( Indices::INTER_BRANCH_KEY_CRYPT ) )
+      old_crypt_key = old_human_key.do_decrypt_key( book_keys.get( Indices::MASTER_KEY_CRYPT ) )
       plain_content = Content.unlock_master( old_crypt_key, book_keys )
       new_crypt_key = KeyCycle.recycle( the_book_id, secret, book_keys, plain_content )
 
@@ -173,7 +173,7 @@ module SafeDb
 
       branch_key = KeyDerivation.regenerate_shell_key( Branch.to_token() )
       key_ciphertext = branch_key.do_encrypt_key( crypt_key )
-      branch_keys.set( Indices::INTRA_BRANCH_KEY_CRYPT, key_ciphertext )
+      branch_keys.set( Indices::BRANCH_KEY_CRYPT, key_ciphertext )
 
     end
 

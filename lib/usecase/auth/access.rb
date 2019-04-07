@@ -33,7 +33,7 @@ module SafeDb
     def contains_all_master_book_indices( data_map )
       return false unless data_map.contains?( Indices::CONTENT_RANDOM_IV )
       return false unless data_map.contains?( Indices::CONTENT_IDENTIFIER )
-      return false unless data_map.contains?( Indices::INTER_BRANCH_KEY_CRYPT )
+      return false unless data_map.contains?( Indices::MASTER_KEY_CRYPT )
       return false unless data_map.contains?( Indices::MASTER_COMMIT_ID )
       return true
     end
