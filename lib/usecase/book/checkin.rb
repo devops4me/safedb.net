@@ -51,29 +51,18 @@ module SafeDb
     # by a ckeckin from another (shell) branch.
     def execute
 
-      book_index = BookIndex.new()
+      book = BookIndex.new()
 
       puts ""
-      puts "### #############################################################\n"
-      puts "--- -------------------------------------------------------------\n"
-      puts ""
-      puts " Book Name   := #{book_index.book_name()}\n"
-      puts " Book Id     := #{book_index.book_id()}\n"
-      puts " Import from := #{@import_filepath}\n"
-      puts " Import time := #{KeyNow.readable()}\n"
+      puts " Book Name  := #{book.book_name()}\n"
+      puts " Book Id    := #{book.book_id()}\n"
+      puts " Checkin At := #{KeyNow.readable()}\n"
+      puts " Branch Id  := #{book.book_id()}\n"
       puts ""
 
-      new_verse_count = 0
-      data_store = DataStore.from_json( File.read( @import_filepath ) )
-      data_store.each_pair do | chapter_name, chapter_data |
-        book_index.import_chapter( chapter_name, chapter_data )
-        new_verse_count += chapter_data.length()
-      end
+      StateTransfer.checkin( book )
 
-      book_index.write()
-
-      puts ""
-      puts "#{data_store.length()} chapters and #{new_verse_count} verses were successfully imported.\n"
+      puts "Check-in from branch to master was successful.\n"
       puts ""
 
 
