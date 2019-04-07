@@ -1,3 +1,99 @@
+
+
+# Cycling Book Master and Branch State
+
+Cycle cycles state indices and content crypt files to and from master and branches.
+The need to cycle content occurs during
+
+- <tt>initialization</tt> - a new master state box is created
+- <tt>login</tt> - branch state is created that mirrors master
+- <tt>checkin</tt> - transfers state from branch to master
+- <tt>checkout</tt> - transfers state from master to branch
+
+
+## State Elements Transition Table
+
+| Element   |  Located     | Create Usecases   | Updated by Usecases | Read by Usecases  | Derived From      |
+|:------------ |:------------ |:----------------- |:------------------- |:----------------- |:----------------- |
+| Key derived from human password | Master Indices File | Book Init | Every Login | Every Login | human password and pbkdf2 and bcrypt salts  |
+| Strong Random Index Crypt Key | Locked with Human and Branch keys | First created during  book initialization | Updated on the very first book login after machine bootup | Read on logins and then all book query/edit use cases | random generator
+
+
+
+
+
+
+
+
+
+
+== Book Login
+
+<tt>Derive the Old</tt>
+
+The login use case is about <tt>re-generating the key from the password text and salts<tt>
+and then accessing the old human crypt key and using it to unlock and access the current strong
+random content encryption key. The old ciphertext protecting the book index is also acquired
+and unlocked.
+
+<tt>Generate the New</tt>
+
+Another strong key is acquired and used to lock the book index. This strong key is itself
+locked by the newly generated key (rederived from the source (human) key and the 
+
+
+Finding and rederiving the old produces the book index ciphertext which , spinning up a new one and deftly unlocking the master
+database with the old and immediately locking it back up again with the new.
+
+The login process also creates a new workspace consisting of
+- a clone of the master content crypt files
+- a new set of indices allowing for the acquisition of the new content key via a shell-based branch key
+- a mirrored commit reference that allows commit (save) back to the master if it hasn't moved forward
+- stating that subsequent commands are for this book and other branch books in play are to be set aside
+
+The logout process destroys the breadcrumb route back to the re-acquisition of the
+content encryption key via the shell key. It also deletes the branch crypts.
+
+== Login Logout Stack Push Pop
+
+The login/logout works like a stack push pop or like a nested structure. A login wrests
+control away from the currently logged in book whilst a logout cedes control to the
+book that was last in play.
+
+<b>Login Recycles 3 things</b>
+
+The three (3) things recycled by this login are
+
+- the human key (sourced by putting the secret text through two key derivation functions)
+- the content crypt key (sourced from a random 48 byte sequence) 
+- the content ciphertext (sourced by decrypting with the old and re-encrypting with the new)
+
+Remember that the content crypt key is itself encrypted by two key entities.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # The open key library generates keys, it stores their salts, it produces differing
 # representations of the keys (like base64 for storage and binary for encrypting).
 #

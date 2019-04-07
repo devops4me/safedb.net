@@ -41,7 +41,7 @@ module SafeDb
       book_keys = DataMap.new( MASTER_INDEX_LOCAL_FILE )
       book_keys.use( @book_id )
 
-      LoginOut.do_login( book_keys, book_password )
+      StateTransfer.login( book_keys, book_password )
 
       view_uc = View.new
       view_uc.flow_of_events

@@ -10,50 +10,7 @@ module SafeDb
   # - <tt>checkin</tt> - transfers state from branch to master
   # - <tt>checkout</tt> - transfers state from master to branch
   #
-  # == Book Login
-  #
-  # <tt>Derive the Old</tt>
-  #
-  # The login use case is about <tt>re-generating the key from the password text and salts<tt>
-  # and then accessing the old human crypt key and using it to unlock and access the current strong
-  # random content encryption key. The old ciphertext protecting the book index is also acquired
-  # and unlocked.
-  #
-  # <tt>Generate the New</tt>
-  #
-  # Another strong key is acquired and used to lock the book index. This strong key is itself
-  # locked by the newly generated key (rederived from the source (human) key and the 
-
-
-  # Finding and rederiving the old produces the book index ciphertext which , spinning up a new one and deftly unlocking the master
-  # database with the old and immediately locking it back up again with the new.
-  #
-  # The login process also creates a new workspace consisting of
-  # - a clone of the master content crypt files
-  # - a new set of indices allowing for the acquisition of the new content key via a shell-based branch key
-  # - a mirrored commit reference that allows commit (save) back to the master if it hasn't moved forward
-  # - stating that subsequent commands are for this book and other branch books in play are to be set aside
-  #
-  # The logout process destroys the breadcrumb route back to the re-acquisition of the
-  # content encryption key via the shell key. It also deletes the branch crypts.
-  #
-  # == Login Logout Stack Push Pop
-  #
-  # The login/logout works like a stack push pop or like a nested structure. A login wrests
-  # control away from the currently logged in book whilst a logout cedes control to the
-  # book that was last in play.
-  #
-  # <b>Login Recycles 3 things</b>
-  #
-  # The three (3) things recycled by this login are
-  #
-  # - the human key (sourced by putting the secret text through two key derivation functions)
-  # - the content crypt key (sourced from a random 48 byte sequence) 
-  # - the content ciphertext (sourced by decrypting with the old and re-encrypting with the new)
-  #
-  # Remember that the content crypt key is itself encrypted by two key entities.
-  #
-  class LoginOut
+  class StateTransfer
 
     # The login process recycles the content encryption key by regenerating the human
     # key from the password text and salts and then accessing the old crypt key, generating
@@ -85,7 +42,7 @@ module SafeDb
     #    The key ring only stores the salts. This means the secret text based key can
     #    only be regenerated at the next login, which explains the inter-branch label.
     #
-    def self.do_login( book_keys, secret )
+    def self.login( book_keys, secret )
 
       the_book_id = book_keys.section()
 
@@ -98,6 +55,16 @@ module SafeDb
       clone_book_into_branch( the_book_id, branch_id, book_keys, new_crypt_key )
 
     end
+
+
+    def self.checkin( book )
+
+      FileUtils.delete_entry( FileTree.master_crypts_folder( book.book_id() ) )
+      FileUtils.mkdir_p( FileTree.master_crypts_folder( book.book_id() ) )
+      FileUtils.copy_entry( FileTree.branch_crypts_folder( book.book_id(), book.branch_id() ), FileTree.master_crypts_folder( book.book_id() ) )
+
+    end
+
 
 
     # <b>Logout of the shell key branch</b> by making the high entropy content

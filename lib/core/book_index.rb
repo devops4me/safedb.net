@@ -360,6 +360,13 @@ module SafeDb
     end
 
 
+    # Returns the id number of the current safe branch
+    # @return [String] the id of this safe branch
+    def branch_id()
+      return @branch_id
+    end
+
+
     # Returns the safedb application software version at the time that the
     # safe book was initialized.
     # @return [String] the software version that initialized this book
