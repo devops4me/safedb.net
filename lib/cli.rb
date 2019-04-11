@@ -2,45 +2,6 @@ require "thor"
 require "fileutils"
 require "strscan"
 
-############### this will be a problem i bet
-############### this will be a problem i bet
-############### this will be a problem i bet
-############### this will be a problem i bet
-############### this will be a problem i bet
-############### this will be a problem i bet
-############### this will be a problem i bet
-############### this will be a problem i bet
-############### this will be a problem i bet
-############### this will be a problem i bet
-############### this will be a problem i bet
-############### this will be a problem i bet
-############### this will be a problem i bet
-############### this will be a problem i bet
-############### this will be a problem i bet
-############### this will be a problem i bet
-############### this will be a problem i bet
-############### this will be a problem i bet
-############### this will be a problem i bet
-############### this will be a problem i bet
-############### this will be a problem i bet
-############### this will be a problem i bet
-############### this will be a problem i bet
-############### this will be a problem i bet
-############### this will be a problem i bet
-############### this will be a problem i bet
-############### this will be a problem i bet
-############### this will be a problem i bet
-############### this will be a problem i bet
-############### this will be a problem i bet
-############### this will be a problem i bet
-############### this will be a problem i bet
-############### this will be a problem i bet
-############### this will be a problem i bet
-############### this will be a problem i bet
-############### this will be a problem i bet
-############### this will be a problem i bet
-############### this will be a problem i bet
-######################  require "branch/time.stamp"
 require "utilities/logs/logger"
 require "usecase/requirer"
 
@@ -107,7 +68,7 @@ class CLI < Thor
   # - either <tt>safe --version</tt>
   # - or <tt>safe version</tt>
   def version
-    log.info(x) { "[usecase] ~> print the version of this safedb.net personal database." }
+    log.info(x) { "print the version of this safedb.net personal database." }
 
     puts ""
     puts "safedb gem version => v#{SafeDb::VERSION}"
@@ -168,7 +129,7 @@ class CLI < Thor
   #
   # @param key_name [String] the key whose value is to be printed
   def print key_name
-    log.info(x) { "[usecase] ~> print the key value at the opened chapter and verse." }
+    log.info(x) { "print the key value at the opened chapter and verse." }
     print_uc = SafeDb::Print.new
     print_uc.key_name = key_name
     print_uc.flow_of_events
@@ -181,7 +142,7 @@ class CLI < Thor
 
   # Print the name of the verse at the opened chapter and verse location.
   def verse
-    log.info(x) { "[usecase] ~> print the verse name at the opened chapter and verse." }
+    log.info(x) { "print the verse name at the opened chapter and verse." }
     verse_uc = SafeDb::Verse.new
     verse_uc.flow_of_events
   end
@@ -194,7 +155,7 @@ class CLI < Thor
   # The<b>token</b> use cases prints out an encrypted shell token tied
   # to the workstation and shell environment.
   def token
-    log.info(x) { "[usecase] ~> generate and print out an encrypted (shell bound) shell token" }
+    log.info(x) { "generate and print out an encrypted (shell bound) shell token" }
     SafeDb::Token.new.flow_of_events
   end
 
@@ -227,7 +188,7 @@ class CLI < Thor
   # @param verse [String]
   #    the verse of the logged in book and specified chapter to open
   def open chapter, verse
-    log.info(x) { "[usecase] ~> open a chapter and verse to read from or write to." }
+    log.info(x) { "open a chapter and verse to read from or write to." }
     open_uc = SafeDb::Open.new
     open_uc.chapter = chapter
     open_uc.verse = verse
@@ -243,7 +204,7 @@ class CLI < Thor
   # master. This is straightforward if the master's state has not been forwarded
   # by a ckeckin from another (shell) branch.
   def checkin
-    log.info(x) { "[usecase] ~> push (save) any changes made to this branch into the master." }
+    log.info(x) { "push (save) any changes made to this branch into the master." }
     SafeDb::CheckIn.new.flow_of_events
   end
 
@@ -256,7 +217,7 @@ class CLI < Thor
   # The --print flag demands that the exported text goes to stdout otherwise it
   # will be placed in an aptly named file in  the present working directory.
   def export
-    log.info(x) { "[usecase] ~> export book chapter content or dictionary at verse in JSON format." }
+    log.info(x) { "export book chapter content or dictionary at verse in JSON format." }
     SafeDb::Export.new.flow_of_events
   end
 
@@ -269,7 +230,7 @@ class CLI < Thor
   # a <em>json</em> formatted data structure.
   # @param import_filepath [String] the path to the JSON file that we will import
   def import import_filepath
-    log.info(x) { "[usecase] ~> importing into current book from file #{import_filepath}." }
+    log.info(x) { "importing into current book from file #{import_filepath}." }
     import_uc = SafeDb::Import.new
     import_uc.import_filepath = import_filepath
     import_uc.flow_of_events    
@@ -286,7 +247,7 @@ class CLI < Thor
   # @param credential_id [String] the id of the secret to put into the opened context
   # @param credential_value [String] the value of the secret to put into the opened context
   def put credential_id, credential_value
-    log.info(x) { "[usecase] ~> put key/value pair into dictionary at open chapter and verse." }
+    log.info(x) { "put key/value pair into dictionary at open chapter and verse." }
     put_uc = SafeDb::Put.new
     put_uc.credential_id = credential_id
     put_uc.credential_value = credential_value
@@ -305,47 +266,11 @@ class CLI < Thor
   # @param directive_name [String] the name of the book-scoped configuration directive
   # @param directive_value [String] the value of the book-scoped configuration directive
   def set directive_name, directive_value
-    log.info(x) { "[usecase] ~> set the configuration directive value for #{directive_name}" }
+    log.info(x) { "set the configuration directive value for #{directive_name}" }
     set_uc = SafeDb::Set.new
     set_uc.directive_name = directive_name
     set_uc.directive_value = directive_value
     set_uc.flow_of_events
-  end
-
-
-
-  # Description of the file command.
-  desc "file <file_key> <file_url>", "ingest a file into the safe from the filesystem (or S3, ssh, Google Drive)"
-
-  # The <b>file use case</b> pulls a read in from either an accessible readsystem
-  # or from a remote http, https, git, S3, GoogleDrive and/or ssh source.
-  #
-  # @param file_key [String] keyname representing the file that is being read in
-  # @param file_url [String] url of file to ingest and assimilate into the safe
-  def file file_key, file_url
-    log.info(x) { "[usecase] ~> file read against key [[ #{file_key} ]]" }
-    log.info(x) { "[usecase] ~> file read from url [[ #{file_url} ]]" }
-    file_uc = SafeDb::FileMe.new
-    file_uc.file_key = file_key
-    file_uc.file_url = file_url
-    file_uc.flow_of_events
-  end
-
-
-
-  # Description of the eject command.
-  desc "eject <file_key>", "write out ingested file at chapter/verse with specified file key"
-
-  # The <b>eject use case</b> writes out a file that was previously ingested
-  # and coccooned inside the safe typically with the file command.
-  #
-  # @param file_key [String] the key that the file was ingested against
-  def eject file_key
-    log.info(x) { "[usecase] ~> eject file at chapter/verse against specified key." }
-    eject_uc = SafeDb::Eject.new()
-    eject_uc.file_key = file_key
-    eject_uc.to_dir = options[:to_dir] if options[:to_dir]
-    eject_uc.flow_of_events
   end
 
 
@@ -358,7 +283,7 @@ class CLI < Thor
   #
   # @param line_id [String] the ID of the entity to remove (line, verse, chapter or book)
   def remove line_id
-    log.info(x) { "[usecase] ~> remove a safe entity with a key id [#{line_id}]." }
+    log.info(x) { "remove a safe entity with a key id [#{line_id}]." }
     remove_uc = SafeDb::Remove.new()
     remove_uc.line_id = line_id
     remove_uc.flow_of_events
@@ -367,22 +292,16 @@ class CLI < Thor
 
 
   # Description of the read command.
-  desc "read <file_url>", "read (reread) file either locally or via http, git or ssh"
+  desc "read <file_url>", "read file into the open chapter and verse for safe keeping."
 
-  # The <b>read use case</b> pulls a read in from either an accessible readsystem
-  # or from a remote http, https, git, S3, GoogleDrive and/or ssh source.
+  # The <b>read use case</b> pulls a file in from either an accessible filesystem.
   #
-  # This use case expects a @file_url parameter. The actions it takes are to
-  #
-  # - register @in.url to mirror @file_url
-  # - register @out.url to mirror @file_url
-  # - check the location of @file_url
-  # - if no file exists it humbly finishes up
-  #
+  # @param file_key [String] keyname representing the file that is being read in
   # @param file_url [String] url of file to ingest and assimilate into the safe
-  def read file_url
-    log.info(x) { "[usecase] ~> read (reread) file from optional url [[ #{file_url} ]]" }
+  def read file_key, file_url
+    log.info(x) { "read file into key #{file_key} from url #{file_url}" }
     read_uc = SafeDb::Read.new
+    read_uc.file_key = file_key
     read_uc.file_url = file_url
     read_uc.flow_of_events
   end
@@ -390,16 +309,18 @@ class CLI < Thor
 
 
   # Description of the write command.
-  desc "write <file_url>", "write out file at chapter/verse to (optional) file url"
+  desc "write <file_key>", "write out file to current folder or use --to_dir=</path/to/dir."
 
   # The <b>write use case</b> writes out a file that was previously ingested
   # and coccooned inside the safe.
   #
-  # @param file_url [String] optional file url marking where to write the file
-  def write( file_url = nil )
-    log.info(x) { "[usecase] ~> write out file at chapter/verse to (optional) file url." }
+  # @param file_key [String] the key name of the file to write out onto the filesystem
+  def write( file_key )
+    log.info(x) { "write out the file against key #{file_key}" }
+    log.info(x) { "output folder optionally set to #{options[:to_dir]}" } if options[:to_dir]
     write_uc = SafeDb::Write.new
-    write_uc.file_url = file_url if file_url
+    write_uc.file_key = file_key
+    write_uc.to_dir = options[:to_dir] if options[:to_dir]
     write_uc.flow_of_events
   end
 
@@ -411,7 +332,7 @@ class CLI < Thor
   # Show the secrets at the opened path. These secrets
   # are simply written out to the shell console.
   def show
-    log.info(x) { "[usecase] ~> show dictionary at the opened chapter and verse." }
+    log.info(x) { "show dictionary at the opened chapter and verse." }
     SafeDb::Show.new.flow_of_events
   end
 
@@ -423,7 +344,7 @@ class CLI < Thor
   # Display a bird's eye view of the domain's database including
   # its envelopes, their keys and imported objects such as files.
   def view
-    log.info(x) { "[usecase] ~> print list of chapter and verse combos to console." }
+    log.info(x) { "print list of chapter and verse combos to console." }
     view_uc = SafeDb::View.new
     view_uc.flow_of_events
   end
@@ -439,7 +360,7 @@ class CLI < Thor
   # @param index [Number]
   #    the integer index chosen from the list procured by the view command.
   def goto index
-    log.info(x) { "[usecase] ~> opens the chapter and verse at index [#{index}]." }
+    log.info(x) { "opens the chapter and verse at index [#{index}]." }
     goto_uc = SafeDb::Goto.new
     goto_uc.index = index
     goto_uc.flow_of_events
@@ -468,7 +389,7 @@ class CLI < Thor
   #    the terraform command to run which is currently limited to plan, apply and destroy.
   #    This parameter is optional and if nothing is given then "apply" is assumed.
   def terraform( command = nil )
-    log.info(x) { "[usecase] ~> will export IAM credentials then invoke $ terraform #{command}" }
+    log.info(x) { "will export IAM credentials then invoke $ terraform #{command}" }
     terraform_uc = SafeDb::Terraform.new
     terraform_uc.command = command if command
     terraform_uc.flow_of_events
@@ -505,7 +426,7 @@ class CLI < Thor
   #
   def jenkins( command, service, url )
 
-    log.info(x) { "[usecase] ~> request to #{command} #{service} credentials to Jenkins at #{url}" }
+    log.info(x) { "request to #{command} #{service} credentials to Jenkins at #{url}" }
     jenkins_uc = SafeDb::Jenkins.new
 
     jenkins_uc.command = command if command
@@ -531,7 +452,7 @@ class CLI < Thor
   #    login or logout
   def docker( command = "login" )
 
-    log.info(x) { "[usecase] ~> request to #{command} into or out of a docker repository." }
+    log.info(x) { "request to #{command} into or out of a docker repository." }
     docker_uc = SafeDb::Docker.new
     docker_uc.command = command
     docker_uc.flow_of_events
@@ -550,7 +471,7 @@ class CLI < Thor
   #    the vpn command to run which is currently limited to up or down
   #    This parameter is optional and if nothing is given then "up" is assumed.
   def vpn( command = nil )
-    log.info(x) { "[usecase] ~> VPN connection command #{command} has been issued." }
+    log.info(x) { "VPN connection command #{command} has been issued." }
     vpn_uc = SafeDb::Vpn.new
     vpn_uc.command = command if command
     vpn_uc.flow_of_events
@@ -563,7 +484,7 @@ class CLI < Thor
 
   # Put out the multiple formats of the current timestamp.
   def id
-    log.info(x) { "[usecase] ~> prints out the current timestamp identifiers." }
+    log.info(x) { "prints out the current timestamp identifiers." }
     id_uc = SafeDb::Id.new
     id_uc.flow_of_events
   end

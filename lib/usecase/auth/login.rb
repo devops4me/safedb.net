@@ -31,7 +31,7 @@ module SafeDb
 
 # @todo usecase => if logged in skip the password collection and do_login() function
 
-## Tactic   ==> first use StateTransfer.is_logged_in?()
+## Tactic   ==> first use Transition.is_logged_in?()
 ## Tactic   ==> next  get the current book ID and RESET it if necessary (also do he [use] use case)
 
 
@@ -45,7 +45,7 @@ module SafeDb
       book_keys = DataMap.new( Indices::MASTER_INDICES_FILEPATH )
       book_keys.use( @book_id )
 
-      StateTransfer.login( book_keys, book_password )
+      Transition.login( book_keys, book_password )
 
       view_uc = View.new
       view_uc.flow_of_events

@@ -10,7 +10,7 @@ module SafeDb
   # - <tt>checkin</tt> - transfers state from branch to master
   # - <tt>checkout</tt> - transfers state from master to branch
   #
-  class StateTransfer
+  class Transition
 
     # The login process recycles the content encryption key by regenerating the human
     # key from the password text and salts and then accessing the old crypt key, generating
@@ -45,15 +45,7 @@ module SafeDb
     def self.login( book_keys, secret )
 
 ## ===> @todo if the bootup ID differs from the master - we recycle the strong content encryption key
-## ===> @todo if the bootup ID differs from the master - we recycle the strong content encryption key
-## ===> @todo if the bootup ID differs from the master - we recycle the strong content encryption key
-## ===> @todo if the bootup ID differs from the master - we recycle the strong content encryption key
-## ===> @todo if the bootup ID differs from the master - we recycle the strong content encryption key
 
-
-## ===> @todo if the bootup ID differs from the master - we create a new commit ID for master and branch
-## ===> @todo if the bootup ID differs from the master - we create a new commit ID for master and branch
-## ===> @todo if the bootup ID differs from the master - we create a new commit ID for master and branch
 ## ===> @todo if the bootup ID differs from the master - we create a new commit ID for master and branch
 
       the_book_id = book_keys.section()
@@ -100,6 +92,8 @@ module SafeDb
     #
     def self.checkin( book )
 
+# @todo usecase => If mismatch in commit IDs then print message instructing to first do safe checkout
+
       FileUtils.remove_entry( FileTree.master_crypts_folder( book.book_id() ) )
       FileUtils.mkdir_p( FileTree.master_crypts_folder( book.book_id() ) )
       FileUtils.copy_entry( FileTree.branch_crypts_folder( book.book_id(), book.branch_id() ), FileTree.master_crypts_folder( book.book_id() ) )
@@ -111,6 +105,8 @@ module SafeDb
 
       master_keys.set( Indices::CONTENT_IDENTIFIER, branch_keys.get( Indices::CONTENT_IDENTIFIER ) )
       master_keys.set( Indices::CONTENT_RANDOM_IV,  branch_keys.get( Indices::CONTENT_RANDOM_IV  ) )
+
+# @todo usecase => create a new commit ID and furnish both master and branch with it
 
     end
 

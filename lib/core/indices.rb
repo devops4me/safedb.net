@@ -124,6 +124,11 @@ module SafeDb
     SAFE_VERSION_STRING = "safedb-v#{SafeDb::VERSION}"
 
 
+    INGESTED_FILE_LINE_NAME_KEY = "safedb.file::"
+    INGESTED_FILE_CONTENT64_KEY = "file.content"
+    INGESTED_FILE_BASE_NAME_KEY = "file.name"
+
+
   end
 
 

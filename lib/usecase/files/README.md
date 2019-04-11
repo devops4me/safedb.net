@@ -1,5 +1,5 @@
 
-# safe file | ingest and eject files
+# safe read | safe write | reading and writing files
 
 You ingest a file with **safe file** and then **safe eject** will output that file into the present working directory.
 

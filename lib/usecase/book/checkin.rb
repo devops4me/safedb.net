@@ -60,7 +60,7 @@ module SafeDb
       puts " Branch Id  := #{book.book_id()}\n"
       puts ""
 
-      StateTransfer.checkin( book )
+      Transition.checkin( book )
 
       puts "Check-in from branch to master was successful.\n"
       puts ""

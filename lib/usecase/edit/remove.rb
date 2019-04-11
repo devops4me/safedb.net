@@ -18,7 +18,7 @@ module SafeDb
     def edit_verse()
 
       @verse.delete( @line_id )
-      @verse.delete( "#{FILE_KEY_PREFIX}#{@line_id}" )
+      @verse.delete( "#{Indices::INGESTED_FILE_LINE_NAME_KEY}#{@line_id}" )
 
     end
 

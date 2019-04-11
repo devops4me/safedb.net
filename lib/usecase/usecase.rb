@@ -28,6 +28,19 @@ module SafeDb
   # - {write} put directive key/value pair in parameter section
   class UseCase
 
+# @todo  => lib/usecase/usecase.rb:41:      exit(100) unless ops_key_exists?
+# @todo  => lib/usecase/usecase.rb:197:    def ops_key_exists?
+# @todo  => lib/usecase/verse.rb:9:      return unless ops_key_exists?
+# @todo  => lib/usecase/set.rb:25:      return unless ops_key_exists?
+# @todo  => lib/usecase/docker/docker.rb:18:            return unless ops_key_exists?
+# @todo  => lib/usecase/files/write.rb:15:      return unless ops_key_exists?
+# @todo  => lib/usecase/files/read.rb:62:      return unless ops_key_exists?
+# @todo  => lib/usecase/files/file_me.rb:27:      return unless ops_key_exists?
+# @todo  => lib/usecase/files/eject.rb:23:      return unless ops_key_exists?
+# @todo  => lib/usecase/terraform/terraform.rb:27:      return unless ops_key_exists?
+# @todo  => lib/usecase/jenkins/jenkins.rb:157:            return unless ops_key_exists?
+
+
     # This use case is initialized primary by resolving the configured
     # +general and use case specific facts+. To access the general facts,
     # a domain name is expected in the parameter delegated by the extension
@@ -168,9 +181,6 @@ module SafeDb
 
     ENV_VAR_PREFIX_A = "evar."
     ENV_VAR_PREFIX_B = "@evar."
-    FILE_KEY_PREFIX = "file::"
-    FILE_CONTENT_KEY = "content64"
-    FILE_NAME_KEY = "filename"
     COMMANDMENT = "safe"
     ENV_VAR_KEY_NAME = "SAFE_TTY_TOKEN"
     ENV_PATH = "env.path"
