@@ -138,12 +138,6 @@ module SafeDb
       data_map[section_name][key] = value
       data_map.write
 
-      puts ""
-      puts "Writing [ #{key} = #{value} ] into section ( #{section_name} )"
-      puts ""
-      puts data_map.to_s
-      puts ""
-
     end
 
 

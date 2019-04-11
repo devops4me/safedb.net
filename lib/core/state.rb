@@ -59,38 +59,10 @@ module SafeDb
       the_book_id = book_keys.section()
 
       old_human_key = KdfApi.regenerate_from_salts( secret, book_keys )
-puts ""
-puts "The Old Human Key => #{old_human_key.to_s}"
-puts ""
-puts "================================================="
-puts "Master Book Keys on Login"
-puts "================================================="
-puts book_keys.as_string()
-puts "================================================="
-puts ""
-puts "================================================="
-puts "Crypt Key Ciphertext => #{book_keys.get( Indices::MASTER_KEY_CRYPT )}"
-
       old_crypt_key = old_human_key.do_decrypt_key( book_keys.get( Indices::MASTER_KEY_CRYPT ) )
       plain_content = Content.unlock_master( old_crypt_key, book_keys )
 
-puts "The Old Strong Crypt Key => #{old_crypt_key.to_s}"
-puts ""
-puts "================================================="
-puts "Book Index Content JSON"
-puts "================================================="
-puts plain_content
-puts "================================================="
-puts ""
-
       new_crypt_key = KeyCycle.recycle( the_book_id, secret, book_keys, plain_content )
-
-puts ""
-puts "The New Strong Crypt Key => #{new_crypt_key.to_s}"
-puts ""
-puts ""
-
-
       branch_id = Identifier.derive_branch_id( Branch.to_token() )
       clone_book_into_branch( the_book_id, branch_id, book_keys, new_crypt_key )
 

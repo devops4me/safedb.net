@@ -28,7 +28,7 @@ class String
   # @example
   #    cipher_text  = "Hello crypt world".encrypt_block_encode "ABC123XYZ"
   #    original_txt = cipher_text.block_decode_decrypt "ABC123XYZ"
-  #    puts original_txt # "Hello crypt world"
+  #    (print out) original_txt # "Hello crypt world"
   #
   # @param crypt_key [String]
   #    a strong long encryption key that is used to encrypt this string before
@@ -47,7 +47,7 @@ class String
   # @example
   #    cipher_text  = "Hello crypt world".decrypt_block_encode "ABC123XYZ"
   #    original_txt = cipher_text.block_decode_decrypt "ABC123XYZ"
-  #    puts original_txt # "Hello crypt world"
+  #    (print out) original_txt # "Hello crypt world"
   #
   # @param crypt_key [String]
   #    a strong long decryption key that is used to decrypt this string after
@@ -76,7 +76,7 @@ class String
   # @example
   #    cipher_text  = "Hello @:==:@ world".encrypt_url_encode "ABC123XYZ"
   #    original_txt = cipher_text.url_decode_decrypt "ABC123XYZ"
-  #    puts original_txt # "Hello @:==:@ world"
+  #    (print out) original_txt # "Hello @:==:@ world"
   #
   # @param crypt_key [String]
   #    a strong long encryption key that is used to encrypt this string before
@@ -123,7 +123,7 @@ class String
   # @example
   #    cipher_text  = "Hello @:==:@ world".encrypt_url_encode "ABC123XYZ"
   #    original_txt = cipher_text.url_decode_decrypt "ABC123XYZ"
-  #    puts original_txt # "Hello @:==:@ world"
+  #    (print out) original_txt # "Hello @:==:@ world"
   #
   # @param crypt_key [String]
   #    a strong long decryption key that is used to decrypt this string after

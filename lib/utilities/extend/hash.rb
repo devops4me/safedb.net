@@ -35,15 +35,13 @@ class Hash
 
     end
 
-
   end
 
 
   # Print a line to standard out stating that a same key (duplicate) map
   # entry has been encountered and here is the one we are rejecting.
   def reject_message( key, value_1, value_2 )
-    the_message = "Refused to allow { #{key} => #{value_2} } to overwrite { #{key} => #{value_1} }"
-    puts the_message
+    puts "Refused to allow { #{key} => #{value_2} } to overwrite { #{key} => #{value_1} }"
   end
 
 
@@ -73,5 +71,6 @@ class Hash
     log.debug(x) { "# --- ----------------------------------------------" }
 
   end
+
 
 end

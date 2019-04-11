@@ -156,14 +156,7 @@ module SafeDb
     # @return [String] the resulting decrypted text that was encrypted with the parameter key
     def self.unlock_it( crypt_path, unlock_key, random_iv )
 
-      crypt_txt = binary_from_read( crypt_path )
-      text_data = unlock_key.do_decrypt_text( random_iv, crypt_txt )
-
-      puts ""
-      puts text_data
-      puts ""
-
-      return text_data
+      return unlock_key.do_decrypt_text( random_iv, binary_from_read( crypt_path ) )
 
     end
 
