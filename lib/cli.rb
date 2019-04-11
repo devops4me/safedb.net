@@ -3,7 +3,7 @@ require "fileutils"
 require "strscan"
 
 require "utilities/logs/logger"
-require "usecase/requirer"
+require "controller/requirer"
 
 # Include the logger mixins so that every class can enjoy "import free"
 # logging through pointers to the (extended) log behaviour.
@@ -465,7 +465,7 @@ class CLI < Thor
   desc "vpn <command>", "runs vpn command typically safe vpn up or safe vpn down"
 
   # This VPN use case connects to the VPN whose specifics are recorded within the vpn.ini
-  # factfile living in the same directory as the vpn.rb usecase class.
+  # factfile living in the same directory as the vpn.rb controlling class.
   #
   # @param command [String]
   #    the vpn command to run which is currently limited to up or down

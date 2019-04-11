@@ -20,7 +20,7 @@ module SafeDb
 
     def execute
 
-# @todo usecase => in parent class Auth validate the book name
+# @todo => in parent class Auth validate the book name
 
       @book_id = Identifier.derive_ergonomic_identifier( @book_name, Indices::SAFE_BOOK_ID_LENGTH )
 
@@ -29,18 +29,18 @@ module SafeDb
         return
       end
 
-# @todo usecase => if logged in skip the password collection and do_login() function
+# @todo => if logged in skip the password collection and do_login() function
 
 ## Tactic   ==> first use Transition.is_logged_in?()
 ## Tactic   ==> next  get the current book ID and RESET it if necessary (also do he [use] use case)
 
 
-# @todo usecase => search for password in environment variable
+# @todo => search for password in environment variable
 
       book_password = KeyPass.password_from_shell( false ) if @password.nil?
       book_password = @password unless @password.nil?
 
-# @todo usecase => if password is correct - if not print out an error.
+# @todo => if password is correct - if not print out an error.
 
       book_keys = DataMap.new( Indices::MASTER_INDICES_FILEPATH )
       book_keys.use( @book_id )

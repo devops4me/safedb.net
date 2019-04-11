@@ -33,7 +33,7 @@ module SafeDb
 
     def execute
 
-# @todo usecase => in parent class Auth validate the book name
+# @todo => in parent class Auth validate the book name
 
 
       @book_id = Identifier.derive_ergonomic_identifier( @book_name, Indices::SAFE_BOOK_ID_LENGTH )
@@ -45,7 +45,7 @@ module SafeDb
 
       initialize_book()
 
-# @todo usecase => search for password in environment variable
+# @todo => search for password in environment variable
 
       book_secret = KeyPass.password_from_shell( true ) if @password.nil?
       book_secret = @password unless @password.nil?

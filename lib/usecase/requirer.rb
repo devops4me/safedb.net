@@ -86,10 +86,10 @@ module SafeDb
     def self.gems( gem_filepath )
 
       require_relative "../version"
-      require_relative "../usecase/usecase"
-      require_relative "../usecase/auth/access"
-      require_relative "../usecase/edit/editverse"
-      require_relative "../usecase/query/queryverse"
+      require_relative "../controller/usecase"
+      require_relative "../controller/auth/access"
+      require_relative "../controller/edit/editverse"
+      require_relative "../controller/query/queryverse"
 
       gem_basepath = File.expand_path "..", gem_filepath
 

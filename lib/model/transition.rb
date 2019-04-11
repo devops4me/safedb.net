@@ -92,7 +92,7 @@ module SafeDb
     #
     def self.checkin( book )
 
-# @todo usecase => If mismatch in commit IDs then print message instructing to first do safe checkout
+# @todo => If mismatch in commit IDs then print message instructing to first do safe checkout
 
       FileUtils.remove_entry( FileTree.master_crypts_folder( book.book_id() ) )
       FileUtils.mkdir_p( FileTree.master_crypts_folder( book.book_id() ) )
@@ -106,7 +106,7 @@ module SafeDb
       master_keys.set( Indices::CONTENT_IDENTIFIER, branch_keys.get( Indices::CONTENT_IDENTIFIER ) )
       master_keys.set( Indices::CONTENT_RANDOM_IV,  branch_keys.get( Indices::CONTENT_RANDOM_IV  ) )
 
-# @todo usecase => create a new commit ID and furnish both master and branch with it
+# @todo => create a new commit ID and furnish both master and branch with it
 
     end
 
@@ -130,10 +130,10 @@ module SafeDb
     #    are logging out of from the shell on this machine.
     def self.do_logout( domain_name )
 
-# @todo usecase => logout logic that deletes branch and allows nested book to bubble up
-# @todo usecase => if logging out when book changed (set one of two flags) - ERROR if flags not provided
-# @todo usecase => safe logout --commit    OR
-# @todo usecase => safe logout --ignore    OR
+# @todo => logout logic that deletes branch and allows nested book to bubble up
+# @todo => if logging out when book changed (set one of two flags) - ERROR if flags not provided
+# @todo => safe logout --commit    OR
+# @todo => safe logout --ignore    OR
 
     end
 
