@@ -66,7 +66,7 @@ module SafeDb
     #    will default to the aptly named "default".
     def initialize backing_file_path
       @file_path = backing_file_path
-      create_dir_if_necessary
+      create_dir_unless_exists()
     end
 
 
@@ -116,7 +116,7 @@ module SafeDb
 
 
     # Write the key/value pair in the parameter into this key/value store's
-    # base file-system backing INI file.
+    # backing INI file.
     #
     # This method assumes the existence of the backing configuration file at
     # the @file_path instance variable that was set during initialization.
@@ -133,10 +133,16 @@ module SafeDb
     #
     def write section_name, key, value
 
-      config_map = IniFile.new( :filename => @file_path, :encoding => 'UTF-8' )
-      config_map = IniFile.load( @file_path ) if File.file? @file_path
-      config_map[section_name][key] = value
-      config_map.write
+      data_map = IniFile.new( :filename => @file_path, :encoding => 'UTF-8' )
+      data_map = IniFile.load( @file_path ) if File.file? @file_path
+      data_map[section_name][key] = value
+      data_map.write
+
+      puts ""
+      puts "Writing [ #{key} = #{value} ] into section ( #{section_name} )"
+      puts ""
+      puts data_map.to_s
+      puts ""
 
     end
 
@@ -209,7 +215,6 @@ module SafeDb
     end
 
 
-
     # Return true if the settings configuration file contains the specified
     # section name. This method ignores whatever section that may or may not
     # have been pointed to by the use command.
@@ -233,7 +238,6 @@ module SafeDb
     end
 
 
-
     # Get the time stamp that was written to the key-value store at
     # the point it was first initialized and then subsequently written
     # out (serialized) onto the file-system.
@@ -250,16 +254,25 @@ module SafeDb
     end
 
 
+    # Fetch this one-dimensional data store as a string in INI file format.
+    # @return [String] an INI formatted string representation of this data
+    def as_string()
+
+      data_map = IniFile.new( :filename => @file_path, :encoding => 'UTF-8' )
+      data_map = IniFile.load( @file_path ) if File.file? @file_path
+      return data_map.to_s
+
+    end
+
 
     private
 
 
+    def create_dir_unless_exists()
 
-    def create_dir_if_necessary
-
-      config_directory = File.dirname @file_path
-      return if (File.exist? config_directory) && (File.directory? config_directory)
-      FileUtils.mkdir_p config_directory
+      file_dir = File.dirname( @file_path )
+      return if (File.exist? file_dir) && (File.directory? file_dir)
+      FileUtils.mkdir_p( file_dir )
 
     end
 

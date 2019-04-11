@@ -229,9 +229,9 @@ class String
     raise ArgumentError, "Begin delimiter is NIL or empty." if this_delimiter.nil? || this_delimiter.empty?
     raise ArgumentError, "End delimiter is NIL or empty." if that_delimiter.nil? || that_delimiter.empty?
     
-    scanner_1 = StringScanner.new self
+    scanner_1 = ::StringScanner.new self
     scanner_1.scan_until /#{this_delimiter}/
-    scanner_2 = StringScanner.new scanner_1.post_match
+    scanner_2 = ::StringScanner.new scanner_1.post_match
     scanner_2.scan_until /#{that_delimiter}/
 
     in_between_text = scanner_2.pre_match.strip

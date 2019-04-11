@@ -31,6 +31,10 @@ module SafeDb
 
 # @todo usecase => if logged in skip the password collection and do_login() function
 
+## Tactic   ==> first use StateTransfer.is_logged_in?()
+## Tactic   ==> next  get the current book ID and RESET it if necessary (also do he [use] use case)
+
+
 # @todo usecase => search for password in environment variable
 
       book_password = KeyPass.password_from_shell( false ) if @password.nil?
@@ -38,7 +42,7 @@ module SafeDb
 
 # @todo usecase => if password is correct - if not print out an error.
 
-      book_keys = DataMap.new( MASTER_INDEX_LOCAL_FILE )
+      book_keys = DataMap.new( Indices::MASTER_INDICES_FILEPATH )
       book_keys.use( @book_id )
 
       StateTransfer.login( book_keys, book_password )

@@ -1,5 +1,6 @@
 require "thor"
 require "fileutils"
+require "strscan"
 
 ############### this will be a problem i bet
 ############### this will be a problem i bet
@@ -42,7 +43,6 @@ require "fileutils"
 ######################  require "branch/time.stamp"
 require "utilities/logs/logger"
 require "usecase/requirer"
-
 
 # Include the logger mixins so that every class can enjoy "import free"
 # logging through pointers to the (extended) log behaviour.

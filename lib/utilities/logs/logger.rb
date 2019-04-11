@@ -27,7 +27,7 @@ module LogImpl
   @@gem_name = "safedb.net"
   @@gem_base = File.join( Dir.home(), ".#{@@gem_name}" )
   FileUtils.mkdir_p( @@gem_base ) unless File.exists?( @@gem_base )
-  @@log_path = File.join( @@gem_base, "safedb-activity-journal.log" )
+  @@log_path = File.join( @@gem_base, "safedb-summary.log" )
 
 
   # Classes that include (MIXIN) this logging module will

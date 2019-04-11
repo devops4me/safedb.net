@@ -8,6 +8,9 @@ module SafeDb
   class Indices
 
 
+    # The command used to invoke the safe database
+    COMMANDER = "safe"
+
     # The short url name of the safe personal database.
     SAFE_URL_NAME = "safedb.net"
 
@@ -31,6 +34,9 @@ module SafeDb
 
     # The file-system location of the safe database tree
     SAFE_DATABASE_FOLDER = File.join( Dir.home, ".#{SAFE_URL_NAME}" )
+
+    # The path to the master indices file
+    MASTER_INDICES_FILEPATH = File.join( SAFE_DATABASE_FOLDER, "safedb-master-indices.ini" )
 
     # The desired length of a content identifier
     CONTENT_ID_LENGTH  = 14

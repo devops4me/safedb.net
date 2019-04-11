@@ -159,6 +159,10 @@ module SafeDb
       crypt_txt = binary_from_read( crypt_path )
       text_data = unlock_key.do_decrypt_text( random_iv, crypt_txt )
 
+      puts ""
+      puts text_data
+      puts ""
+
       return text_data
 
     end

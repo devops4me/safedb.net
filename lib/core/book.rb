@@ -116,15 +116,15 @@ module SafeDb
 
 
     # Return true if this book has been opened at a chapter and verse location.
-    # This method uses {print_open_help} to print out a helpful message detailing
-    # how to open a chapter and verse.
+    # This method uses {TextChunk.not_open_message} to print out a helpful message
+    # detailing how to open a chapter and verse.
     #
     # Note that an open chapter need not contain any data. The same goes for an
     # open verse. In these cases the {open_chapter} and {open_verse} methods both
     # return empty data structures.
     def unopened_chapter_verse()
       return if has_open_chapter_name?() and has_open_verse_name?()
-      print_open_help()
+      TextChunk.not_open_message()
     end
 
 
@@ -150,7 +150,7 @@ module SafeDb
     # If has_open_chapter_name?() returns false this method will throw an exception.
     # @return [String] the name of the chapter that this book is opened at
     def get_open_chapter_name()
-      abort "No chapter has been opened." unless has_open_chapter_name?()
+      raise RuntimeError, "No chapter has been opened." unless has_open_chapter_name?()
       return @book_index[ Indices::OPENED_CHAPTER_NAME ]
     end
 
@@ -159,7 +159,7 @@ module SafeDb
     # If has_open_verse_name?() returns false this method will throw an exception.
     # @return [String] the name of the verse that this book is opened at
     def get_open_verse_name()
-      abort "No verse has been opened." unless has_open_verse_name?()
+      raise RuntimeError, "No verse has been opened." unless has_open_verse_name?()
       return @book_index[ Indices::OPENED_VERSE_NAME ]
     end
 
@@ -185,7 +185,7 @@ module SafeDb
     # is empty.
     # @return [Boolean] true if an open chapter name has been set for this book
     def has_open_chapter_data?()
-      abort "Cannot check chapter data availability as no chapter is open." unless has_open_chapter_name?()
+      raise RuntimeError, "Unopened chapter prevents data availability check." unless has_open_chapter_name?()
       return @book_index[ Indices::SAFE_BOOK_CHAPTER_KEYS ].has_key?( get_open_chapter_name() )
     end
 
@@ -197,7 +197,7 @@ module SafeDb
     # an exception is thrown.
     # @return [DataStore] the chapter keys for the chapter this book is opened at
     def get_open_chapter_keys()
-      abort "Cannot get chapter keys as no chapter is open." unless has_open_chapter_name?()
+      raise RuntimeError, "Cannot get chapter keys as no chapter is open." unless has_open_chapter_name?()
       @book_index[ Indices::SAFE_BOOK_CHAPTER_KEYS ][ get_open_chapter_name() ] = DataStore.new() unless has_open_chapter_data?()
       return @book_index[ Indices::SAFE_BOOK_CHAPTER_KEYS ][ get_open_chapter_name() ]
     end
@@ -207,7 +207,7 @@ module SafeDb
     # If has_open_chapter_name?() returns false this method will throw an exception.
     # @return [DataStore] the data of the chapter that this book is opened at
     def get_open_chapter_data()
-      abort "Cannot read data as no chapter is open." unless has_open_chapter_name?()
+      raise RuntimeError, "Cannot read data as no chapter is open." unless has_open_chapter_name?()
       return @chapter_data unless @chapter_data.nil?()
       @chapter_data = DataStore.new unless has_open_chapter_data?()
       @chapter_data = Content.unlock_chapter( get_open_chapter_keys() ) if has_open_chapter_data?()
@@ -220,8 +220,8 @@ module SafeDb
     # raised in this circumstance. Nor can a data structure be persisted if no name
     # is set for the open chapter.
     def set_open_chapter_data()
-      abort "Cannot persist the data with no open chapter name." unless has_open_chapter_name?()
-      abort "Cannot persist a nil or empty data structure." if @chapter_data.nil?() or @chapter_data.empty?()
+      raise RuntimeError, "Cannot persist the data with no open chapter name." unless has_open_chapter_name?()
+      raise RuntimeError, "Cannot persist a nil or empty data structure." if @chapter_data.nil?() or @chapter_data.empty?()
       Content.lock_chapter( get_open_chapter_keys(), @chapter_data.to_json() )
     end
 
@@ -231,8 +231,8 @@ module SafeDb
     # is empty.
     # @return [Boolean] true if an open verse name has been set for this book
     def has_open_verse_data?()
-      abort "Cannot check verse data availability as no chapter is open." unless has_open_chapter_name?()
-      abort "Cannot check verse data availability as no verse is open." unless has_open_verse_name?()
+      raise RuntimeError, "Cannot look for verse as no open chapter." unless has_open_chapter_name?()
+      raise RuntimeError, "Cannot look for verse as no open verse." unless has_open_verse_name?()
       chapter_data = get_open_chapter_data()
       return false if chapter_data.empty?()
       return chapter_data.has_key?( get_open_verse_name() )
@@ -285,7 +285,7 @@ module SafeDb
     def import_chapter( chapter_name, chapter_data )
 
       KeyError.not_new( chapter_name, self )
-      abort "The chapter must not be nil or empty." if( chapter_data.nil?() or chapter_data.empty?() )
+      raise RuntimeError, "The chapter must not be nil or empty." if( chapter_data.nil?() or chapter_data.empty?() )
 
       chapter_exists = @book_index[ Indices::SAFE_BOOK_CHAPTER_KEYS ].has_key?( chapter_name )
       @book_index[ Indices::SAFE_BOOK_CHAPTER_KEYS ][ chapter_name ] = DataStore.new() unless chapter_exists
@@ -313,7 +313,7 @@ module SafeDb
     # is thrown if the parameter chapter name is nil.
     # @param this_chapter_name [String] the name of the chapter to test
     def is_open_chapter?( this_chapter_name )
-      abort "Cannot test a nil chapter name." if this_chapter_name.nil?()
+      raise RuntimeError, "Cannot test a nil chapter name." if this_chapter_name.nil?()
       return false unless has_open_chapter_name?()
       return this_chapter_name.eql?( get_open_chapter_name() )
     end
@@ -323,7 +323,7 @@ module SafeDb
     # is thrown if the parameter verse name is nil.
     # @param this_verse_name [String] the name of the verse to test
     def is_open_verse?( this_verse_name )
-      abort "Cannot test a nil verse name." if this_verse_name.nil?()
+      raise RuntimeError, "Cannot test a nil verse name." if this_verse_name.nil?()
       return false unless has_open_verse_name?()
       return this_verse_name.eql?( get_open_verse_name() )
     end
@@ -381,40 +381,6 @@ module SafeDb
     # @return [DataStore] the data structure holding chapter key data
     def chapter_keys()
       return @book_index[ Indices::SAFE_BOOK_CHAPTER_KEYS ]
-    end
-
-
-    private
-
-
-    def print_open_help()
-
-      <<-UNOPENED_MESSAGE
-
-      Please open a chapter and verse to put, edit or query data.
-
-          #{COMMANDMENT} open contacts monica
-
-       then add monica's contact details
-
-          #{COMMANDMENT} put email monica.lewinsky@gmail.com
-          #{COMMANDMENT} put phone +1-357-246-8901
-          #{COMMANDMENT} put twitter @monica_x
-          #{COMMANDMENT} put skype.id 6363430539
-          #{COMMANDMENT} put birthday \"1st April 1978\"
-
-       also hilary's
-
-          #{COMMANDMENT} open contacts hilary
-          #{COMMANDMENT} put email hilary@whitehouse.gov
-
-       then save the changes to your book and logout."
-
-          #{COMMANDMENT} commit"
-          #{COMMANDMENT} logout"
-
-      UNOPENED_MESSAGE
-
     end
 
 

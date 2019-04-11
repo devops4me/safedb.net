@@ -20,8 +20,8 @@ module SafeDb
     def is_book_initialized?()
 
       KeyError.not_new( @book_name, self )
-      return false unless File.exists?( MASTER_INDEX_LOCAL_FILE )
-      data_map = DataMap.new( MASTER_INDEX_LOCAL_FILE )
+      return false unless File.exists?( Indices::MASTER_INDICES_FILEPATH )
+      data_map = DataMap.new( Indices::MASTER_INDICES_FILEPATH )
       return false unless data_map.has_section?( @book_id )
       data_map.use( @book_id )
 

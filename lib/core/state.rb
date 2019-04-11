@@ -44,12 +44,52 @@ module SafeDb
     #
     def self.login( book_keys, secret )
 
+## ===> @todo if the bootup ID differs from the master - we recycle the strong content encryption key
+## ===> @todo if the bootup ID differs from the master - we recycle the strong content encryption key
+## ===> @todo if the bootup ID differs from the master - we recycle the strong content encryption key
+## ===> @todo if the bootup ID differs from the master - we recycle the strong content encryption key
+## ===> @todo if the bootup ID differs from the master - we recycle the strong content encryption key
+
+
+## ===> @todo if the bootup ID differs from the master - we create a new commit ID for master and branch
+## ===> @todo if the bootup ID differs from the master - we create a new commit ID for master and branch
+## ===> @todo if the bootup ID differs from the master - we create a new commit ID for master and branch
+## ===> @todo if the bootup ID differs from the master - we create a new commit ID for master and branch
+
       the_book_id = book_keys.section()
 
       old_human_key = KdfApi.regenerate_from_salts( secret, book_keys )
+puts ""
+puts "The Old Human Key => #{old_human_key.to_s}"
+puts ""
+puts "================================================="
+puts "Master Book Keys on Login"
+puts "================================================="
+puts book_keys.as_string()
+puts "================================================="
+puts ""
+puts "================================================="
+puts "Crypt Key Ciphertext => #{book_keys.get( Indices::MASTER_KEY_CRYPT )}"
+
       old_crypt_key = old_human_key.do_decrypt_key( book_keys.get( Indices::MASTER_KEY_CRYPT ) )
       plain_content = Content.unlock_master( old_crypt_key, book_keys )
+
+puts "The Old Strong Crypt Key => #{old_crypt_key.to_s}"
+puts ""
+puts "================================================="
+puts "Book Index Content JSON"
+puts "================================================="
+puts plain_content
+puts "================================================="
+puts ""
+
       new_crypt_key = KeyCycle.recycle( the_book_id, secret, book_keys, plain_content )
+
+puts ""
+puts "The New Strong Crypt Key => #{new_crypt_key.to_s}"
+puts ""
+puts ""
+
 
       branch_id = Identifier.derive_branch_id( Branch.to_token() )
       clone_book_into_branch( the_book_id, branch_id, book_keys, new_crypt_key )
@@ -57,11 +97,48 @@ module SafeDb
     end
 
 
+    # In the main, the <tt>checkin use case</tt> changes the master so that it mirrors
+    # the branch's state. A check-in syncs the master's state to mirror the branch.
+    #
+    # == The Simple Check In
+    #
+    # The simplest case is when no other branch has issued a check-in since this branch
+    #
+    # - <tt>logged in</tt>
+    # - <tt>checked in</tt> or
+    # - <tt>checked out</tt>
+    #
+    # In this case the main events are to
+    #
+    # - make the master crypts mirror the branch crypts
+    # - update the master content ID to mirror the branch
+    # - give a new commit ID to both master and branch
+    #
+    # == The Commit ID Lifecycle
+    #
+    # A new commit ID is only created during
+    #
+    # - <tt>either the first login</tt> since the machine booted up
+    # - <tt>or a branch checkin</tt>
+    #
+    # The commit ID is copied from master to branch during
+    #
+    # - <tt>either subsequent logins</tt>
+    # - <tt>or a branch checkout</tt>
+    #
     def self.checkin( book )
 
-      FileUtils.delete_entry( FileTree.master_crypts_folder( book.book_id() ) )
+      FileUtils.remove_entry( FileTree.master_crypts_folder( book.book_id() ) )
       FileUtils.mkdir_p( FileTree.master_crypts_folder( book.book_id() ) )
       FileUtils.copy_entry( FileTree.branch_crypts_folder( book.book_id(), book.branch_id() ), FileTree.master_crypts_folder( book.book_id() ) )
+
+      master_keys = DataMap.new( Indices::MASTER_INDICES_FILEPATH )
+      master_keys.use( book.book_id() )
+      branch_keys = DataMap.new( FileTree.branch_indices_filepath( book.branch_id() ) )
+      branch_keys.use( book.book_id() )
+
+      master_keys.set( Indices::CONTENT_IDENTIFIER, branch_keys.get( Indices::CONTENT_IDENTIFIER ) )
+      master_keys.set( Indices::CONTENT_RANDOM_IV,  branch_keys.get( Indices::CONTENT_RANDOM_IV  ) )
 
     end
 
@@ -93,35 +170,22 @@ module SafeDb
     end
 
 
-    # Has the user orchestrating this shell logged in? Yes or no?
-    # If yes then they appear to have supplied the correct secret
+    # If the branch indices file exists it means we have logged into
+    # at least one book - furthermore if a section headed up with our
+    # book id (derived from the book_name CLI parameter) exists then
+    # we have definitely logged into this book.
     #
-    # - in this shell
-    # - on this machine and
-    # - for this application instance
+    # Remember that many books can be in-play in the same shell so
+    # it is important to check the "currently in use book id" and then
+    # update the value if necessary on receipt of either the login
+    # or <tt>use</tt> commands.
     #
-    # Use the crumbs found underneath the universal (branch) ID within the
-    # main breadcrumbs file for this application instance.
-    #
-    # Note that the system does not rely on this value for its security, it
-    # exists only to give a pleasant error message.
-    #
-    # @return [Boolean]
-    #    return true if a marker denoting that this shell with this
-    #    application instance on this machine has logged in. Subverting this
-    #    return value only serves to evoke disgraceful degradation.
-    def self.is_logged_in?( domain_name )
+    def self.is_logged_in?()
 
-# @todo usecase => write code saying you are already logged into book (state time).
-
-      return false unless File.exists?( XXXXXXXXXXX )
-
-      crumbs_db = DataMap.new( blah_blah_blah_filepath() )
-      crumbs_db.use( XXXXXXXXXXXXX )
-      return false unless crumbs_db.contains?( XXXXXXXXXXXXXXX )
-
-      recorded_id = crumbs_db.get( XXXXXXXXXXXXXXXXX )
-      return recorded_id.eql?( @uni_id )
+      branch_id = Identifier.derive_branch_id( Branch.to_token() )
+      return false unless File.exists? FileTree.branch_indices_filepath( branch_id )
+      branch_keys = DataMap.new( FileTree.branch_indices_filepath( branch_id ) )
+      return branch_keys.has_section?( book_id )
 
     end
 
