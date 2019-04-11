@@ -2,7 +2,7 @@ require "thor"
 require "fileutils"
 require "strscan"
 
-require "utilities/logs/logger"
+require "utils/logs/logger"
 require "controller/requirer"
 
 # Include the logger mixins so that every class can enjoy "import free"
