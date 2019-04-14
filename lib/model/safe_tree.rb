@@ -11,6 +11,12 @@ module SafeDb
   class FileTree
 
 
+    # Find the path to the file that contains the book index within the
+    # master (not branch) line. We need the book identifier and the file's
+    # content identifier to derive the path.
+    # @param book_id [String] the identifier of the book in question
+    # @param content_id [String] the identifier of the chapter content
+    # @return [File] path to the crypted content index file for book
     def self.master_crypts_filepath( book_id, content_id )
       return File.join( master_crypts_folder( book_id ), "safedb.chapter.#{content_id}.txt" )
     end

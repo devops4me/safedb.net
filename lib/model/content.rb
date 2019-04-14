@@ -66,7 +66,7 @@ module SafeDb
       random_iv = KeyIV.in_binary( iv_base64 )
 
       crypt_key = Key.from_random()
-      data_store.store( Indices::CHAPTER_KEY_CRYPT, crypt_key.to_char64() )
+      data_store.store( Indices::CRYPT_CIPHER_TEXT, crypt_key.to_char64() )
 
       lock_it( new_chapter_crypt_path, crypt_key, random_iv, content_body, TextChunk.crypt_header( book_id ) )
 
@@ -136,7 +136,7 @@ module SafeDb
       book_id = DataMap.new( branch_indices_file ).read( Indices::BRANCH_DATA, Indices::CURRENT_BRANCH_BOOK_ID )
 
       content_id = data_store[ Indices::CONTENT_IDENTIFIER ]
-      crypt_key = Key.from_char64( data_store[ Indices::CHAPTER_KEY_CRYPT ] )
+      crypt_key = Key.from_char64( data_store[ Indices::CRYPT_CIPHER_TEXT ] )
       random_iv = KeyIV.in_binary( data_store[ Indices::CONTENT_RANDOM_IV ] )
 
       crypt_path = FileTree.branch_crypts_filepath( book_id, branch_id, content_id )

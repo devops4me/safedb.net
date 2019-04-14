@@ -23,7 +23,7 @@ module SafeDb
     def execute
 
       return unless ops_key_exists?
-      master_db = BookIndex.read()
+      master_db = Book.read()
 
       master_db[ @directive_name ] = @directive_value
 
@@ -31,7 +31,7 @@ module SafeDb
       puts JSON.pretty_generate( master_db )
       puts ""
 
-      BookIndex.write( create_header(), master_db )
+      Book.write( create_header(), master_db )
 
     end
 

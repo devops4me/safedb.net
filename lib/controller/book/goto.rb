@@ -20,9 +20,9 @@ module SafeDb
 
     def execute
 
-      book_index = BookIndex.new()
+      book = Book.new()
       goto_location = 0
-      book_index.chapter_keys().each_pair do | chapter_name, chapter_keys |
+      book.branch_chapter_keys().each_pair do | chapter_name, chapter_keys |
 
         chapter_data = Content.unlock_chapter( chapter_keys )
         chapter_data.each_key do | verse_name |

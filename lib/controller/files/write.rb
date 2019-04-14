@@ -17,7 +17,7 @@ module SafeDb
     # and print its corresponding value without a line feed or return.
     def query_verse()
 
-      bcv_name = "#{@book_index.book_name()}/#{@book_index.get_open_chapter_name()}/#{@book_index.get_open_verse_name()}"
+      bcv_name = "#{@book.book_name()}/#{@book.get_open_chapter_name()}/#{@book.get_open_verse_name()}"
 
       puts ""
       puts "book/chapter/verse\n"

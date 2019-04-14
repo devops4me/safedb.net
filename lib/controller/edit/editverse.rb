@@ -20,9 +20,9 @@ module SafeDb
 
     # This parental behaviour sets up common ubiquitous chapter and verse data structures
     # and indices. It then calls the child's query_verse() behaviour and once that is complete
-    # it encrypts and persists an (updated) BookIndex and the amended chapter.
+    # it encrypts and persists an (updated) Book and the amended chapter.
     #
-    # The streaming process also deletes the current (old) BookIndex and chapter crypts.
+    # The streaming process also deletes the current (old) Book and chapter crypts.
     def execute
 
       # Before calling the edit_verse() method we perform some

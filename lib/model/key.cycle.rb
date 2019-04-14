@@ -88,7 +88,7 @@ module SafeDb
       high_entropy_key = Key.from_random
       Content.lock_master( book_id, high_entropy_key, data_map, content_body )
       derived_key = KdfApi.generate_from_password( human_secret, data_map )
-      data_map.set( Indices::MASTER_KEY_CRYPT, derived_key.do_encrypt_key( high_entropy_key ) )
+      data_map.set( Indices::CRYPT_CIPHER_TEXT, derived_key.do_encrypt_key( high_entropy_key ) )
       return high_entropy_key
 
     end

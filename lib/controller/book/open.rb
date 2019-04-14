@@ -19,10 +19,10 @@ module SafeDb
 
     def execute
 
-      book_index = BookIndex.new()
-      book_index.set_open_chapter_name( @chapter )
-      book_index.set_open_verse_name( @verse )
-      book_index.write()
+      book = Book.new()
+      book.set_open_chapter_name( @chapter )
+      book.set_open_verse_name( @verse )
+      book.write()
 
       # Show the mini dictionary at the opened chapter and verse location
       # More work is needed when for when only the chapter is opened in

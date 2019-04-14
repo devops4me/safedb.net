@@ -51,7 +51,7 @@ module SafeDb
     # by a ckeckin from another (shell) branch.
     def execute
 
-      book = BookIndex.new()
+      book = Book.new()
       book.print_book_mark()
 
       unless book.can_checkin?()

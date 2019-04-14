@@ -51,7 +51,7 @@ module SafeDb
     # by a ckeckin from another (shell) branch.
     def execute
 
-      book = BookIndex.new()
+      book = Book.new()
 
       puts ""
       puts " Book Name  := #{book.book_name()}\n"

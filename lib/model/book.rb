@@ -4,7 +4,7 @@ module SafeDb
 
   # The book index is pretty much like the index at the front of a book!
   #
-  # With a real book the index tells you the page number of a chapter. Our BookIndex
+  # With a real book the index tells you the page number of a chapter. Our Book
   # knows about and behaves with concepts like
   #
   # - the list of chapters in the book including the chapter names
@@ -15,7 +15,7 @@ module SafeDb
   # Parental use cases in the background will use this index to encrypt, decrypt
   # create, read, update and delete chapter encased credentials.
   #
-  class BookIndex
+  class Book
 
 
     # Initialize the book index data structure from the branch state file
@@ -26,19 +26,47 @@ module SafeDb
     def initialize
 
       @branch_id = Identifier.derive_branch_id( Branch.to_token() )
-      branch_indices_file = FileTree.branch_indices_filepath( @branch_id )
-      @branch_keys = DataMap.new( branch_indices_file )
+      @branch_keys = DataMap.new( FileTree.branch_indices_filepath( @branch_id ) )
       @book_id = @branch_keys.read( Indices::BRANCH_DATA, Indices::CURRENT_BRANCH_BOOK_ID )
       @branch_keys.use( @book_id )
       @content_id = @branch_keys.get( Indices::CONTENT_IDENTIFIER )
 
-      intra_key_ciphertext = @branch_keys.get( Indices::BRANCH_KEY_CRYPT )
+      @master_keys = DataMap.new( Indices::MASTER_INDICES_FILEPATH )
+      @master_keys.use( @book_id )
+
+      intra_key_ciphertext = @branch_keys.get( Indices::CRYPT_CIPHER_TEXT )
       intra_key = KeyDerivation.regenerate_shell_key( Branch.to_token() )
       @crypt_key = intra_key.do_decrypt_key( intra_key_ciphertext )
 
       read()
 
     end
+
+
+
+    # Get the hash data structure representing the master's state. This state
+    # may or may not be equivalent to the current branch state.
+    def to_master_data()
+
+      set_master_chapter_keys()
+      @master_data = {}
+      @master_verse_count = 0
+
+      @master_chapter_keys.each_pair do | chapter_name, chapter_indices |
+
+        random_iv = KeyIV.in_binary( chapter_indices.get( Indices::CONTENT_RANDOM_IV ) )
+        content_id = chapter_indices.get( Indices::CONTENT_IDENTIFIER )
+        chapter_filepath = FileTree.master_crypts_filepath( @book_id, content_id )
+        master_chapter_data = DataStore.from_json( Content.unlock_it( chapter_filepath, @crypt_key, random_iv ) )
+        @master_data.store( chapter_name, master_chapter_data )
+        @master_verse_count += master_chapter_data.length()
+
+      end
+
+      return @master_data
+
+    end
+
 
 
     # Create the book within the master indices file and set its book identifier
@@ -60,17 +88,12 @@ module SafeDb
     # @return [Boolean] true if can checkin, false otherwise
     def can_checkin?()
 
-      master_keys = DataMap.new( Indices::MASTER_INDICES_FILEPATH )
-      master_keys.use( @book_id )
-      branch_keys = DataMap.new( FileTree.branch_indices_filepath( @branch_id ) )
-      branch_keys.use( @book_id )
-
-      return branch_keys.get( Indices::COMMIT_IDENTIFIER ).eql?( master_keys.get( Indices::COMMIT_IDENTIFIER ) )
+      return @branch_keys.get( Indices::COMMIT_IDENTIFIER ).eql?( @master_keys.get( Indices::COMMIT_IDENTIFIER ) )
 
     end
 
 
-    # Construct a BookIndex object that extends the DataStore data structure
+    # Construct a Book object that extends the DataStore data structure
     # which in turns extens the Ruby hash object. The parental objects know
     # how to manipulate (store, delete, read etc the data structures).
     #
@@ -99,7 +122,7 @@ module SafeDb
 
       read_crypt_path = FileTree.branch_crypts_filepath( @book_id, @branch_id, @content_id )
       random_iv = KeyIV.in_binary( @branch_keys.get( Indices::CONTENT_RANDOM_IV ) )
-      @book_index = DataStore.from_json( Content.unlock_it( read_crypt_path, @crypt_key, random_iv ) )
+      @book = DataStore.from_json( Content.unlock_it( read_crypt_path, @crypt_key, random_iv ) )
 
     end
 
@@ -138,7 +161,7 @@ module SafeDb
       @branch_keys.set( Indices::CONTENT_RANDOM_IV, iv_base64 )
       random_iv = KeyIV.in_binary( iv_base64 )
 
-      Content.lock_it( write_crypt_path, @crypt_key, random_iv, @book_index.to_json, TextChunk.crypt_header( @book_id ) )
+      Content.lock_it( write_crypt_path, @crypt_key, random_iv, @book.to_json, TextChunk.crypt_header( @book_id ) )
       File.delete( old_crypt_path ) if File.exists? old_crypt_path
 
     end
@@ -162,7 +185,7 @@ module SafeDb
     # is empty.
     # @return [Boolean] true if an open chapter name has been set for this book
     def has_open_chapter_name?()
-      return @book_index.has_key?( Indices::OPENED_CHAPTER_NAME )
+      return @book.has_key?( Indices::OPENED_CHAPTER_NAME )
     end
 
 
@@ -171,7 +194,7 @@ module SafeDb
     # empty.
     # @return [Boolean] true if an open verse name has been set for this book
     def has_open_verse_name?()
-      return @book_index.has_key?( Indices::OPENED_VERSE_NAME )
+      return @book.has_key?( Indices::OPENED_VERSE_NAME )
     end
 
 
@@ -180,7 +203,7 @@ module SafeDb
     # @return [String] the name of the chapter that this book is opened at
     def get_open_chapter_name()
       raise RuntimeError, "No chapter has been opened." unless has_open_chapter_name?()
-      return @book_index[ Indices::OPENED_CHAPTER_NAME ]
+      return @book[ Indices::OPENED_CHAPTER_NAME ]
     end
 
 
@@ -189,7 +212,7 @@ module SafeDb
     # @return [String] the name of the verse that this book is opened at
     def get_open_verse_name()
       raise RuntimeError, "No verse has been opened." unless has_open_verse_name?()
-      return @book_index[ Indices::OPENED_VERSE_NAME ]
+      return @book[ Indices::OPENED_VERSE_NAME ]
     end
 
 
@@ -197,7 +220,7 @@ module SafeDb
     # overwrites the currently open chapter name if there is one.
     # @param chapter_name [String] the name of the chapter to open
     def set_open_chapter_name( chapter_name )
-      @book_index[ Indices::OPENED_CHAPTER_NAME ] = chapter_name
+      @book[ Indices::OPENED_CHAPTER_NAME ] = chapter_name
     end
 
 
@@ -205,7 +228,7 @@ module SafeDb
     # overwrites the currently open verse name if there is one.
     # @param verse_name [String] the name of the verse to open
     def set_open_verse_name( verse_name )
-      @book_index[ Indices::OPENED_VERSE_NAME ] = verse_name
+      @book[ Indices::OPENED_VERSE_NAME ] = verse_name
     end
 
 
@@ -215,7 +238,7 @@ module SafeDb
     # @return [Boolean] true if an open chapter name has been set for this book
     def has_open_chapter_data?()
       raise RuntimeError, "Unopened chapter prevents data availability check." unless has_open_chapter_name?()
-      return @book_index[ Indices::SAFE_BOOK_CHAPTER_KEYS ].has_key?( get_open_chapter_name() )
+      return @book[ Indices::SAFE_BOOK_CHAPTER_KEYS ].has_key?( get_open_chapter_name() )
     end
 
 
@@ -227,8 +250,8 @@ module SafeDb
     # @return [DataStore] the chapter keys for the chapter this book is opened at
     def get_open_chapter_keys()
       raise RuntimeError, "Cannot get chapter keys as no chapter is open." unless has_open_chapter_name?()
-      @book_index[ Indices::SAFE_BOOK_CHAPTER_KEYS ][ get_open_chapter_name() ] = DataStore.new() unless has_open_chapter_data?()
-      return @book_index[ Indices::SAFE_BOOK_CHAPTER_KEYS ][ get_open_chapter_name() ]
+      @book[ Indices::SAFE_BOOK_CHAPTER_KEYS ][ get_open_chapter_name() ] = DataStore.new() unless has_open_chapter_data?()
+      return @book[ Indices::SAFE_BOOK_CHAPTER_KEYS ][ get_open_chapter_name() ]
     end
 
 
@@ -316,9 +339,9 @@ module SafeDb
       KeyError.not_new( chapter_name, self )
       raise RuntimeError, "The chapter must not be nil or empty." if( chapter_data.nil?() or chapter_data.empty?() )
 
-      chapter_exists = @book_index[ Indices::SAFE_BOOK_CHAPTER_KEYS ].has_key?( chapter_name )
-      @book_index[ Indices::SAFE_BOOK_CHAPTER_KEYS ][ chapter_name ] = DataStore.new() unless chapter_exists
-      chapter_keys = @book_index[ Indices::SAFE_BOOK_CHAPTER_KEYS ][ chapter_name ]
+      chapter_exists = @book[ Indices::SAFE_BOOK_CHAPTER_KEYS ].has_key?( chapter_name )
+      @book[ Indices::SAFE_BOOK_CHAPTER_KEYS ][ chapter_name ] = DataStore.new() unless chapter_exists
+      chapter_keys = @book[ Indices::SAFE_BOOK_CHAPTER_KEYS ][ chapter_name ]
       new_chapter = Content.unlock_chapter( chapter_keys ) if chapter_exists
       new_chapter = DataStore.new() unless chapter_exists
 
@@ -334,7 +357,7 @@ module SafeDb
     # Get the number of chapters nestled within this book.
     # @return [Numeric] the number of chapters within this book
     def chapter_count()
-      return chapter_keys().length()
+      return branch_chapter_keys().length()
     end
 
 
@@ -378,14 +401,14 @@ module SafeDb
     # first initialized.
     # @return [String] the time that this book was first initialized
     def init_time()
-      return @book_index[ Indices::SAFE_BOOK_INITIALIZE_TIME ]
+      return @book[ Indices::SAFE_BOOK_INITIALIZE_TIME ]
     end
 
 
     # Returns the name of the safe book.
     # @return [String] the name of this book
     def book_name()
-      return @book_index[ Indices::SAFE_BOOK_NAME ]
+      return @book[ Indices::SAFE_BOOK_NAME ]
     end
 
 
@@ -407,16 +430,30 @@ module SafeDb
     # safe book was initialized.
     # @return [String] the software version that initialized this book
     def init_version()
-      return @book_index[ Indices::SAFE_BOOK_INIT_VERSION ]
+      return @book[ Indices::SAFE_BOOK_INIT_VERSION ]
     end
 
 
-    # Returns a map of chapter keys that exist within this book.
+    # Sets a map of chapter keys that exist within the main (master) line
+    # of this book.
+    # An empty map will be returned if no data has been added as yet
+    # to the master book line.
+    def set_master_chapter_keys()
+      random_iv = KeyIV.in_binary( @master_keys.get( Indices::CONTENT_RANDOM_IV ) )
+      content_id = @master_keys.get( Indices::CONTENT_IDENTIFIER )
+      master_index_filepath = FileTree.master_crypts_filepath( @book_id, content_id )
+      master_index = DataStore.from_json( Content.unlock_it( master_index_filepath, @crypt_key, random_iv ) )
+      @master_chapter_keys = master_index[ Indices::SAFE_BOOK_CHAPTER_KEYS ]
+    end
+
+
+    # Returns a map of chapter keys that exist within the current branch
+    # (line) of this book.
     # An empty map will be returned if no data has been added as yet
     # to the book.
     # @return [DataStore] the data structure holding chapter key data
-    def chapter_keys()
-      return @book_index[ Indices::SAFE_BOOK_CHAPTER_KEYS ]
+    def branch_chapter_keys()
+      return @book[ Indices::SAFE_BOOK_CHAPTER_KEYS ]
     end
 
 

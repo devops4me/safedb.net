@@ -14,7 +14,7 @@ module SafeDb
     # the opened verse.
     def query_verse()
 
-      @book_index.print_book_mark()
+      @book.print_book_mark()
       if @verse.empty?()
 
         puts JSON.pretty_generate( {} )

@@ -43,7 +43,7 @@ module SafeDb
         return
       end
 
-      BookIndex.create_book( @book_id )
+      Book.create_book( @book_id )
 
 # @todo => search for password in environment variable
 
@@ -57,7 +57,7 @@ module SafeDb
         @book_id,
         book_secret,
         master_keys,
-        virginal_book_index()
+        virginal_book()
       )
 
       print_success_initializing
@@ -68,7 +68,7 @@ module SafeDb
     private
 
 
-    def virginal_book_index()
+    def virginal_book()
 
       initial_db = DataStore.new()
       initial_db.store( Indices::SAFE_BOOK_INITIALIZE_TIME, KeyNow.readable() )

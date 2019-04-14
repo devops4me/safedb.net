@@ -28,10 +28,10 @@ module SafeDb
   # - {write} put directive key/value pair in parameter section
   class UseCase
 
-    # This use case is initialized primary by resolving the configured
-    # +general and use case specific facts+. To access the general facts,
-    # a domain name is expected in the parameter delegated by the extension
-    # use case classes.
+    # All controllers are initialized here meaning that there will be automatic
+    # execution of very frequently used setup behaviour. This includes
+    # - checking for (and reporting a lack of) the safe token environment variable
+    # - asimilating a fact file if employed by the specific use case (controller)
     def initialize
 
       class_name = self.class.name.split(":").last.downcase
@@ -39,6 +39,9 @@ module SafeDb
       return if is_no_token_uc
 
       exit(100) unless ops_key_exists?
+
+      # Chop off all fact work for now. May need to resurrect for VPN functionality.
+      return
 
       fact_filepath = File.sister_filepath( self, "ini", :execute )
       log.info(x) { "Search location for INI factfile is [#{fact_filepath}]" }
@@ -58,9 +61,9 @@ module SafeDb
 
 # @todo => consider doing the book index opening with initializer UNLESS token/admin use case
 
-      @book_index = BookIndex.new()
-      return if @book_index.unopened_chapter_verse()
-      @verse = @book_index.get_open_verse_data()
+      @book = Book.new()
+      return if @book.unopened_chapter_verse()
+      @verse = @book.get_open_verse_data()
 
     end
 
@@ -70,7 +73,7 @@ module SafeDb
     # to the now superceeded chapter state.
     def update_verse()
 
-      @book_index.write_open_chapter()
+      @book.write_open_chapter()
       Show.new.flow_of_events
 
     end
@@ -175,20 +178,20 @@ module SafeDb
     ENVELOPE_KEY_PREFIX = "envelope@"
 
 
-    def add_secret_facts fact_db
+# -->    def add_secret_facts fact_db
 
-      master_db = BookIndex.read()
-      raise ArgumentError.new "There is no open chapter here." if unopened_envelope?( master_db )
-      chapter_id = ENVELOPE_KEY_PREFIX + master_db[ ENV_PATH ]
-      verse_id = master_db[ KEY_PATH ]
-      chapter_data = DataStore.from_json( Lock.content_unlock( master_db[ chapter_id ] ) )
-      mini_dictionary = chapter_data[ master_db[ KEY_PATH ] ]
+# -->      master_db = Book.read()
+# -->      raise ArgumentError.new "There is no open chapter here." if unopened_envelope?( master_db )
+# -->      chapter_id = ENVELOPE_KEY_PREFIX + master_db[ ENV_PATH ]
+# -->      verse_id = master_db[ KEY_PATH ]
+# -->      chapter_data = DataStore.from_json( Lock.content_unlock( master_db[ chapter_id ] ) )
+# -->      mini_dictionary = chapter_data[ master_db[ KEY_PATH ] ]
 
-      mini_dictionary.each do | key_str, value_str|
-        fact_db.assimilate_fact( "secrets", key_str, value_str )
-      end
+# -->      mini_dictionary.each do | key_str, value_str|
+# -->        fact_db.assimilate_fact( "secrets", key_str, value_str )
+# -->      end
 
-    end
+# -->    end
 
 
     def ops_key_exists?
@@ -233,46 +236,6 @@ module SafeDb
       return
 
     end
-
-
-=begin
-
-    def unopened_envelope?( key_database )
-
-      return false if key_database.has_key?( ENV_PATH )
-      print_unopened_envelope()
-      return true
-
-    end
-
-
-    def print_unopened_envelope()
-
-      puts ""
-      puts "Problem - before creating, reading or changing data you"
-      puts "must first open a path to it like this."
-      puts ""
-      puts "    #{COMMANDMENT} open email.accounts joe@gmail.com"
-      puts ""
-      puts " then you put data at that path"
-      puts ""
-      puts "    #{COMMANDMENT} put username joebloggs"
-      puts "    #{COMMANDMENT} put password jo3s-s3cr3t"
-      puts "    #{COMMANDMENT} put phone-no 07123456789"
-      puts "    #{COMMANDMENT} put question \"Mums maiden name\""
-      puts ""
-      puts " and why not read it back"
-      puts ""
-      puts "    #{COMMANDMENT} get password"
-      puts ""
-      puts " then close the path."
-      puts ""
-      puts "    #{COMMANDMENT} close"
-      puts ""
-
-    end
-
-=end
 
 
   end

@@ -7,7 +7,6 @@ module SafeDb
   # well as for naming of files folders and other artifacts.
   class Indices
 
-
     # The command used to invoke the safe database
     COMMANDER = "safe"
 
@@ -47,26 +46,11 @@ module SafeDb
     # The AES symmetric encryption initialization vector
     CONTENT_RANDOM_IV  = "content.iv"
 
-    # The start of the content block laid out in a crypt file
-    CONTENT_BLOCK_START_STRING = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789ab\n"
-
-    # The end of the content block laid out in a crypt file
-    CONTENT_BLOCK_END_STRING   = "ba9876543210fedcba9876543210fedcba9876543210fedcba9876543210\n"
-
-    # The delimeter used to separate headers from ciphertext in a crypt file
-    CONTENT_BLOCK_DELIMITER    = "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
-
     # The commit identifiers of the master and branch are compared to ascertain eligibility for checkins
     COMMIT_IDENTIFIER = "commit.identifier"
 
-    # The inter branch crypt is locked with the human key for retrieval at the next login
-    MASTER_KEY_CRYPT = "master.key.crypt"
-
-    # The intra branch crypt is locked with the branch key for retrieval at the next command
-    BRANCH_KEY_CRYPT = "branch.key.crypt"
-
-    # The chapter content is locked with the key that is marshalled from the value here
-    CHAPTER_KEY_CRYPT = "chapter.key.crypt"
+    # The key ciphertext that sits against the trio of either master, branch or chapter
+    CRYPT_CIPHER_TEXT = "crypt.cipher.text"
 
     # This is the global section header of the branch book index file
     BRANCH_DATA = "branch.data"
@@ -85,6 +69,15 @@ module SafeDb
 
     # The time this book was last accessed during this branch
     BOOK_LAST_ACCESSED_TIME = "book.last.accessed.time"
+
+    # The start of the content block laid out in a crypt file
+    CONTENT_BLOCK_START_STRING = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789ab\n"
+
+    # The end of the content block laid out in a crypt file
+    CONTENT_BLOCK_END_STRING   = "ba9876543210fedcba9876543210fedcba9876543210fedcba9876543210\n"
+
+    # The delimeter used to separate headers from ciphertext in a crypt file
+    CONTENT_BLOCK_DELIMITER    = "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
 
     # The name of the safe tty token environment variable
     TOKEN_VARIABLE_NAME = "SAFE_TTY_TOKEN"
