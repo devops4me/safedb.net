@@ -41,6 +41,35 @@ module SafeDb
     end
 
 
+    # Create the book within the master indices file and set its book identifier
+    # along with the initialize time and a fresh commit identifier.
+    #
+    # @param book_identifier [String] the identifier of the book to create
+    def self.create_book( book_identifier )
+      FileUtils.mkdir_p( FileTree.master_crypts_folder( book_identifier ) )
+
+      keypairs = DataMap.new( Indices::MASTER_INDICES_FILEPATH )
+      keypairs.use( book_identifier )
+      keypairs.set( Indices::SAFE_BOOK_INITIALIZE_TIME, KeyNow.readable() )
+      keypairs.set( Indices::COMMIT_IDENTIFIER, Identifier.get_random_identifier( 16 ) )
+    end
+
+
+    # Return true if the commit identifiers for the master and the branch match
+    # meaning that we can commit (checkin).
+    # @return [Boolean] true if can checkin, false otherwise
+    def can_checkin?()
+
+      master_keys = DataMap.new( Indices::MASTER_INDICES_FILEPATH )
+      master_keys.use( @book_id )
+      branch_keys = DataMap.new( FileTree.branch_indices_filepath( @branch_id ) )
+      branch_keys.use( @book_id )
+
+      return branch_keys.get( Indices::COMMIT_IDENTIFIER ).eql?( master_keys.get( Indices::COMMIT_IDENTIFIER ) )
+
+    end
+
+
     # Construct a BookIndex object that extends the DataStore data structure
     # which in turns extens the Ruby hash object. The parental objects know
     # how to manipulate (store, delete, read etc the data structures).

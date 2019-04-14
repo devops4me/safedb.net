@@ -17,22 +17,13 @@ module SafeDb
       bcv_name = "#{@book_index.book_name()}/#{@book_index.get_open_chapter_name()}/#{@book_index.get_open_verse_name()}"
 
       puts ""
-      puts "book/chapter/verse\n"
       puts "#{bcv_name} (#{@verse.length()})\n"
       puts ""
 
       if @verse.empty?()
 
-## ==>        puts "There are no data lines in this verse."
-## ==>        puts "Use the put command to add some."
-## ==>        puts ""
-## ==>        puts "safe put name \"Joe Bloggs\""
-## ==>        puts "safe put email joe@safedb.net"
-## ==>        puts "safe show"
-
         puts JSON.pretty_generate( {} )
         puts ""
-
         return
 
       end

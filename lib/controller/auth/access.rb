@@ -34,7 +34,7 @@ module SafeDb
       return false unless data_map.contains?( Indices::CONTENT_RANDOM_IV )
       return false unless data_map.contains?( Indices::CONTENT_IDENTIFIER )
       return false unless data_map.contains?( Indices::MASTER_KEY_CRYPT )
-      return false unless data_map.contains?( Indices::MASTER_COMMIT_ID )
+      return false unless data_map.contains?( Indices::COMMIT_IDENTIFIER )
       return true
     end
 

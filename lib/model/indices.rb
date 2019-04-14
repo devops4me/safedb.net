@@ -56,11 +56,8 @@ module SafeDb
     # The delimeter used to separate headers from ciphertext in a crypt file
     CONTENT_BLOCK_DELIMITER    = "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
 
-    # The master commit id is synonymous with a git commit hash
-    MASTER_COMMIT_ID  = "master.commit.id"
-
-    # The branch commit id is compared with the master to determine whether a commit (save) is possible
-    BRANCH_COMMIT_ID = "branch.commit.id"
+    # The commit identifiers of the master and branch are compared to ascertain eligibility for checkins
+    COMMIT_IDENTIFIER = "commit.identifier"
 
     # The inter branch crypt is locked with the human key for retrieval at the next login
     MASTER_KEY_CRYPT = "master.key.crypt"

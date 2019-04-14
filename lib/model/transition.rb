@@ -103,10 +103,12 @@ module SafeDb
       branch_keys = DataMap.new( FileTree.branch_indices_filepath( book.branch_id() ) )
       branch_keys.use( book.book_id() )
 
+      checkin_commit_id = Identifier.get_random_identifier( 16 )
+      branch_keys.set( Indices::COMMIT_IDENTIFIER, checkin_commit_id )
+      master_keys.set( Indices::COMMIT_IDENTIFIER, checkin_commit_id )
+
       master_keys.set( Indices::CONTENT_IDENTIFIER, branch_keys.get( Indices::CONTENT_IDENTIFIER ) )
       master_keys.set( Indices::CONTENT_RANDOM_IV,  branch_keys.get( Indices::CONTENT_RANDOM_IV  ) )
-
-# @todo => create a new commit ID and furnish both master and branch with it
 
     end
 
@@ -189,7 +191,7 @@ module SafeDb
 
       branch_keys.set( Indices::CONTENT_IDENTIFIER, master_keys.get( Indices::CONTENT_IDENTIFIER ) )
       branch_keys.set( Indices::CONTENT_RANDOM_IV,  master_keys.get( Indices::CONTENT_RANDOM_IV  ) )
-      branch_keys.set( Indices::BRANCH_COMMIT_ID,  master_keys.get( Indices::MASTER_COMMIT_ID   ) )
+      branch_keys.set( Indices::COMMIT_IDENTIFIER,   master_keys.get( Indices::COMMIT_IDENTIFIER   ) )
 
       branch_key = KeyDerivation.regenerate_shell_key( Branch.to_token() )
       key_ciphertext = branch_key.do_encrypt_key( crypt_key )

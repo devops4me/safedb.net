@@ -43,7 +43,7 @@ module SafeDb
         return
       end
 
-      initialize_book()
+      BookIndex.create_book( @book_id )
 
 # @todo => search for password in environment variable
 
@@ -66,18 +66,6 @@ module SafeDb
 
 
     private
-
-
-    def initialize_book()
-
-      FileUtils.mkdir_p( FileTree.master_crypts_folder( @book_id ) )
-
-      keypairs = DataMap.new( Indices::MASTER_INDICES_FILEPATH )
-      keypairs.use( @book_id )
-      keypairs.set( Indices::SAFE_BOOK_INITIALIZE_TIME, KeyNow.readable() )
-      keypairs.set( Indices::MASTER_COMMIT_ID, Identifier.get_random_identifier( 16 ) )
-
-    end
 
 
     def virginal_book_index()

@@ -28,15 +28,6 @@ module SafeDb
   # - {write} put directive key/value pair in parameter section
   class UseCase
 
-# @todo  => lib/usecase/usecase.rb:41:      exit(100) unless ops_key_exists?
-# @todo  => lib/usecase/usecase.rb:197:    def ops_key_exists?
-# @todo  => lib/usecase/verse.rb:9:      return unless ops_key_exists?
-# @todo  => lib/usecase/set.rb:25:      return unless ops_key_exists?
-# @todo  => lib/usecase/docker/docker.rb:18:            return unless ops_key_exists?
-# @todo  => lib/usecase/terraform/terraform.rb:27:      return unless ops_key_exists?
-# @todo  => lib/usecase/jenkins/jenkins.rb:157:            return unless ops_key_exists?
-
-
     # This use case is initialized primary by resolving the configured
     # +general and use case specific facts+. To access the general facts,
     # a domain name is expected in the parameter delegated by the extension
