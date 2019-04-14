@@ -69,8 +69,8 @@ module SafeDb
 
       Transition.checkin( book )
 
-      puts " Checkin At := #{KeyNow.readable()}\n"
-      puts "Check-in from branch to master was successful.\n"
+      puts "The checkin was on #{KeyNow.readable()}\n"
+      puts "Checkin from branch to master was successful.\n"
       puts ""
 
 
