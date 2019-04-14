@@ -14,12 +14,7 @@ module SafeDb
     # the opened verse.
     def query_verse()
 
-      bcv_name = "#{@book_index.book_name()}/#{@book_index.get_open_chapter_name()}/#{@book_index.get_open_verse_name()}"
-
-      puts ""
-      puts "#{bcv_name} (#{@verse.length()})\n"
-      puts ""
-
+      @book_index.print_book_mark()
       if @verse.empty?()
 
         puts JSON.pretty_generate( {} )

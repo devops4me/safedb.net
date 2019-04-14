@@ -52,11 +52,7 @@ module SafeDb
     def execute
 
       book = BookIndex.new()
-
-      puts ""
-      puts " Book Name  := #{book.book_name()}\n"
-      puts " Book Id    := #{book.book_id()}\n"
-      puts ""
+      book.print_book_mark()
 
       unless book.can_checkin?()
 

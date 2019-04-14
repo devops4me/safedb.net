@@ -348,6 +348,13 @@ module SafeDb
     end
 
 
+    def print_book_mark()
+      bcv_name = "#{book_name()}/#{get_open_chapter_name()}/#{get_open_verse_name()}"
+      puts ""
+      puts "#{bcv_name} (#{get_open_verse_data().length()})\n"
+      puts ""
+    end
+
     # Is the verse name in the parameter the book's open verse? An exception
     # is thrown if the parameter verse name is nil.
     # @param this_verse_name [String] the name of the verse to test
