@@ -10,7 +10,7 @@ module SafeDb
   # - <tt>checkin</tt> - transfers state from branch to master
   # - <tt>checkout</tt> - transfers state from master to branch
   #
-  class Transition
+  class StateTransition
 
     # The login process recycles the content encryption key by regenerating the human
     # key from the password text and salts and then accessing the old crypt key, generating

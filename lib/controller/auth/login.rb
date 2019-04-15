@@ -44,10 +44,8 @@ module SafeDb
       book_keys = DataMap.new( Indices::MASTER_INDICES_FILEPATH )
       book_keys.use( @book_id )
 
-      Transition.login( book_keys, book_password )
-
-      view_uc = View.new
-      view_uc.flow()
+      StateTransition.login( book_keys, book_password )
+      View.new().flow()
 
     end
 
