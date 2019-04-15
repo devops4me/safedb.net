@@ -40,11 +40,11 @@ module SafeDb
       puts "Clobbered File = #{backup_filename}" if will_clobber
       puts "Prescribed Directory = #{@to_dir}" unless @to_dir.nil?
       puts "Present Directory = #{Dir.pwd}" if @to_dir.nil?
-      puts "Ejected Filename = #{simple_filename}"
+      puts "Written Out Filename = #{simple_filename}"
       puts "The Full Filepath = #{file_full_path}"
-      puts "Ejected File Key = #{@file_key}"
+      puts "Written File Key = #{@file_key}"
       puts ""
-      puts "File successfully ejected from the safe."
+      puts "File successfully written from safe to filesystem."
       puts ""
 
       File.write( backup_file_path, File.read( file_full_path ) ) if will_clobber

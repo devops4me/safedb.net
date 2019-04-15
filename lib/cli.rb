@@ -197,6 +197,21 @@ class CLI < Thor
 
 
 
+  # Description of the diff use case command.
+  desc "diff", "list differences between the working branch and the master."
+
+  # The <b>diff use case</b> spells out the key differences between the safe book
+  # on the master line the one on the current working branch.
+  #
+  # By default when conflicts occur, priority is given to the current working branch.
+  # No parameters are required to perform a diff.
+  def diff
+    log.info(x) { "spell out the differences between books in the master and working branch." }
+    SafeDb::Diff.new.flow_of_events
+  end
+
+
+
   # Description of the checkin use case command.
   desc "checkin", "save changes made to the branch with a checks into master."
 
