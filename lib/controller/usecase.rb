@@ -74,7 +74,7 @@ module SafeDb
     def update_verse()
 
       @book.write_open_chapter()
-      Show.new.flow_of_events
+      Show.new.flow()
 
     end
 
@@ -82,7 +82,7 @@ module SafeDb
     # Execute the use cases's flow from beginning when
     # you validate the input and parameters through the
     # memorize and execute.
-    def flow_of_events
+    def flow()
 
       check_pre_conditions
       execute

@@ -97,7 +97,7 @@ class CLI < Thor
     init_uc = SafeDb::Init.new
     init_uc.password = options[ :password ] if options[ :password ]
     init_uc.book_name = book_name
-    init_uc.flow_of_events
+    init_uc.flow()
   end
 
 
@@ -116,7 +116,7 @@ class CLI < Thor
     login_uc = SafeDb::Login.new
     login_uc.book_name = book_name unless book_name.nil?
     login_uc.password = options[ :password ] if options[ :password ]
-    login_uc.flow_of_events
+    login_uc.flow()
   end
 
 
@@ -132,7 +132,7 @@ class CLI < Thor
     log.info(x) { "print the key value at the opened chapter and verse." }
     print_uc = SafeDb::Print.new
     print_uc.key_name = key_name
-    print_uc.flow_of_events
+    print_uc.flow()
   end
 
 
@@ -144,7 +144,7 @@ class CLI < Thor
   def verse
     log.info(x) { "print the verse name at the opened chapter and verse." }
     verse_uc = SafeDb::Verse.new
-    verse_uc.flow_of_events
+    verse_uc.flow()
   end
 
 
@@ -156,7 +156,7 @@ class CLI < Thor
   # to the workstation and shell environment.
   def token
     log.info(x) { "generate and print out an encrypted (shell bound) shell token" }
-    SafeDb::Token.new.flow_of_events
+    SafeDb::Token.new.flow()
   end
 
 
@@ -192,7 +192,7 @@ class CLI < Thor
     open_uc = SafeDb::Open.new
     open_uc.chapter = chapter
     open_uc.verse = verse
-    open_uc.flow_of_events
+    open_uc.flow()
   end
 
 
@@ -207,7 +207,7 @@ class CLI < Thor
   # No parameters are required to perform a diff.
   def diff
     log.info(x) { "spell out the differences between books in the master and working branch." }
-    SafeDb::Diff.new.flow_of_events
+    SafeDb::Diff.new.flow()
   end
 
 
@@ -220,7 +220,7 @@ class CLI < Thor
   # by a ckeckin from another (shell) branch.
   def checkin
     log.info(x) { "push (save) any changes made to this branch into the master." }
-    SafeDb::CheckIn.new.flow_of_events
+    SafeDb::CheckIn.new.flow()
   end
 
 
@@ -233,7 +233,7 @@ class CLI < Thor
   # will be placed in an aptly named file in  the present working directory.
   def export
     log.info(x) { "export book chapter content or dictionary at verse in JSON format." }
-    SafeDb::Export.new.flow_of_events
+    SafeDb::Export.new.flow()
   end
 
 
@@ -248,7 +248,7 @@ class CLI < Thor
     log.info(x) { "importing into current book from file #{import_filepath}." }
     import_uc = SafeDb::Import.new
     import_uc.import_filepath = import_filepath
-    import_uc.flow_of_events    
+    import_uc.flow()    
   end
 
 
@@ -266,7 +266,7 @@ class CLI < Thor
     put_uc = SafeDb::Put.new
     put_uc.credential_id = credential_id
     put_uc.credential_value = credential_value
-    put_uc.flow_of_events
+    put_uc.flow()
   end
 
 
@@ -285,7 +285,7 @@ class CLI < Thor
     set_uc = SafeDb::Set.new
     set_uc.directive_name = directive_name
     set_uc.directive_value = directive_value
-    set_uc.flow_of_events
+    set_uc.flow()
   end
 
 
@@ -301,7 +301,7 @@ class CLI < Thor
     log.info(x) { "remove a safe entity with a key id [#{line_id}]." }
     remove_uc = SafeDb::Remove.new()
     remove_uc.line_id = line_id
-    remove_uc.flow_of_events
+    remove_uc.flow()
   end
 
 
@@ -318,7 +318,7 @@ class CLI < Thor
     read_uc = SafeDb::Read.new
     read_uc.file_key = file_key
     read_uc.file_url = file_url
-    read_uc.flow_of_events
+    read_uc.flow()
   end
 
 
@@ -336,7 +336,7 @@ class CLI < Thor
     write_uc = SafeDb::Write.new
     write_uc.file_key = file_key
     write_uc.to_dir = options[:to_dir] if options[:to_dir]
-    write_uc.flow_of_events
+    write_uc.flow()
   end
 
 
@@ -348,7 +348,7 @@ class CLI < Thor
   # are simply written out to the shell console.
   def show
     log.info(x) { "show dictionary at the opened chapter and verse." }
-    SafeDb::Show.new.flow_of_events
+    SafeDb::Show.new.flow()
   end
 
 
@@ -361,7 +361,7 @@ class CLI < Thor
   def view
     log.info(x) { "print list of chapter and verse combos to console." }
     view_uc = SafeDb::View.new
-    view_uc.flow_of_events
+    view_uc.flow()
   end
 
 
@@ -378,7 +378,7 @@ class CLI < Thor
     log.info(x) { "opens the chapter and verse at index [#{index}]." }
     goto_uc = SafeDb::Goto.new
     goto_uc.index = index
-    goto_uc.flow_of_events
+    goto_uc.flow()
 
   end
 
@@ -407,7 +407,7 @@ class CLI < Thor
     log.info(x) { "will export IAM credentials then invoke $ terraform #{command}" }
     terraform_uc = SafeDb::Terraform.new
     terraform_uc.command = command if command
-    terraform_uc.flow_of_events
+    terraform_uc.flow()
   end
 
 
@@ -448,7 +448,7 @@ class CLI < Thor
     jenkins_uc.service = service if service
     jenkins_uc.url     = url     if url
 
-    jenkins_uc.flow_of_events
+    jenkins_uc.flow()
 
   end
 
@@ -470,7 +470,7 @@ class CLI < Thor
     log.info(x) { "request to #{command} into or out of a docker repository." }
     docker_uc = SafeDb::Docker.new
     docker_uc.command = command
-    docker_uc.flow_of_events
+    docker_uc.flow()
 
   end
 
@@ -489,7 +489,7 @@ class CLI < Thor
     log.info(x) { "VPN connection command #{command} has been issued." }
     vpn_uc = SafeDb::Vpn.new
     vpn_uc.command = command if command
-    vpn_uc.flow_of_events
+    vpn_uc.flow()
   end
 
 
@@ -501,7 +501,7 @@ class CLI < Thor
   def id
     log.info(x) { "prints out the current timestamp identifiers." }
     id_uc = SafeDb::Id.new
-    id_uc.flow_of_events
+    id_uc.flow()
   end
 
 

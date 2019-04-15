@@ -33,7 +33,7 @@ module SafeDb
           open_uc = Open.new
           open_uc.chapter = chapter_name
           open_uc.verse = verse_name
-          open_uc.flow_of_events
+          open_uc.flow()
 
           return
 

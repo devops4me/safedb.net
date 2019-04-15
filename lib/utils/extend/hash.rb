@@ -23,34 +23,15 @@ class Hash
   # @param merge_me [Hash] the incoming hash data structure to merge
   def merge_recursively!( merge_me )
 
-    is_a_string = merge_me.kind_of?( String )
-    puts "ATTEMPTING TO MERGE a HASH with a STRING => #{merge_me}" if is_a_string
-    puts "NOT MERGING A HASH WITH A STRING" unless is_a_string
-    begin
+    self.merge!( merge_me ) do | key, value_1, value_2 |
 
-      puts "Merging Me\n\n#{JSON.pretty_generate(self)}\n\nWith Data\n\n#{JSON.pretty_generate(merge_me)}\n"
+      is_mergeable = value_1.kind_of?( Hash   ) && value_2.kind_of?( Hash   )
+      are_both_str = value_1.kind_of?( String ) && value_2.kind_of?( String )
+      not_the_same = are_both_str && ( value_1 != value_2 )
 
-      self.merge!( merge_me ) do | key, value_1, value_2 |
-
-        is_mergeable = value_1.kind_of?( Hash   ) && value_2.kind_of?( Hash   )
-        are_both_str = value_1.kind_of?( String ) && value_2.kind_of?( String )
-        not_the_same = are_both_str && ( value_1 != value_2 )
-
-        reject_message( key, value_1, value_2 ) if not_the_same
-        value_1.merge_recursively!( value_2 ) if is_mergeable
-        value_1
-
-
-      end
-
-    rescue TypeError => e
-
-      puts ""
-      puts "Is this the implicit conversion of string into hash failure?."
-      puts ""
-      puts "   => #{e.message}"
-      puts ""
-      abort e.message
+      reject_message( key, value_1, value_2 ) if not_the_same
+      value_1.merge_recursively!( value_2 ) if is_mergeable
+      value_1
 
     end
 

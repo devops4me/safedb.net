@@ -43,6 +43,54 @@ module SafeDb
     end
 
 
+    # Returns true if valid credentials have been provided earlier on in this
+    # session against the book specified in the parameter.
+    #
+    # Note the "in-use" concept. Even when specified book is not currently
+    # in use, true may be returned (as long as a successful login occured).
+    #
+    # @param book_id [String] book identifier that login request is against
+    # @return [Boolean] true if the parameter book is currently logged in
+    def self.is_logged_in?( book_id )
+      
+      branch_id = Identifier.derive_branch_id( Branch.to_token() )
+      return false unless File.exists?( FileTree.branch_indices_filepath( branch_id ) )
+      branch_keys = DataMap.new( FileTree.branch_indices_filepath( branch_id ) )
+      return false unless branch_keys.has_section?( Indices::BRANCH_DATA )
+      return false unless branch_keys.has_section?( book_id )
+
+      branch_keys.use( book_id )
+      branch_key_ciphertext = branch_keys.get( Indices::CRYPT_CIPHER_TEXT )
+      branch_key = KeyDerivation.regenerate_shell_key( Branch.to_token() )
+
+      begin
+        branch_key.do_decrypt_key( branch_key_ciphertext )
+        return true
+      rescue OpenSSL::Cipher::CipherError => e
+        log.warn(x) { "A login check against book #{book_id} has failed." }
+        log.warn(x) { "Login failure error message is #{e.message}" }
+        return false
+      end
+
+      return false # technically this line of code is unreachable
+
+    end
+
+
+    # Switch the current branch (if necessary) to using the book whose ID
+    # is specified in the parameter. Only call method if {is_logged_in?}
+    # has returned true.
+    #
+    # @param book_id [String] book identifier that login request is against
+    def self.use_book( book_id )
+      branch_id = Identifier.derive_branch_id( Branch.to_token() )
+      branch_keys = DataMap.new( FileTree.branch_indices_filepath( @branch_id ) )
+      branch_keys.use( Indices::BRANCH_DATA )
+      current_book_id = branch_keys.get( Indices::CURRENT_BRANCH_BOOK_ID )
+      log.info(x) { "Current book is #{current_book_id} and the instruction is to use #{book_id}" }
+      branch_keys.set( Indices::CURRENT_BRANCH_BOOK_ID, book_id )
+    end
+
 
     # Get the hash data structure representing the master's state. This state
     # may or may not be equivalent to the current branch state.
@@ -54,8 +102,8 @@ module SafeDb
 
       @master_chapter_keys.each_pair do | chapter_name, chapter_indices |
 
-        random_iv = KeyIV.in_binary( chapter_indices.get( Indices::CONTENT_RANDOM_IV ) )
-        content_id = chapter_indices.get( Indices::CONTENT_IDENTIFIER )
+        random_iv = KeyIV.in_binary( chapter_indices[ Indices::CONTENT_RANDOM_IV ] )
+        content_id = chapter_indices[ Indices::CONTENT_IDENTIFIER ]
         chapter_filepath = FileTree.master_crypts_filepath( @book_id, content_id )
         master_chapter_data = DataStore.from_json( Content.unlock_it( chapter_filepath, @crypt_key, random_iv ) )
         @master_data.store( chapter_name, master_chapter_data )
@@ -87,9 +135,7 @@ module SafeDb
     # meaning that we can commit (checkin).
     # @return [Boolean] true if can checkin, false otherwise
     def can_checkin?()
-
       return @branch_keys.get( Indices::COMMIT_IDENTIFIER ).eql?( @master_keys.get( Indices::COMMIT_IDENTIFIER ) )
-
     end
 
 

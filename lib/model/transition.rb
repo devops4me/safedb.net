@@ -140,26 +140,6 @@ module SafeDb
     end
 
 
-    # If the branch indices file exists it means we have logged into
-    # at least one book - furthermore if a section headed up with our
-    # book id (derived from the book_name CLI parameter) exists then
-    # we have definitely logged into this book.
-    #
-    # Remember that many books can be in-play in the same shell so
-    # it is important to check the "currently in use book id" and then
-    # update the value if necessary on receipt of either the login
-    # or <tt>use</tt> commands.
-    #
-    def self.is_logged_in?()
-
-      branch_id = Identifier.derive_branch_id( Branch.to_token() )
-      return false unless File.exists? FileTree.branch_indices_filepath( branch_id )
-      branch_keys = DataMap.new( FileTree.branch_indices_filepath( branch_id ) )
-      return branch_keys.has_section?( book_id )
-
-    end
-
-
     # When we login to a book which may or may not be the first book in the branch
     # that we have logged into, we are effectively cloning all its master crypts and
     # some of its keys (indices).

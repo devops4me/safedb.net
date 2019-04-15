@@ -17,7 +17,6 @@ module SafeDb
   # - you can deliver the password in multiple ways
   class Login < AccessUc
 
-
     def execute
 
 # @todo => in parent class Auth validate the book name
@@ -29,11 +28,11 @@ module SafeDb
         return
       end
 
-# @todo => if logged in skip the password collection and do_login() function
-
-## Tactic   ==> first use Transition.is_logged_in?()
-## Tactic   ==> next  get the current book ID and RESET it if necessary (also do he [use] use case)
-
+      if( Book.is_logged_in?( @book_id ) )
+        Book.use_book( @book_id )
+        View.new().flow()
+        return
+      end
 
 # @todo => search for password in environment variable
 
@@ -48,7 +47,7 @@ module SafeDb
       Transition.login( book_keys, book_password )
 
       view_uc = View.new
-      view_uc.flow_of_events
+      view_uc.flow()
 
     end
 

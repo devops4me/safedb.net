@@ -28,7 +28,7 @@ module SafeDb
       # More work is needed when for when only the chapter is opened in
       # which case we should show the list of verses and perhaps the count
       # of key value pairs each verse contains.
-      Show.new.flow_of_events
+      Show.new.flow()
 
     end
 
