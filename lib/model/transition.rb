@@ -21,6 +21,18 @@ module SafeDb
     # state of the master book. A login acts like a stack push in that it wrests control from
     # the current book only to cede it back during logout.
 
+    # We recycle the (kdf) derived key every time we are handed the human password
+    # (during init and login) but the high entropy machine generated random key is
+    # only recycled at a special time.
+    #
+    # == When is the high entropy key recycled?
+    #
+    # The high entropy key is recycled only on the first login into a book since the
+    # machine reboot. This is because subsequent branch logins that protect the
+    # random key will need to check back with the master branch when performing either
+    # a diff or checkout operations. Also the checkin operation must maintain the
+    # same content encryption key for readability by validated agents.
+    #
     # @param book_keys [DataMap]
     #    the {DataMap} contains the salts for key rederivation seeing as we have the
     #    book password and the rederived key will be able to unlock the ciphertext
@@ -51,12 +63,62 @@ module SafeDb
       the_book_id = book_keys.section()
 
       old_human_key = KdfApi.regenerate_from_salts( secret, book_keys )
-      old_crypt_key = old_human_key.do_decrypt_key( book_keys.get( Indices::CRYPT_CIPHER_TEXT ) )
-      plain_content = Content.unlock_master( old_crypt_key, book_keys )
+      the_crypt_key = old_human_key.do_decrypt_key( book_keys.get( Indices::CRYPT_CIPHER_TEXT ) )
+      plain_content = Content.unlock_master( the_crypt_key, book_keys )
 
-      new_crypt_key = KeyCycle.recycle( the_book_id, secret, book_keys, plain_content )
+      is_first_login_since_boot = blablbal()
+      the_crypt_key = Key.from_random if is_first_login_since_boot
+      recycle_keys( the_crypt_key, the_book_id, secret, book_keys, plain_content )
+
       branch_id = Identifier.derive_branch_id( Branch.to_token() )
-      clone_book_into_branch( the_book_id, branch_id, book_keys, new_crypt_key )
+      clone_book_into_branch( the_book_id, branch_id, book_keys, the_crypt_key )
+
+    end
+
+
+
+    # This method creates a new high entropy content encryption key and then forwards
+    # it on to behaviour that recycles the (kdf) key from the provided human sourced
+    # secret.
+    #
+    # @param book_id [String] the identifier of the book whose keys we are cycling
+    # @param human_secret [String] this secret is sourced into key derivation functions
+    # @param data_map [Hash] book related key/value data that will be populated as appropriate
+    # @param content_body [String] this content is encrypted and the ciphertext output stored
+    # @return [Key] the generated random high entropy key that the content is locked with
+    #
+    def self.recycle_both_keys( book_id, human_secret, data_map, content_body )
+      recycle_keys( Key.from_random, book_id, human_secret, data_map, content_body )
+    end
+
+
+
+    # During initialization or login we recycle keys produced by key derivation
+    # functions (BCrypt. SCrypt and/or PBKDF2) from human sourced secrets.
+    #
+    # The flow of events of the recycling process is to
+    #
+    # - use the random high entropy key given in parameter one
+    # - lock the provided content with this high entropy key
+    # - save ciphertext in a file named by a random identifier
+    # - write this random identifier to the key cache
+    # - write the initialization vector to the key cache
+    # - use KDFs to derive a key from the human sourced password
+    # - save the salts crucial for reproducing this derived key
+    # - use the derived key to encrypt the high entropy key
+    # - write the resulting ciphertext into the key cache
+    # - return the high entropy key that locked the content
+    #
+    # @param high_entropy_key [Key] the machine generated high entropy content encryption key
+    # @param book_id [String] the identifier of the book whose keys we are cycling
+    # @param human_secret [String] this secret is sourced into key derivation functions
+    # @param data_map [Hash] book related key/value data that will be populated as appropriate
+    # @param content_body [String] this content is encrypted and the ciphertext output stored
+    def self.recycle_keys( high_entropy_key, book_id, human_secret, data_map, content_body )
+
+      Content.lock_master( book_id, high_entropy_key, data_map, content_body )
+      derived_key = KdfApi.generate_from_password( human_secret, data_map )
+      data_map.set( Indices::CRYPT_CIPHER_TEXT, derived_key.do_encrypt_key( high_entropy_key ) )
 
     end
 
@@ -110,6 +172,46 @@ module SafeDb
       master_keys.set( Indices::CONTENT_IDENTIFIER, branch_keys.get( Indices::CONTENT_IDENTIFIER ) )
       master_keys.set( Indices::CONTENT_RANDOM_IV,  branch_keys.get( Indices::CONTENT_RANDOM_IV  ) )
 
+    end
+
+
+
+    # Create the book within the master indices file and set its book identifier
+    # along with the initialize time and a fresh commit identifier.
+    #
+    # @param book_identifier [String] the identifier of the book to create
+    def self.create_book( book_identifier )
+      FileUtils.mkdir_p( FileTree.master_crypts_folder( book_identifier ) )
+
+      keypairs = DataMap.new( Indices::MASTER_INDICES_FILEPATH )
+      keypairs.use( book_identifier )
+      keypairs.set( Indices::SAFE_BOOK_INITIALIZE_TIME, KeyNow.readable() )
+      keypairs.set( Indices::COMMIT_IDENTIFIER, Identifier.get_random_identifier( 16 ) )
+    end
+
+
+
+    # Return true if the commit identifiers for the master and the branch match
+    # meaning that we can commit (checkin).
+    # @return [Boolean] true if can checkin, false otherwise
+    def can_checkin?()
+      return @branch_keys.get( Indices::COMMIT_IDENTIFIER ).eql?( @master_keys.get( Indices::COMMIT_IDENTIFIER ) )
+    end
+
+
+
+    # Switch the current branch (if necessary) to using the book whose ID
+    # is specified in the parameter. Only call method if we are definitely
+    # in a logged in state.
+    #
+    # @param book_id [String] book identifier that login request is against
+    def self.use_book( book_id )
+      branch_id = Identifier.derive_branch_id( Branch.to_token() )
+      branch_keys = DataMap.new( FileTree.branch_indices_filepath( @branch_id ) )
+      branch_keys.use( Indices::BRANCH_DATA )
+      current_book_id = branch_keys.get( Indices::CURRENT_BRANCH_BOOK_ID )
+      log.info(x) { "Current book is #{current_book_id} and the instruction is to use #{book_id}" }
+      branch_keys.set( Indices::CURRENT_BRANCH_BOOK_ID, book_id )
     end
 
 

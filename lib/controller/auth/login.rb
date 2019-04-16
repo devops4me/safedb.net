@@ -28,8 +28,8 @@ module SafeDb
         return
       end
 
-      if( Book.is_logged_in?( @book_id ) )
-        Book.use_book( @book_id )
+      if( StateQuery.is_logged_in?( @book_id ) )
+        StateTransition.use_book( @book_id )
         View.new().flow()
         return
       end

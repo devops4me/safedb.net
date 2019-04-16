@@ -43,7 +43,7 @@ module SafeDb
         return
       end
 
-      Book.create_book( @book_id )
+      StateTransition.create_book( @book_id )
 
 # @todo => search for password in environment variable
 
@@ -53,7 +53,7 @@ module SafeDb
       master_keys = DataMap.new( Indices::MASTER_INDICES_FILEPATH )
       master_keys.use( @book_id )
 
-      KeyCycle.recycle(
+      StateTransition.recycle_both_keys(
         @book_id,
         book_secret,
         master_keys,
