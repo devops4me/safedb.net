@@ -49,6 +49,9 @@ module SafeDb
     # The commit identifiers of the master and branch are compared to ascertain eligibility for checkins
     COMMIT_IDENTIFIER = "commit.identifier"
 
+    # The bootup id is set on machine boot and lasts until the reboot or shutdown.
+    BOOTUP_IDENTIFIER = "bootup.identifier"
+
     # The key ciphertext that sits against the trio of either master, branch or chapter
     CRYPT_CIPHER_TEXT = "crypt.cipher.text"
 

@@ -142,11 +142,23 @@ module SafeDb
     # - Kubernetes pods
     #
     # @return [String] the bootup ID hash value
-    def self.get_bootup_id
+    def self.get_bootup_id()
 
       bootup_id_cmd = "cat /proc/sys/kernel/random/boot_id"
       bootup_id_str = %x[ #{bootup_id_cmd} ]
       return bootup_id_str.chomp
+
+    end
+
+
+    # Logs a list of the last few times that this machine has rebooted.
+    # This log can be useful when used in conjunction with the behaviour
+    # that gets the bootup identifier.
+    def self.log_reboot_times()
+
+      the_cmd = "last reboot"
+      the_str = %x[ #{the_cmd} ]
+      the_str.log_lines()
 
     end
 
