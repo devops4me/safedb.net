@@ -41,6 +41,27 @@ module SafeDb
     end
 
 
+    # Have any logins to this safe book occured since the machine was last
+    # rebooted? If no, true is returned. If another login has already occurred
+    # since the reboot false is returned.
+    #
+    # This method examines the bootup ID and if one exists and is equivalent
+    # to the current one, false is returned. Otherwise true is returned.
+    #
+    # Set the booup identifier within the parameter key/value map under the
+    # globally recognized {Indices::BOOTUP_IDENTIFIER} constant. This method
+    # expects the {DataMap} section name to be a significant identifier.
+    #
+    # @param data_map [DataMap] the data map in which we set the bootup id
+    # @return [Boolean] true if this is the first book login since bootup
+    def self.is_first_login?( data_map )
+      
+      return true unless data_map.contains?( Indices::BOOTUP_IDENTIFIER )
+      old_bootup_id = data_map.get( Indices::BOOTUP_IDENTIFIER )
+      new_bootup_id = MachineId.get_bootup_id()
+      return old_bootup_id != new_bootup_id
+
+    end
 
 
   end

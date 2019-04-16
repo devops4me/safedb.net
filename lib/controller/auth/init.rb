@@ -52,6 +52,7 @@ module SafeDb
 
       master_keys = DataMap.new( Indices::MASTER_INDICES_FILEPATH )
       master_keys.use( @book_id )
+      StateTransition.set_bootup_id( master_keys )
 
       StateTransition.recycle_both_keys(
         @book_id,

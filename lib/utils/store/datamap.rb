@@ -64,7 +64,7 @@ module SafeDb
     # @param the_default_group [String]
     #    the name of the default group. If none is presented this value
     #    will default to the aptly named "default".
-    def initialize backing_file_path
+    def initialize( backing_file_path )
       @file_path = backing_file_path
       create_dir_unless_exists()
     end
@@ -76,7 +76,7 @@ module SafeDb
     # @param the_section_name [String]
     #    the non-nil and non whitespace only section name that will lead a
     #    set of key-value pairs in the INI formatted file.
-    def use the_section_name
+    def use( the_section_name )
       raise ArgumentError, "Cannot use a Nil section name." if the_section_name.nil?
       @section_to_use = the_section_name
     end
@@ -86,7 +86,7 @@ module SafeDb
     #
     # @param key_name [String] the name of the key whose value is to be written
     # @param key_value [String] the data item value of the key specified
-    def set key_name, key_value
+    def set( key_name, key_value )
       raise ArgumentError, "Cannot set a Nil section name." if @section_to_use.nil?
       write @section_to_use, key_name, key_value
     end
@@ -98,7 +98,7 @@ module SafeDb
     # @param key_name [String] the name of the key whose value is to be written
     # @return [String]
     #    return the value of the configuration directive in the default group
-    def get key_name
+    def get( key_name )
       raise ArgumentError, "Cannot get from a Nil section name." if @section_to_use.nil?
       read @section_to_use, key_name
     end
@@ -109,7 +109,7 @@ module SafeDb
     #
     # @return [String]
     #    return the name of the currently in-focus section
-    def section
+    def section()
       raise ArgumentError, "The use method has not specified a section." if @section_to_use.nil?
       return @section_to_use
     end
@@ -131,7 +131,7 @@ module SafeDb
     # @param key [String] the key name of config directive to be written into the file
     # @param value [String] value of the config directive to be written into the file
     #
-    def write section_name, key, value
+    def write( section_name, key, value )
 
       data_map = IniFile.new( :filename => @file_path, :encoding => 'UTF-8' )
       data_map = IniFile.load( @file_path ) if File.file? @file_path
@@ -153,7 +153,7 @@ module SafeDb
     #     cause the key value to not be retrieved. This can range from
     #     non-existent directories and files, non readable files, incorrect
     #     configurations right down to missing keys or even missing values.
-    def read section_name, key_name
+    def read( section_name, key_name )
 
       raise ArgumentError.new "No section given." if section_name.nil? || section_name.strip.empty?
       raise ArgumentError.new "No parameter key given." if key_name.nil? || key_name.strip.empty?
@@ -195,7 +195,7 @@ module SafeDb
     # raise [ArgumentError]
     #    if the configuration file does not exist or is empty
     #    if the paramter key_name is nil, empty or contains only whitespace
-    def contains? key_name
+    def contains?( key_name )
 
       raise ArgumentError.new "No parameter key given." if key_name.nil? || key_name.strip.empty?
       raise ArgumentError.new "No file found at [ #{@file_path} ]" unless File.exists? @file_path
@@ -218,7 +218,7 @@ module SafeDb
     #
     # @return [Boolean]
     #    return true if a section exists with the specified name
-    def has_section? section_name
+    def has_section?( section_name )
 
       KeyError.not_new( section_name, self )
 
@@ -243,7 +243,7 @@ module SafeDb
     #    the string time stamp denoting the first time this key-value
     #    store was first initialized and then subsequently written out
     #    (serialized) onto the file-system.
-    def time_stamp
+    def time_stamp()
       return get INIT_TIME_STAMP_NAME
     end
 

@@ -56,19 +56,16 @@ module SafeDb
     #
     def self.login( book_keys, secret )
 
-## ===> @todo if the bootup ID differs from the master - we recycle the strong content encryption key
-
-## ===> @todo if the bootup ID differs from the master - we create a new commit ID for master and branch
-
       the_book_id = book_keys.section()
 
       old_human_key = KdfApi.regenerate_from_salts( secret, book_keys )
       the_crypt_key = old_human_key.do_decrypt_key( book_keys.get( Indices::CRYPT_CIPHER_TEXT ) )
       plain_content = Content.unlock_master( the_crypt_key, book_keys )
 
-      is_first_login_since_boot = blablbal()
-      the_crypt_key = Key.from_random if is_first_login_since_boot
+      first_login_since_boot = StateQuery.is_first_login?( book_keys )
+      the_crypt_key = Key.from_random if first_login_since_boot
       recycle_keys( the_crypt_key, the_book_id, secret, book_keys, plain_content )
+      set_bootup_id( book_keys ) if first_login_since_boot
 
       branch_id = Identifier.derive_branch_id( Branch.to_token() )
       clone_book_into_branch( the_book_id, branch_id, book_keys, the_crypt_key )
@@ -88,7 +85,7 @@ module SafeDb
     # @return [Key] the generated random high entropy key that the content is locked with
     #
     def self.recycle_both_keys( book_id, human_secret, data_map, content_body )
-      recycle_keys( Key.from_random, book_id, human_secret, data_map, content_body )
+      recycle_keys( Key.from_random(), book_id, human_secret, data_map, content_body )
     end
 
 
@@ -176,6 +173,26 @@ module SafeDb
 
 
 
+    # Set the booup identifier within the parameter key/value map under the
+    # globally recognized {Indices::BOOTUP_IDENTIFIER} constant. This method
+    # expects the {DataMap} section name to be a significant identifier.
+    #
+    # @param data_map [DataMap] the data map in which we set the bootup id
+    def self.set_bootup_id( data_map )
+
+      has_bootup_id = data_map.contains?( Indices::BOOTUP_IDENTIFIER )
+      old_bootup_id = data_map.get( Indices::BOOTUP_IDENTIFIER ) if has_bootup_id
+      log.info(x) { "overriding bootup id [#{old_bootup_id}] in section [#{data_map.section()}]." } if has_bootup_id
+
+      new_bootup_id = MachineId.get_bootup_id()
+      master_keys.set( Indices::BOOTUP_IDENTIFIER, new_bootup_id )
+      log.info(x) { "setting bootup id in section [#{data_map.section()}] to [#{new_bootup_id}]." }
+      MachineId.log_reboot_times()
+
+    end
+
+
+
     # Create the book within the master indices file and set its book identifier
     # along with the initialize time and a fresh commit identifier.
     #
@@ -188,7 +205,6 @@ module SafeDb
       keypairs.set( Indices::SAFE_BOOK_INITIALIZE_TIME, KeyNow.readable() )
       keypairs.set( Indices::COMMIT_IDENTIFIER, Identifier.get_random_identifier( 16 ) )
     end
-
 
 
     # Return true if the commit identifiers for the master and the branch match
