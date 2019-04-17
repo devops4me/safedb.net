@@ -185,12 +185,11 @@ module SafeDb
       log.info(x) { "overriding bootup id [#{old_bootup_id}] in section [#{data_map.section()}]." } if has_bootup_id
 
       new_bootup_id = MachineId.get_bootup_id()
-      master_keys.set( Indices::BOOTUP_IDENTIFIER, new_bootup_id )
+      data_map.set( Indices::BOOTUP_IDENTIFIER, new_bootup_id )
       log.info(x) { "setting bootup id in section [#{data_map.section()}] to [#{new_bootup_id}]." }
       MachineId.log_reboot_times()
 
     end
-
 
 
     # Create the book within the master indices file and set its book identifier
@@ -207,15 +206,6 @@ module SafeDb
     end
 
 
-    # Return true if the commit identifiers for the master and the branch match
-    # meaning that we can commit (checkin).
-    # @return [Boolean] true if can checkin, false otherwise
-    def can_checkin?()
-      return @branch_keys.get( Indices::COMMIT_IDENTIFIER ).eql?( @master_keys.get( Indices::COMMIT_IDENTIFIER ) )
-    end
-
-
-
     # Switch the current branch (if necessary) to using the book whose ID
     # is specified in the parameter. Only call method if we are definitely
     # in a logged in state.
@@ -223,13 +213,12 @@ module SafeDb
     # @param book_id [String] book identifier that login request is against
     def self.use_book( book_id )
       branch_id = Identifier.derive_branch_id( Branch.to_token() )
-      branch_keys = DataMap.new( FileTree.branch_indices_filepath( @branch_id ) )
+      branch_keys = DataMap.new( FileTree.branch_indices_filepath( branch_id ) )
       branch_keys.use( Indices::BRANCH_DATA )
       current_book_id = branch_keys.get( Indices::CURRENT_BRANCH_BOOK_ID )
       log.info(x) { "Current book is #{current_book_id} and the instruction is to use #{book_id}" }
       branch_keys.set( Indices::CURRENT_BRANCH_BOOK_ID, book_id )
     end
-
 
 
     # <b>Logout of the shell key branch</b> by making the high entropy content

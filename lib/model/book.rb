@@ -346,6 +346,14 @@ module SafeDb
     end
 
 
+    # Return true if the commit identifiers for the master and the branch match
+    # meaning that we can commit (checkin).
+    # @return [Boolean] true if can checkin, false otherwise
+    def can_checkin?()
+      return @branch_keys.get( Indices::COMMIT_IDENTIFIER ).eql?( @master_keys.get( Indices::COMMIT_IDENTIFIER ) )
+    end
+
+
     def print_book_mark()
       bcv_name = "#{book_name()}/#{get_open_chapter_name()}/#{get_open_verse_name()}"
       puts ""

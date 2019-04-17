@@ -100,7 +100,7 @@ module SafeDb
     #    return the value of the configuration directive in the default group
     def get( key_name )
       raise ArgumentError, "Cannot get from a Nil section name." if @section_to_use.nil?
-      read @section_to_use, key_name
+      read( @section_to_use, key_name )
     end
 
 
