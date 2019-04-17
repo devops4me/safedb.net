@@ -24,7 +24,7 @@ module SafeDb
       goto_location = 0
       book.branch_chapter_keys().each_pair do | chapter_name, chapter_keys |
 
-        chapter_data = Content.unlock_chapter( chapter_keys )
+        chapter_data = Content.unlock_branch_chapter( chapter_keys )
         chapter_data.each_key do | verse_name |
 
           goto_location += 1

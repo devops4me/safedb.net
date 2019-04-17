@@ -63,6 +63,10 @@ module SafeDb
       plain_content = Content.unlock_master( the_crypt_key, book_keys )
 
       first_login_since_boot = StateQuery.is_first_login?( book_keys )
+
+      puts "Apparently this IS the first login since boot" if first_login_since_boot
+      puts "We are told this IS NOT the first login since boot" unless first_login_since_boot
+
       the_crypt_key = Key.from_random if first_login_since_boot
       recycle_keys( the_crypt_key, the_book_id, secret, book_keys, plain_content )
       set_bootup_id( book_keys ) if first_login_since_boot
@@ -218,32 +222,6 @@ module SafeDb
       current_book_id = branch_keys.get( Indices::CURRENT_BRANCH_BOOK_ID )
       log.info(x) { "Current book is #{current_book_id} and the instruction is to use #{book_id}" }
       branch_keys.set( Indices::CURRENT_BRANCH_BOOK_ID, book_id )
-    end
-
-
-    # <b>Logout of the shell key branch</b> by making the high entropy content
-    # encryption key <b>irretrievable for all intents and purposes</b> to anyone
-    # who does not possess the domain secret.
-    #
-    # The key logout action is deleting the ciphertext originally produced when
-    # the intra branch (shell) key encrypted the content encryption key.
-    #
-    # <b>Why Isn't the Shell Token Deleted?</b>
-    #
-    # The shell token is left to <b>die by natural causes</b> so that we don't
-    # interfere with other domain interactions that may be in progress within
-    # this shell.
-    #
-    # @param domain_name [String]
-    #    the string reference that points to the application instance that we
-    #    are logging out of from the shell on this machine.
-    def self.do_logout( domain_name )
-
-# @todo => logout logic that deletes branch and allows nested book to bubble up
-# @todo => if logging out when book changed (set one of two flags) - ERROR if flags not provided
-# @todo => safe logout --commit    OR
-# @todo => safe logout --ignore    OR
-
     end
 
 

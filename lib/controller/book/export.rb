@@ -33,7 +33,7 @@ module SafeDb
 
       book.branch_chapter_keys().each_pair do | chapter_name, chapter_keys |
 
-        chapter_data = Content.unlock_chapter( chapter_keys )
+        chapter_data = Content.unlock_branch_chapter( chapter_keys )
         verse_count += chapter_data.length
         exported_struct.store( chapter_name, chapter_data )
 

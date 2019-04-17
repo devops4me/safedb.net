@@ -53,7 +53,7 @@ module SafeDb
     BOOTUP_IDENTIFIER = "bootup.identifier"
 
     # The key ciphertext that sits against the trio of either master, branch or chapter
-    CRYPT_CIPHER_TEXT = "crypt.cipher.text"
+    CRYPT_CIPHER_TEXT = "crypt.cipher"
 
     # This is the global section header of the branch book index file
     BRANCH_DATA = "branch.data"
@@ -93,7 +93,7 @@ module SafeDb
     SECRET_MASK_STRING = "*" * rand( 7 .. 17 )
 
     # The birthday (initialization time) of this safe book.
-    SAFE_BOOK_INITIALIZE_TIME = "book.initialize.time"
+    SAFE_BOOK_INITIALIZE_TIME = "book.init.time"
 
     # The name of this safe book.
     SAFE_BOOK_NAME = "book.name"
@@ -116,9 +116,13 @@ module SafeDb
     # The application version that oversaw this book's initialization.
     SAFE_VERSION_STRING = "safedb-v#{SafeDb::VERSION}"
 
-
+    # Handle to the key name of the ingested file in the submap verse
     INGESTED_FILE_LINE_NAME_KEY = "safedb.file::"
+
+    # Handle to the file base64 content within the submap verse
     INGESTED_FILE_CONTENT64_KEY = "file.content"
+
+    # Handle to the simple name of the ingested file in the submap verse
     INGESTED_FILE_BASE_NAME_KEY = "file.name"
 
 

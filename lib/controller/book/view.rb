@@ -28,7 +28,7 @@ module SafeDb
 
         chapter_index += 1
         verse_index = 0
-        chapter_data = Content.unlock_chapter( chapter_keys )
+        chapter_data = Content.unlock_branch_chapter( chapter_keys )
         chapter_data.each_key do | verse_name |
 
           verse_index += 1

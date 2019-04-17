@@ -52,14 +52,9 @@ module SafeDb
       @master_verse_count = 0
 
       @master_chapter_keys.each_pair do | chapter_name, chapter_indices |
-
-        random_iv = KeyIV.in_binary( chapter_indices[ Indices::CONTENT_RANDOM_IV ] )
-        content_id = chapter_indices[ Indices::CONTENT_IDENTIFIER ]
-        chapter_filepath = FileTree.master_crypts_filepath( @book_id, content_id )
-        master_chapter_data = DataStore.from_json( Content.unlock_it( chapter_filepath, @crypt_key, random_iv ) )
+        master_chapter_data = Content.unlock_master_chapter( @book_id, chapter_indices )
         @master_data.store( chapter_name, master_chapter_data )
         @master_verse_count += master_chapter_data.length()
-
       end
 
       return @master_data
@@ -237,7 +232,7 @@ module SafeDb
       raise RuntimeError, "Cannot read data as no chapter is open." unless has_open_chapter_name?()
       return @chapter_data unless @chapter_data.nil?()
       @chapter_data = DataStore.new unless has_open_chapter_data?()
-      @chapter_data = Content.unlock_chapter( get_open_chapter_keys() ) if has_open_chapter_data?()
+      @chapter_data = Content.unlock_branch_chapter( get_open_chapter_keys() ) if has_open_chapter_data?()
       return @chapter_data
     end
 
@@ -317,7 +312,7 @@ module SafeDb
       chapter_exists = @book[ Indices::SAFE_BOOK_CHAPTER_KEYS ].has_key?( chapter_name )
       @book[ Indices::SAFE_BOOK_CHAPTER_KEYS ][ chapter_name ] = DataStore.new() unless chapter_exists
       chapter_keys = @book[ Indices::SAFE_BOOK_CHAPTER_KEYS ][ chapter_name ]
-      new_chapter = Content.unlock_chapter( chapter_keys ) if chapter_exists
+      new_chapter = Content.unlock_branch_chapter( chapter_keys ) if chapter_exists
       new_chapter = DataStore.new() unless chapter_exists
 
 ##########      merged_data = Struct.recursively_merge!( new_chapter, chapter_data )
@@ -417,16 +412,22 @@ module SafeDb
     end
 
 
-    # Sets a map of chapter keys that exist within the main (master) line
-    # of this book.
-    # An empty map will be returned if no data has been added as yet
-    # to the master book line.
+    # Initializes the master book index chapter keys by using the {@crypt_key}
+    # along with the random iv and content id (read from the master indices)
+    # to decrypt the ciphertext in a master crypt file (found using the book id
+    # and content id).
+    #
+    # Once the book index ciphertext is decrypted access the struct holding
+    # the chapter crypt keys, content ids and ivs which is against the
+    # {Indices::SAFE_BOOK_CHAPTER_KEYS} index.
     def set_master_chapter_keys()
+
       random_iv = KeyIV.in_binary( @master_keys.get( Indices::CONTENT_RANDOM_IV ) )
       content_id = @master_keys.get( Indices::CONTENT_IDENTIFIER )
       master_index_filepath = FileTree.master_crypts_filepath( @book_id, content_id )
       master_index = DataStore.from_json( Content.unlock_it( master_index_filepath, @crypt_key, random_iv ) )
       @master_chapter_keys = master_index[ Indices::SAFE_BOOK_CHAPTER_KEYS ]
+
     end
 
 

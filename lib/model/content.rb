@@ -126,10 +126,9 @@ module SafeDb
     # Then use the unlock key from the parameter along with the random IV that is inside
     # the {DataMap} or {DataStore} to decrypt and return the ciphertext.
     #
-    # @param unlock_key [Key] symmetric key that was used to encrypt the ciphertext
     # @param data_store [DataMap] either {DataMap} or {DataStore} containing content id and random iv
     # @return [String] the resulting decrypted text that was encrypted with the parameter key
-    def self.unlock_chapter( data_store )
+    def self.unlock_branch_chapter( data_store )
 
       branch_id = Identifier.derive_branch_id( Branch.to_token() )
       branch_indices_file = FileTree.branch_indices_filepath( branch_id )
@@ -140,6 +139,25 @@ module SafeDb
       random_iv = KeyIV.in_binary( data_store[ Indices::CONTENT_RANDOM_IV ] )
 
       crypt_path = FileTree.branch_crypts_filepath( book_id, branch_id, content_id )
+      return DataStore.from_json( unlock_it( crypt_path, crypt_key, random_iv ) )
+
+    end
+
+
+
+    # Use the content's external id to find the ciphertext file that is to be unlocked.
+    # Then use the unlock key from the parameter along with the random IV that is inside
+    # the {DataMap} or {DataStore} to decrypt and return the ciphertext.
+    #
+    # @param book_id [String] ID of the book to unlock the chapter of
+    # @param data_store [DataMap] either {DataMap} or {DataStore} containing content id and random iv
+    # @return [String] the resulting decrypted text that was encrypted with the parameter key
+    def self.unlock_master_chapter( book_id, data_store )
+
+      random_iv = KeyIV.in_binary( data_store[ Indices::CONTENT_RANDOM_IV ] )
+      crypt_key = Key.from_char64( data_store[ Indices::CRYPT_CIPHER_TEXT ] )
+      content_id = data_store[ Indices::CONTENT_IDENTIFIER ]
+      crypt_path = FileTree.master_crypts_filepath( book_id, content_id )
       return DataStore.from_json( unlock_it( crypt_path, crypt_key, random_iv ) )
 
     end

@@ -275,7 +275,7 @@ module SafeDb
     #    If the bit value string for this key is nil.
     #    Or if the bit string length is not a multiple of six.
     #    Or if it contains any character that is not a 1 or 0.
-    def to_char64
+    def to_char64()
       assert_non_nil_bits
       return Key64.from_bits( @bit_string )
     end
@@ -292,7 +292,7 @@ module SafeDb
     # @return [Byte]
     #    a non-printable binary string of eight (8) bit bytes which can be
     #    used as input to both digest and symmetric cipher functions.
-    def to_binary
+    def to_binary()
       return [ to_s ].pack("B*")
     end
 
