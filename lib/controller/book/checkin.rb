@@ -67,7 +67,7 @@ module SafeDb
 
       end
 
-      StateTransition.checkin( book )
+      StateMigrate.checkin( book )
 
       puts "The checkin was on #{KeyNow.readable()}\n"
       puts "Checkin from branch to master was successful.\n"

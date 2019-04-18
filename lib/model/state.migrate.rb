@@ -10,7 +10,7 @@ module SafeDb
   # - <tt>checkin</tt> - transfers state from branch to master
   # - <tt>checkout</tt> - transfers state from master to branch
   #
-  class StateTransition
+  class StateMigrate
 
     # The login process recycles the content encryption key by regenerating the human
     # key from the password text and salts and then accessing the old crypt key, generating
@@ -62,7 +62,7 @@ module SafeDb
       the_crypt_key = old_human_key.do_decrypt_key( book_keys.get( Indices::CRYPT_CIPHER_TEXT ) )
       plain_content = Content.unlock_master( the_crypt_key, book_keys )
 
-      first_login_since_boot = StateQuery.is_first_login?( book_keys )
+      first_login_since_boot = StateInspect.is_first_login?( book_keys )
 
       puts "Apparently this IS the first login since boot" if first_login_since_boot
       puts "We are told this IS NOT the first login since boot" unless first_login_since_boot

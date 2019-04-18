@@ -2,10 +2,10 @@
 
 module SafeDb
 
-  # State queries are related to {StateTransition} but they simple ask for information
+  # State queries are related to {StateMigrate} but they simple ask for information
   # about the state without changing any state.
   #
-  class StateQuery
+  class StateInspect
 
     # Returns true if valid credentials have been provided earlier on in this
     # session against the book specified in the parameter.

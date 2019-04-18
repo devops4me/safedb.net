@@ -28,8 +28,8 @@ module SafeDb
         return
       end
 
-      if( StateQuery.is_logged_in?( @book_id ) )
-        StateTransition.use_book( @book_id )
+      if( StateInspect.is_logged_in?( @book_id ) )
+        StateMigrate.use_book( @book_id )
         View.new().flow()
         return
       end
@@ -44,7 +44,7 @@ module SafeDb
       book_keys = DataMap.new( Indices::MASTER_INDICES_FILEPATH )
       book_keys.use( @book_id )
 
-      StateTransition.login( book_keys, book_password )
+      StateMigrate.login( book_keys, book_password )
       View.new().flow()
 
     end
