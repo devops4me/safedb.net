@@ -7,6 +7,85 @@ module SafeDb
   #
   class StateInspect
 
+
+=begin
+
+---
+--- safe diff --checkin
+--- outgoing from branch into master
+---
+
+---
+--- safe diff --checkout
+--- incoming from master into branch
+---
+ + Line to be added ->
+ + Chapter 2b added ->
+ + Verse 2 be added ->
+ / Line will change ->
+
+ - Line to be removed ->
+ - Chapter 2b removed ->
+ - Verse 2 be removed ->
+
+=end
+
+    def self.to_checkout_diff_report( book )
+
+      master_data = book.to_master_data()
+      branch_data = book.to_branch_data()
+
+
+      master_data.each_pair do | chapter_name, master_verse_data |
+        
+        has_chapter = branch_data.has_key?( chapter_name )
+        puts "Chapter [ #{chapter_name} ] will be added to branch." unless has_chapter
+        if( has_chapter )
+          
+          branch_verse_data = branch_data[ chapter_name ]
+          master_verse_data.each_pair do | verse_name, master_line_data |
+
+            has_verse = branch_verse_data.has_key?( verse_name )
+            puts "Verse [ #{chapter_name}/#{verse_name} ] will be added to branch." unless has_verse
+            if( has_verse )
+
+              branch_line_data = branch_verse_data[ verse_name ]
+              master_line_data.each_pair do | line_name, master_line_value |
+
+                has_line = branch_line_data.has_key?( line_name )
+                puts "Line [ #{chapter_name}/#{verse_name}/#{line_name} ] will be added to branch." unless has_line
+                if( has_line )
+
+                  branch_line_value = branch_line_data[ line_name ]
+                  lines_equal = master_line_value == branch_line_value
+                  puts "Line [ #{chapter_name}/#{verse_name}/#{line_name} ] will be changed." unless lines_equal
+
+                end
+
+              end
+
+            end
+
+          end
+
+        end
+
+
+      end
+
+      puts JSON.pretty_generate( master_data )
+      puts "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+      puts JSON.pretty_generate( branch_data )
+
+      puts ""
+      puts "The master has #{master_data.length()} chapters and #{book.get_master_verse_count()} verses.\n"
+      puts "The branch has #{branch_data.length()} chapters and #{book.get_branch_verse_count()} verses.\n"
+      puts ""
+
+    end
+
+
+
     # Returns true if valid credentials have been provided earlier on in this
     # session against the book specified in the parameter.
     #
@@ -35,8 +114,6 @@ module SafeDb
         log.warn(x) { "Login failure error message is #{e.message}" }
         return false
       end
-
-      return false # technically this line of code is unreachable
 
     end
 

@@ -20,17 +20,7 @@ module SafeDb
       puts " == Book Mark := #{book.get_open_chapter_name()}/#{book.get_open_verse_name()}\n" if book.is_opened?()
       puts ""
 
-      master_data = book.to_master_data()
-      branch_data = book.to_branch_data()
-
-      puts JSON.pretty_generate( master_data )
-      puts "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-      puts JSON.pretty_generate( branch_data )
-
-      puts ""
-      puts "The master has #{master_data.length()} chapters and #{book.get_master_verse_count()} verses.\n"
-      puts "The branch has #{branch_data.length()} chapters and #{book.get_branch_verse_count()} verses.\n"
-      puts ""
+      StateInspect.to_checkout_diff_report( book )
 
     end
 
