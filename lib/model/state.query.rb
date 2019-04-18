@@ -56,13 +56,9 @@ module SafeDb
     # @return [Boolean] true if this is the first book login since bootup
     def self.is_first_login?( data_map )
       
-      puts "Data Map is Below"
-      puts data_map.to_s
       return true unless data_map.contains?( Indices::BOOTUP_IDENTIFIER )
       old_bootup_id = data_map.get( Indices::BOOTUP_IDENTIFIER )
       new_bootup_id = MachineId.get_bootup_id()
-      puts "Old Bootup ID => #{old_bootup_id}"
-      puts "New Bootup ID => #{new_bootup_id}"
       return old_bootup_id != new_bootup_id
 
     end

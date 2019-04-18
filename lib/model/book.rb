@@ -44,7 +44,8 @@ module SafeDb
 
 
     # Get the hash data structure representing the master's state. This state
-    # may or may not be equivalent to the current branch state.
+    # may or may not be equivalent to the current branch state as gettable by
+    # the {to_branch_data} method.
     def to_master_data()
 
       set_master_chapter_keys()
@@ -60,6 +61,39 @@ module SafeDb
       return @master_data
 
     end
+
+    # Get the number of verses in the master's data structure.
+    # @return [Number] the number of verses in the master's data.
+    def get_master_verse_count()
+      return @master_verse_count
+    end
+
+    # Get the hash data structure representing the branch's state. This state
+    # may or may not be equivalent to the current master state as gettable by
+    # the {to_master_data} method.
+    def to_branch_data()
+
+      @branch_data = {}
+      @branch_verse_count = 0
+
+      branch_chapter_keys().each_pair do | chapter_name, chapter_keys |
+
+        branch_chapter_data = Content.unlock_branch_chapter( chapter_keys )
+        @branch_data.store( chapter_name, branch_chapter_data )
+        @branch_verse_count += branch_chapter_data.length
+
+      end
+
+      return @branch_data
+
+    end
+
+    # Get the number of verses in the branch's data structure.
+    # @return [Number] the number of verses in the branch's data.
+    def get_branch_verse_count()
+      return @branch_verse_count
+    end
+
 
 
 
@@ -230,10 +264,10 @@ module SafeDb
     # @return [DataStore] the data of the chapter that this book is opened at
     def get_open_chapter_data()
       raise RuntimeError, "Cannot read data as no chapter is open." unless has_open_chapter_name?()
-      return @chapter_data unless @chapter_data.nil?()
-      @chapter_data = DataStore.new unless has_open_chapter_data?()
-      @chapter_data = Content.unlock_branch_chapter( get_open_chapter_keys() ) if has_open_chapter_data?()
-      return @chapter_data
+      return @open_chapter_data unless @open_chapter_data.nil?()
+      @open_chapter_data = DataStore.new unless has_open_chapter_data?()
+      @open_chapter_data = Content.unlock_branch_chapter( get_open_chapter_keys() ) if has_open_chapter_data?()
+      return @open_chapter_data
     end
 
 
@@ -243,8 +277,8 @@ module SafeDb
     # is set for the open chapter.
     def set_open_chapter_data()
       raise RuntimeError, "Cannot persist the data with no open chapter name." unless has_open_chapter_name?()
-      raise RuntimeError, "Cannot persist a nil or empty data structure." if @chapter_data.nil?() or @chapter_data.empty?()
-      Content.lock_chapter( get_open_chapter_keys(), @chapter_data.to_json() )
+      raise RuntimeError, "Cannot persist a nil or empty data structure." if @open_chapter_data.nil?() or @open_chapter_data.empty?()
+      Content.lock_chapter( get_open_chapter_keys(), @open_chapter_data.to_json() )
     end
 
 
@@ -372,6 +406,13 @@ module SafeDb
     # @param verse_name [String] the name of the verse to test
     def is_open?( chapter_name, verse_name )
       return ( is_open_chapter?( chapter_name ) and is_open_verse?( verse_name ) )
+    end
+
+
+    # Has this book been opened at a chapter and verse location.
+    # @return [Boolean] true if it has an open chapter and an open verse
+    def is_opened?()
+      return has_open_chapter_name?() && has_open_verse_name?()
     end
 
 

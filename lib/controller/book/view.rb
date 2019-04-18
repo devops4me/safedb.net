@@ -14,12 +14,11 @@ module SafeDb
     def execute
 
       book = Book.new()
-      is_opened = book.has_open_chapter_name?() && book.has_open_verse_name?()
 
       puts ""
       puts " == Birth Day := #{book.init_time()}\n"
-      puts " == Book Name := #{book.book_name()}\n"
-      puts " == Book Mark := #{book.get_open_chapter_name()}/#{book.get_open_verse_name()}\n" if is_opened
+      puts " == Book Name := #{book.book_name()} [#{book.book_id}]\n"
+      puts " == Book Mark := #{book.get_open_chapter_name()}/#{book.get_open_verse_name()}\n" if book.is_opened?()
       puts ""
 
       verse_count = 0
