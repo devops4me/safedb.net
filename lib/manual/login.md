@@ -38,8 +38,9 @@ To login into a safe book you must
 
 ## Related Commands
 
-| safe command | parameters | the observable value delivered | relationship with login |
-|:------------ |:---------- |:------------------------------ |:----------------------- |
-| safe init | book name | creates the book for managing credentials | book must exist first |
-| safe logout | (none) | deletes session information preventing further usage | can logout after login |
+| safe command | parameters | observable value delivered                             | relationships           |
+|:------------ |:---------- |:------------------------------------------------------ |:----------------------- |
+| safe init    | book name  | creates the book for managing credentials              | book must exist first   |
+| safe use     | book name  | switch books after same shell logins to multiple books | login must have occured |
+| safe logout  | (none)     | deletes session information preventing further usage   | can logout after login  |
 
