@@ -228,27 +228,27 @@ class CLI < Thor
 
 
   # Description of the checkin use case command.
-  desc "checkin", "save changes made to the branch with a checks into master."
+  desc "checkin", "commit (save) the branch changes by putting them into master."
 
   # The <b>checkin use case</b> commits any changes made to the safe book into
   # master. This is straightforward if the master's state has not been forwarded
   # by a ckeckin from another (shell) branch.
   def checkin
-    log.info(x) { "push (save) any changes made to this branch into the master." }
+    log.info(x) { "commit (save) any changes made to this branch into the master." }
     SafeDb::CheckIn.new.flow()
   end
 
 
 
   # Description of the checkout use case command.
-  desc "checkout", "refresh working branch with changes from the master."
+  desc "checkout", "refresh (update) the working branch with changes from the master."
 
   # The <b>checkout use case</b> commits any changes made to the safe book into
   # master. This is straightforward if the master's state has not been forwarded
   # by a ckeckin from another (shell) branch.
-  def checkin
-    log.info(x) { "push (save) any changes made to this branch into the master." }
-    SafeDb::CheckIn.new.flow()
+  def checkout
+    log.info(x) { "refresh (update) the working branch with changes from the master." }
+    SafeDb::CheckOut.new.flow()
   end
 
 

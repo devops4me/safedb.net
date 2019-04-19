@@ -96,7 +96,6 @@ module SafeDb
 
 
 
-
     # Construct a Book object that extends the DataStore data structure
     # which in turns extens the Ruby hash object. The parental objects know
     # how to manipulate (store, delete, read etc the data structures).
@@ -348,9 +347,6 @@ module SafeDb
       chapter_keys = @book[ Indices::SAFE_BOOK_CHAPTER_KEYS ][ chapter_name ]
       new_chapter = Content.unlock_branch_chapter( chapter_keys ) if chapter_exists
       new_chapter = DataStore.new() unless chapter_exists
-
-##########      merged_data = Struct.recursively_merge!( new_chapter, chapter_data )
-##########      Content.lock_chapter( chapter_keys, merged_data.to_json() )
 
       new_chapter.merge_recursively!( chapter_data )
       Content.lock_chapter( chapter_keys, new_chapter.to_json() )

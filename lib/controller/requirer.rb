@@ -87,7 +87,7 @@ module SafeDb
 
       require_relative "../version"
       require_relative "../controller/usecase"
-      require_relative "../controller/auth/access"
+      require_relative "../controller/admin/access"
       require_relative "../controller/edit/editverse"
       require_relative "../controller/query/queryverse"
 

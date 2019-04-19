@@ -8,30 +8,12 @@ module SafeDb
   #
   # == master and branch not in sync
   #
-  # The checkout and checkout use cases will be evolved to provide more options
-  # if the master state is out of sync.
+  # Checkins cannot occur when the master's state has been moved forward by another
+  # branch checkin. In these cases one needs to use the below sequence.
   #
-  # Six options present when the master state is ahead.
-  #
-  # == first checkout and then checkout
-  #
-  # The preferred manner of dealing with an out of sync state is to checkout
-  # first and then to checkout.
-  #
-  # - <tt>safe checkout --merge --branch</tt> | merge down (into branch) and branch wins on duplicates
-  # - <tt>safe checkout --merge --master</tt> | merge down (into branch)  but master wins on duplicates
-  # - <tt>safe checkout --clobber</tt>        | force branch to exactly mimic the master's state
-  #
-  # Once you chosent one of the above you can then <tt>safe checkout</tt> in a safe way.
-  #
-  # == bull in a china shop
-  #
-  # Merging down is more considered (and polite) to team members than merging up.
-  # If you know what you are doing you can merge or clobber up!
-  #
-  # - <tt>safe checkout --merge --branch</tt> | merge up (into master) and branch wins on duplicates
-  # - <tt>safe checkout --merge --master</tt> | merge up (into master) but master wins on duplicates
-  # - <tt>safe checkout --clobber</tt>        | force master to exactly mimic our branch state
+  # - <tt>safe diff --checkout</tt> | diff will list what will the state changes during checkout
+  # - <tt>safe checkout</tt> | the actual merge down (from master to branch) that never deletes keys
+  # - <tt>safe checkin</tt> | now the checkin can proceed as the branch is in line with the master
   #
   # == checkout | merge up mechanics
   #
@@ -54,15 +36,15 @@ module SafeDb
       book = Book.new()
 
       puts ""
-      puts " Book Name  := #{book.book_name()}\n"
-      puts " Book Id    := #{book.book_id()}\n"
-      puts " Checkin At := #{KeyNow.readable()}\n"
-      puts " Branch Id  := #{book.book_id()}\n"
+      puts " == Birth Day := #{book.init_time()}\n"
+      puts " == Book Name := #{book.book_name()} [#{book.book_id}]\n"
+      puts " == Book Mark := #{book.get_open_chapter_name()}/#{book.get_open_verse_name()}\n" if book.is_opened?()
       puts ""
 
       StateMigrate.checkout( book )
+      StateMigrate.copy_commit_id_to_branch( book )
 
-      puts "Check-out from master to branch was successful.\n"
+      puts "Checkout from master to branch was successful.\n"
       puts ""
 
 

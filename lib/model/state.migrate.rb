@@ -177,6 +177,49 @@ module SafeDb
 
 
 
+    # A checkout merges down the master's data into the data of this working branch.
+    # The <tt>commit ID</tt> of the working branch after the checkout is made to be
+    # equivalent with that of the master. This act signifies that a checkin is now 
+    # allowed (as long as another branch doesn't checkin in the meantime).
+    #
+    # @param book [Book] the book whose master data will be merged down into the branch.
+    def self.checkout( book )
+
+      master_data = book.to_master_data()
+      branch_data = book.to_branch_data()
+
+      merged_verse_count = 0
+      data_store = DataStore.from_json( File.read( @import_filepath ) )
+      master_data.each_pair do | chapter_name, chapter_data |
+        book.import_chapter( chapter_name, chapter_data )
+        merged_verse_count += chapter_data.length()
+      end
+
+      book.write()
+
+      puts ""
+      puts "#{master_data.length()} chapters and #{merged_verse_count} verses from master were merged in.\n"
+      puts ""
+
+    end
+
+
+    # Copy the master commit identifier to the branch. This signifies that the branch
+    # is aligned (and ready) to checkin its changes into the master.
+    # @param book [Book] the book whose commit IDs will be manipulated
+    def self.copy_commit_id_to_branch( book )
+
+      master_keys = DataMap.new( Indices::MASTER_INDICES_FILEPATH )
+      master_keys.use( book.book_id() )
+      branch_keys = DataMap.new( FileTree.branch_indices_filepath( book.branch_id() ) )
+      branch_keys.use( book.book_id() )
+
+      master_commit_id = master_keys.get( Indices::COMMIT_IDENTIFIER )
+      branch_keys.set( Indices::COMMIT_IDENTIFIER, master_commit_id )
+
+    end
+
+
     # Set the booup identifier within the parameter key/value map under the
     # globally recognized {Indices::BOOTUP_IDENTIFIER} constant. This method
     # expects the {DataMap} section name to be a significant identifier.
