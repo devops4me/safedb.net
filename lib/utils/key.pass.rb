@@ -100,7 +100,7 @@ module SafeDb
         unless( first_text.eql? second_text )
 
           puts
-          puts "Those two bits of text are not the same (in my book)!"
+          puts "Those two passwords are not the same (in my book)!"
           puts
 
           exit

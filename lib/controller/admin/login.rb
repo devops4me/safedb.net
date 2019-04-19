@@ -15,6 +15,14 @@ module SafeDb
   # - you can call it with a --with=password switch
   # - a space before the command prevents it being logged in .bash_history
   # - you can deliver the password in multiple ways
+
+      # - an environment variable
+      # - the system clipboard (cleared after reading)
+      # - a file whose path is a command parameter
+      # - a file in a pre-agreed location
+      # - a file in the present directory (with a pre-agreed name)
+      # - a URL from a parameter or pre-agreed
+      # - the shell's secure password reader
   class Login < AccessUc
 
     def execute
