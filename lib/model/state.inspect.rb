@@ -8,79 +8,58 @@ module SafeDb
   class StateInspect
 
 
-=begin
+    # A checkout is effectively an incoming merge of the master's data
+    # structure into the working branch. With checkouts nothing ever gets
+    # deleted.
+    #
+    # No delete is self-evident in this list of only <tt>4 prophetic</tt>
+    # outcomes
+    #
+    # - this chapter will be added
+    # - this verse will be added
+    # - this line will be added
+    # - this branch's line value will be overwritten with the value from master
+    #
+    # Examine the sister method {checkin_diff} that prophesizes on the
+    # state changes a checkin will invoke.
+    #
+    # @param master_data [Hash] data structure from the master line of the book
+    # @param branch_data [Hash] data structure from the current working branch
+    def self.checkout_prophecies( master_data, branch_data )
 
----
---- safe diff --checkin
---- outgoing from branch into master
----
-
----
---- safe diff --checkout
---- incoming from master into branch
----
- + Line to be added ->
- + Chapter 2b added ->
- + Verse 2 be added ->
- / Line will change ->
-
- - Line to be removed ->
- - Chapter 2b removed ->
- - Verse 2 be removed ->
-
-=end
-
-    def self.to_checkout_diff_report( book )
-
-      master_data = book.to_master_data()
-      branch_data = book.to_branch_data()
-
-
-      master_data.each_pair do | chapter_name, master_verse_data |
-        
-        has_chapter = branch_data.has_key?( chapter_name )
-        puts "Chapter [ #{chapter_name} ] will be added to branch." unless has_chapter
-        if( has_chapter )
-          
-          branch_verse_data = branch_data[ chapter_name ]
-          master_verse_data.each_pair do | verse_name, master_line_data |
-
-            has_verse = branch_verse_data.has_key?( verse_name )
-            puts "Verse [ #{chapter_name}/#{verse_name} ] will be added to branch." unless has_verse
-            if( has_verse )
-
-              branch_line_data = branch_verse_data[ verse_name ]
-              master_line_data.each_pair do | line_name, master_line_value |
-
-                has_line = branch_line_data.has_key?( line_name )
-                puts "Line [ #{chapter_name}/#{verse_name}/#{line_name} ] will be added to branch." unless has_line
-                if( has_line )
-
-                  branch_line_value = branch_line_data[ line_name ]
-                  lines_equal = master_line_value == branch_line_value
-                  puts "Line [ #{chapter_name}/#{verse_name}/#{line_name} ] will be changed." unless lines_equal
-
-                end
-
-              end
-
-            end
-
-          end
-
-        end
-
-
-      end
-
-      puts JSON.pretty_generate( master_data )
-      puts "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-      puts JSON.pretty_generate( branch_data )
-
+      puts " = safe diff --checkout"
+      puts " = incoming from master to working branch"
       puts ""
-      puts "The master has #{master_data.length()} chapters and #{book.get_master_verse_count()} verses.\n"
-      puts "The branch has #{branch_data.length()} chapters and #{book.get_branch_verse_count()} verses.\n"
+
+      data_differences( master_data, branch_data )
+
+    end
+
+
+    # A checkout merges whilst a checkin is effectively a hard copy that destroys
+    # whatever is on the master making it exactly reflect the branch's current state.
+    #
+    # The three addition state changes prophesized by a checkout can also occur on
+    # checkins. However checkins can also prophesize that
+    #
+    # - this master's line value will be overwritten with the branch's value
+    # - this chapter will be removed
+    # - this verse will be removed
+    # - this line will be removed
+    #
+    # Examine the sister method {checkin_diff} that prophesizes on the
+    # state changes a checkin will invoke.
+    #
+    # @param master_data [Hash] data structure from the master line of the book
+    # @param branch_data [Hash] data structure from the current working branch
+    def self.checkin_prophecies( master_data, branch_data )
+
+      puts " = safe diff --checkin"
+      puts " = outgoing from working branch to master"
       puts ""
+
+      data_differences( branch_data, master_data )
+      drop_differences( master_data, branch_data )
 
     end
 
@@ -138,6 +117,101 @@ module SafeDb
       new_bootup_id = MachineId.get_bootup_id()
       return old_bootup_id != new_bootup_id
 
+    end
+
+
+    private
+
+
+    def self.data_differences( this_data, that_data )
+
+      this_data.each_pair do | chapter_name, master_verse_data |
+        
+        has_chapter = that_data.has_key?( chapter_name )
+        print_chapter_2b_added( chapter_name ) unless has_chapter
+        next unless has_chapter
+          
+        branch_verse_data = that_data[ chapter_name ]
+        master_verse_data.each_pair do | verse_name, master_line_data |
+
+          has_verse = branch_verse_data.has_key?( verse_name )
+          print_verse_2_be_added( "#{chapter_name}/#{verse_name}" ) unless has_verse
+          next unless has_verse
+
+          branch_line_data = branch_verse_data[ verse_name ]
+          master_line_data.each_pair do | line_name, master_line_value |
+
+            has_line = branch_line_data.has_key?( line_name )
+            print_line_to_be_added( "#{chapter_name}/#{verse_name}/#{line_name}" ) unless has_line
+            next unless has_line
+
+            branch_line_value = branch_line_data[ line_name ]
+            lines_equal = master_line_value == branch_line_value
+            print_line_will_change( "#{chapter_name}/#{verse_name}/#{line_name}" ) unless lines_equal
+
+          end
+
+        end
+
+      end
+
+    end
+
+    def self.drop_differences( this_data, that_data )
+
+      this_data.each_pair do | chapter_name, master_verse_data |
+        
+        has_chapter = that_data.has_key?( chapter_name )
+        print_chapter_2b_removed( chapter_name ) unless has_chapter
+        next unless has_chapter
+          
+        branch_verse_data = that_data[ chapter_name ]
+        master_verse_data.each_pair do | verse_name, master_line_data |
+
+          has_verse = branch_verse_data.has_key?( verse_name )
+          print_verse_2_be_removed( "#{chapter_name}/#{verse_name}" ) unless has_verse
+          next unless has_verse
+
+          branch_line_data = branch_verse_data[ verse_name ]
+          master_line_data.each_pair do | line_name, master_line_value |
+
+            has_line = branch_line_data.has_key?( line_name )
+            print_line_to_be_removed( "#{chapter_name}/#{verse_name}/#{line_name}" ) unless has_line
+
+          end
+
+        end
+
+      end
+
+    end
+
+    def self.print_chapter_2b_added( fq_chap_name )
+      puts " + Chapter 2b added -> #{fq_chap_name}"
+    end
+
+    def self.print_verse_2_be_added( fq_vers_name )
+      puts " + Verse 2 be added -> #{fq_vers_name}"
+    end
+
+    def self.print_line_to_be_added( fq_line_name )
+      puts " + Line to be added -> #{fq_line_name}"
+    end
+
+    def self.print_line_will_change( fq_line_name )
+      puts " + Line will change -> #{fq_line_name}"
+    end
+
+    def self.print_chapter_2b_removed( fq_chap_name )
+      puts " - Chapter 2b removed -> #{fq_chap_name}"
+    end
+
+    def self.print_verse_2_be_removed( fq_vers_name )
+      puts " - Verse 2 be removed -> #{fq_vers_name}"
+    end
+
+    def self.print_line_to_be_removed( fq_line_name )
+      puts " - Line to be removed -> #{fq_line_name}"
     end
 
 

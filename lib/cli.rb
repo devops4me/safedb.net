@@ -197,8 +197,20 @@ class CLI < Thor
 
 
 
-  # Description of the diff use case command.
-  desc "diff", "list differences between the working branch and the master."
+  # Description of the diff use case command from the point of view
+  # of either a checkout from master to branch, a checkin from branch
+  # to master or a diff listing prophesying about both.
+  desc "diff", "master and branch diff with --checkin (-i), --checkout (-o) or both."
+
+  # A checkin is basically a copy-overwrite operation which does not finesse
+  # like the merging checkout does. The diff report illustrates that the master
+  # will essentially reflect the working branch's current state.
+  method_option :checkin, :type => :boolean, :aliases => "-i"
+
+  # A checkout is effectively an incoming merge of the master's data
+  # structure into the working branch. With checkouts nothing ever gets
+  # deleted.
+  method_option :checkout, :type => :boolean, :aliases => "-o"
 
   # The <b>diff use case</b> spells out the key differences between the safe book
   # on the master line the one on the current working branch.
@@ -206,8 +218,11 @@ class CLI < Thor
   # By default when conflicts occur, priority is given to the current working branch.
   # No parameters are required to perform a diff.
   def diff
-    log.info(x) { "spell out the differences between books in the master and working branch." }
-    SafeDb::Diff.new.flow()
+    log.info(x) { "prophesy list of checkout and/or checkin actions. CLI options are #{options.to_s()}" }
+    diff_uc = SafeDb::Diff.new()
+    diff_uc.checkin = true if options[ :checkin ]
+    diff_uc.checkout = true if options[ :checkout ]
+    diff_uc.flow()
   end
 
 
