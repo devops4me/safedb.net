@@ -240,6 +240,19 @@ class CLI < Thor
 
 
 
+  # Description of the checkout use case command.
+  desc "checkout", "refresh working branch with changes from the master."
+
+  # The <b>checkout use case</b> commits any changes made to the safe book into
+  # master. This is straightforward if the master's state has not been forwarded
+  # by a ckeckin from another (shell) branch.
+  def checkin
+    log.info(x) { "push (save) any changes made to this branch into the master." }
+    SafeDb::CheckIn.new.flow()
+  end
+
+
+
   # Description of the export use case command.
   desc "export", "exports the book or chapter or the mini dictionary at verse."
 

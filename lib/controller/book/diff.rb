@@ -35,7 +35,6 @@ module SafeDb
   #
   class Diff < UseCase
 
-
     # The checkin and checkout boolean flags that signal which way round to do the diff
     attr_writer :checkin, :checkout
 
