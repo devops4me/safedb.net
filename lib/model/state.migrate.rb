@@ -63,10 +63,6 @@ module SafeDb
       plain_content = Content.unlock_master( the_crypt_key, book_keys )
 
       first_login_since_boot = StateInspect.is_first_login?( book_keys )
-
-      puts "Apparently this IS the first login since boot" if first_login_since_boot
-      puts "We are told this IS NOT the first login since boot" unless first_login_since_boot
-
       the_crypt_key = Key.from_random if first_login_since_boot
       recycle_keys( the_crypt_key, the_book_id, secret, book_keys, plain_content )
       set_bootup_id( book_keys ) if first_login_since_boot
@@ -189,7 +185,6 @@ module SafeDb
       branch_data = book.to_branch_data()
 
       merged_verse_count = 0
-      data_store = DataStore.from_json( File.read( @import_filepath ) )
       master_data.each_pair do | chapter_name, chapter_data |
         book.import_chapter( chapter_name, chapter_data )
         merged_verse_count += chapter_data.length()
