@@ -54,7 +54,7 @@ safedb is automatically released by Jenkins using a GitOps style pipeline define
 - quality numbers passed by the Reek code quality analyzer
 - available rubygems.org credentials in ~/.gem/credentials
 
-## release safedb to RubyGems.org
+## Release to RubyGems.org
 
 Once only use **`gem push`** at the repository root to create a **rubygems API key** and slurp it up from the **`~/.gem/credentials`** with **`safe file rubygems.org.credentials ~/.gem/credentials`**
 Now when releasing we eject the file back into **`~/.gem/credentials`**, secure it ( with **`sudo chmod 0600 credentials`** ) and then issue the below command from the **gem-release** gem.
@@ -63,26 +63,26 @@ Now when releasing we eject the file back into **`~/.gem/credentials`**, secure 
 
 The gem bump (and release) command bumps up the patch (or major or minor) version, tags the repository, pushes the changes and releases to rubygems.org
 
+## Common Development Commands
 
+These commands will be used frequently while developing the safe.
 
-## safedb development environment commands
+- `rake install`
+- `cucumber`
+- `git checkout -b feature.verb-noun`
+- `git add; git commit;`
+- `git cherry -v origin`
+- `git cherry -v origin feature.verb-noun`
+- `git push -u origin feature.verb-noun`
+- `git pull origin master`
+- `git pull origin feature.verb-noun`
 
-### `rake install`
-### `cucumber`
-### `git checkout -b feature.commit-branch`
-### `git add; git commit;`
-### `git cherry -v origin`
-### `git cherry -v origin feature.commit-branch`
-### `git push -u origin feature.commit-branch`
-### `git pull origin master`
-### `git pull origin feature.commit-branch`
+When ready to merge the feature development branch into master these commands will be used.
 
-## common git feature merge commands
-
-### `git checkout master`
-### `git pull origin master`
-### `git merge feature.commit-branch`
-### `git push -u origin master`
+- `git checkout master`
+- `git pull origin master`
+- `git merge feature.verb-noun`
+- `git push origin master`
 
 
 ## Branch Naming Convention
@@ -95,9 +95,9 @@ Branch names begin with either
 
 Branch names are then typically a **verb-noun concatenation** like
 
-- feature.safe-inport-export
-- refactor.book-id-create-algorithm
-- refactor.validate-book-names
+- feature.copy-paste
+- bug.login-error
+- refactor.cucumber-features
 
 ## how to git push to safedb.net
 
