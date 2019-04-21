@@ -503,41 +503,81 @@ Again you can configure 1 to 32 which guarantees that the generated password seq
 
 There are 62 alpha-numerics which is the starting point and smallest source pool of usable choosable characters for a printable character sequence.
 
+
+## Password Strength vs Password Length
+
+Strength indicates the number of possible printable characters to choose from whilst median length indicates the approximate size of the generated secret. Both strengths and lengths run from 1 to 32. The defaults are
+
+- a weighted strength of 12 (a bucket of 70 characters)
+- a weighted length of 12 (a median length of 22 characters)
+
+## Including and Excluding Characters
+
+The stated strength indicates the characters that can appear in the password. This can be configured to
+
+- <tt>exclude</tt> characters inside of the stated strength
+- <tt>include</tt> characters outside of the stated strength
+
+```
+safe secret               # generate with default strength and length
+safe secret --length=4    # generate secret between 10 and 16 characters
+safe secret --strength=6  # include alpha-numerics, underscore, period and hyphens
+```
+
+To adjust the secret's character bucket we can include and exclude characters.
+
+```
+safe secret --length 16 --strength 12 --include ampersand,dollar --exclude hat,period
+safe secret -l=16 -s=12 -i=ampersand,dollar -e=hat,period
+```
+
+## Config Levels Reminder
+
+If you open a verse and then use set to add configuraion, the config scope will cover just that verse. You can move to chapter and/or to book level.
+
+Configuration can be
+
+- command scoped (in command options)
+- session scoped (in session indices or environment variables)
+- book, chapter or verse scoped ( in book indices)
+- database scoped (within master indices)
+
+
         - ---------------------- | -------------------- - --------- -
-        | Password Makeup Weight |  #   | Char Name     | Character |
+        | Password Strength      |  #   | Char Name     | Character |
         | ---------------------- | -----| ------------- | --------- |
-        |         1              |  62  | alpha-nums    | A-Za-z0-9 |
+        |         1              |  26  | lowercase     |  a-z      |
+        |         1              |  36  | digits        |  0-9      |
+        |         1              |  62  | uppercase     |  A-Z      |
         |         2              |  63  | underscore    |   _       |
         |         3              |  64  | period        |   .       |
         |         4              |  65  | hyphen        |   -       |
-        |         5              |  66  | at symbol     |   @       |
+        |         5              |  66  | at            |   @       |
         |         6              |  67  | squiggle      |   ~       |
-        |         7              |  68  | hyphen        |   -       |
-        |         8              |  69  | plus sign     |   +       |
-        |         9              |  70  | percent       |   %       |
-        |         10             |  71  | equals        |   =       |
-        |         11             |  72  | SPACE         |           |
-        |         12             |  73  | fwd slash     |   /       |
-        |         13             |  74  | hat symbol    |   ^       |
-        |         14             |  75  | soft open     |   (       |
-        |         15             |  76  | soft close    |   )       |
-        |         16             |  77  | square open   |   [       |
-        |         17             |  78  | square close  |   ]       |
-        |         18             |  79  | curly open    |   {       |
-        |         19             |  80  | curly close   |   }       |
-        |         20             |  81  | angle open    |   <       |
-        |         21             |  82  | angle close   |   >       |
-        |         22             |  83  | pipe symbol   |   |       |
-        |         23             |  84  | hash symbol   |   #       |
-        |         24             |  85  | question mark |   ?       |
-        |         25             |  86  | colon         |   :       |
-        |         26             |  87  | semi-colon    |   ;       |
-        |         27             |  88  | comma         |   ,       |
-        |         28             |  89  | asterix       |   *       |
-        |         29             |  90  | ampersand     |   &       |
-        |         30             |  91  | exclamation   |   !       |
-        |         31             |  92  | dollar sign   |   $       |
-        |         32             |  93  | back tick     |   `       |
+        |         7              |  68  | plus          |   +       |
+        |         26             |  87  | comma         |   ,       |
+        |         24             |  85  | colon         |   :       |
+        |         25             |  86  | semicolon     |   ;       |
+        |         8              |  69  | percent       |   %       |
+        |         9              |  70  | equals        |   =       |
+        |         13             |  74  | hat           |   ^       |
+        |         10             |  71  | pipe          |   |       |
+        |         12             |  73  | fwdslash      |   /       |
+        |         14             |  75  | softopen      |   (       |
+        |         15             |  76  | softclose     |   )       |
+        |         16             |  77  | squareopen    |   [       |
+        |         17             |  78  | squareclose   |   ]       |
+        |         18             |  79  | curlyopen     |   {       |
+        |         19             |  80  | curlyclose    |   }       |
+        |         20             |  81  | angleopen     |   <       |
+        |         21             |  82  | angleclose    |   >       |
+        |         22             |  83  | hash          |   #       |
+        |         23             |  84  | question      |   ?       |
+        |         27             |  88  | asterix       |   *       |
+        |         28             |  89  | ampersand     |   &       |
+        |         29             |  90  | exclamation   |   !       |
+        |         30             |  91  | dollar        |   $       |
+        |         31             |  92  | backtick      |   `       |
         | ---------------------- | -----| ------------- | --------- |
 
 Use the full set of **93 printable characters** when protecting high value assets like databases.
