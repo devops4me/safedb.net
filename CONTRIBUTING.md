@@ -99,11 +99,11 @@ Branch names are then typically a **verb-noun concatenation** like
 - bug.login-error
 - refactor.cucumber-features
 
-## how to git push to safedb.net
+## git push to github.com/devops4me/safedb.net
 
 Those with priveleges to release to safedb.net will have a private key to push pull requests into the repository.
 
-This is how to setup the **ssh config** and **pem private key**.
+Described here is setting up the **ssh config**, the **pem private key**, then cloning the repository with https, creating a branch, merging and finally pusing using **git ssh**.
 
 ```
 safe login safe.ecosystem
@@ -114,9 +114,21 @@ safe eject safedb.code.private.key
 chmod 600 safedb.code.private.key
 cd <<repositories-folder>>
 ssh -i ~/.ssh/safedb.code.private.key.pem -vT git@safedb.code
-git clone git@safedb.code:devops4me/safedb.net.git mirror.safedb.code
+git clone https://github.com/devops4me/safedb.net safedb.net
+git remote set-url --push origin git@safedb.code:devops4me/safedb.net.git
 ```
 
 If a config file already exists then safe will back it up with a timestamp prefix before clobbering the file. Now bump up the major, minor or patch versions, then commit.
 
+## Continuous Integration using Jenkins 2.0 Docker Pipeline
 
+safedb.net has Dockerfiles through which the Cucumber/Aruba BDD (behaviour driven development) tests are run within
+
+- **Ubuntu 16.04 and 18.04**
+- Raspbian
+- **RedHat Enterprise Linux (RHEL)**
+- CoreOS containers
+
+### CI/CD Pipeline from Git to RubyGems.org
+
+The Jenkinsfile template used is in the RubyGem category so succesful builds, quality inspection and tests result in a new version of the software being released to RubyGems.org
