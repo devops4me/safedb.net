@@ -109,13 +109,19 @@ class CLI < Thor
   # inaccessible or the call originates from non-interactive software.
   option :password, :aliases => '-p'
 
+  # The <tt>--clip</tt> option says the password is to be read from the
+  # clipboard. Usually one needs to just highlight the text without
+  # actually copying it with the mouse or Ctrl-c
+  method_option :clip, :type => :boolean, :aliases => "-c"
+
   # Login in order to securely interact with your safe credentials.
   # @param book_name [String] the name of the credentials book to login to
   def login( book_name = nil )
-    log.info(x) { "login to the safe credentials book called [#{book_name}]." }
+    log.info(x) { "login attempt to the safe book called [#{book_name}]." }
     login_uc = SafeDb::Login.new
     login_uc.book_name = book_name unless book_name.nil?
     login_uc.password = options[ :password ] if options[ :password ]
+    login_uc.clip = true if options[ :clip ]
     login_uc.flow()
   end
 

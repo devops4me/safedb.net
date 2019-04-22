@@ -14,7 +14,7 @@ module SafeDb
   # ubiquitous safe open command.
   #
   #     safe open <<chapter>> <<verse>>
-  class Terraform < UseCase
+  class Terraform < QueryVerse
 
     attr_writer :command
 
@@ -22,34 +22,7 @@ module SafeDb
     # and convert for consumption into module input variables.
     TERRAFORM_EVAR_PREFIX = "TF_VAR_"
 
-    def execute
-
-      return unless ops_key_exists?
-      master_db = get_master_database()
-      return if unopened_envelope?( master_db )
-
-      # Get the open chapter identifier (id).
-      # Decide whether chapter already exists.
-      # Then get (or instantiate) the chapter's hash data structure
-      chapter_id = ENVELOPE_KEY_PREFIX + master_db[ ENV_PATH ]
-      verse_id = master_db[ KEY_PATH ]
-      chapter_exists = KeyApi.db_envelope_exists?( master_db[ chapter_id ] )
-
-
-      # -- @todo begin
-      # -- Throw an exception (error) if the chapter
-      # -- either exists and is empty or does not exist.
-      # -- @todo end
-
-
-      # Unlock the chapter data structure by supplying
-      # key/value mini-dictionary breadcrumbs sitting
-      # within the master database at the section labelled
-      # envelope@<<actual_chapter_id>>.
-      chapter_data = DataStore.from_json( Lock.content_unlock( master_db[ chapter_id ] ) )
-
-      # Now read the three AWS IAM credentials @access.key, @secret.key and region.key
-      # into the 3 environment variables terraform expects to find.
+    def query_verse()
 
       # ############## | ############################################################
       # @todo refactor | ############################################################
@@ -82,12 +55,11 @@ module SafeDb
       puts "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
       puts ""
 
-      ENV[ "AWS_ACCESS_KEY_ID"     ] = chapter_data[ verse_id ][ "@access.key" ]
-      ENV[ "AWS_SECRET_ACCESS_KEY" ] = chapter_data[ verse_id ][ "@secret.key" ]
-      ENV[ "AWS_DEFAULT_REGION"    ] = chapter_data[ verse_id ][ "region.key"  ]
+      ENV[ "AWS_ACCESS_KEY_ID"     ] = @verse[ "@access.key" ]
+      ENV[ "AWS_SECRET_ACCESS_KEY" ] = @verse[ "@secret.key" ]
+      ENV[ "AWS_DEFAULT_REGION"    ] = @verse[ "region.key"  ]
 
-      mini_dictionary = chapter_data[ verse_id ]
-      mini_dictionary.each do | key_str, value_object |
+      @verse.each do | key_str, value_object |
 
         is_env_var = key_str.start_with?( ENV_VAR_PREFIX_A ) || key_str.start_with?( ENV_VAR_PREFIX_B )
         next unless is_env_var
@@ -97,6 +69,7 @@ module SafeDb
         env_var_keyname = TERRAFORM_EVAR_PREFIX + env_var_name
         ENV[ env_var_keyname ] = value_object
         puts "Environment variable #{env_var_keyname} has been set."
+        log.info(x) { "Setting terraform environment variable => #{env_var_keyname}" }
 
       end
 
