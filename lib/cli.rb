@@ -211,12 +211,12 @@ class CLI < Thor
   # A commit is basically a copy-overwrite operation which does not finesse
   # like the merging refresh does. The diff report illustrates that the master
   # will essentially reflect the working branch's current state.
-  method_option :commit, :type => :boolean, :aliases => "-i"
+  method_option :commit, :type => :boolean, :aliases => "-c"
 
   # A refresh is effectively an incoming merge of the master's data
   # structure into the working branch. With refreshs nothing ever gets
   # deleted.
-  method_option :refresh, :type => :boolean, :aliases => "-o"
+  method_option :refresh, :type => :boolean, :aliases => "-r"
 
   # The <b>diff use case</b> spells out the key differences between the safe book
   # on the master line the one on the current working branch.

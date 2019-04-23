@@ -16,14 +16,19 @@ module SafeDb
   # - a space before the command prevents it being logged in .bash_history
   # - you can deliver the password in multiple ways
 
-      # - an environment variable
-      # - the system clipboard (cleared after reading)
-      # - a file whose path is a command parameter
-      # - a file in a pre-agreed location
-      # - a file in the present directory (with a pre-agreed name)
-      # - a URL from a parameter or pre-agreed
-      # - the shell's secure password reader
+  # - an environment variable
+  # - the system clipboard (cleared after reading)
+  # - a file whose path is a command parameter
+  # - a file in a pre-agreed location
+  # - a file in the present directory (with a pre-agreed name)
+  # - a URL from a parameter or pre-agreed
+  # - the shell's secure password reader
   class Login < AccessUc
+
+    # If the clip switch is present it signifies that the password should
+    # be read in from the clipboard. Any text selection puts text into the
+    # the clipboard - no need specifically to use Ctrl-c (copy).
+    attr_writer :clip
 
     def execute
 
@@ -44,8 +49,9 @@ module SafeDb
 
 # @todo => search for password in environment variable
 
-      book_password = KeyPass.password_from_shell( false ) if @password.nil?
-      book_password = @password unless @password.nil?
+      book_password = Clipboard.read_password() if @clip
+      book_password = KeyPass.password_from_shell( false ) if( @password.nil?() && @clip.nil?() )
+      book_password = @password unless @password.nil?()
 
 # @todo => if password is correct - if not print out an error.
 
