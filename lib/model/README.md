@@ -7,8 +7,8 @@ The need to cycle content occurs during
 
 - <tt>initialization</tt> - a new master state box is created
 - <tt>login</tt> - branch state is created that mirrors master
-- <tt>checkin</tt> - transfers state from branch to master
-- <tt>checkout</tt> - transfers state from master to branch
+- <tt>commit</tt> - transfers state from branch to master
+- <tt>refresh</tt> - transfers state from master to branch
 
 
 ## State Elements Transition Table

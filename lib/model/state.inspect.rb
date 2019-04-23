@@ -8,8 +8,8 @@ module SafeDb
   class StateInspect
 
 
-    # A checkout is effectively an incoming merge of the master's data
-    # structure into the working branch. With checkouts nothing ever gets
+    # A refresh is effectively an incoming merge of the master's data
+    # structure into the working branch. With refreshs nothing ever gets
     # deleted.
     #
     # No delete is self-evident in this list of only <tt>4 prophetic</tt>
@@ -20,14 +20,14 @@ module SafeDb
     # - this line will be added
     # - this branch's line value will be overwritten with the value from master
     #
-    # Examine the sister method {checkin_diff} that prophesizes on the
-    # state changes a checkin will invoke.
+    # Examine the sister method {commit_diff} that prophesizes on the
+    # state changes a commit will invoke.
     #
     # @param master_data [Hash] data structure from the master line of the book
     # @param branch_data [Hash] data structure from the current working branch
-    def self.checkout_prophecies( master_data, branch_data )
+    def self.refresh_prophecies( master_data, branch_data )
 
-      puts " = safe diff --checkout"
+      puts " = safe diff --refresh"
       puts " = incoming from master to working branch"
       puts ""
 
@@ -36,25 +36,25 @@ module SafeDb
     end
 
 
-    # A checkout merges whilst a checkin is effectively a hard copy that destroys
+    # A refresh merges whilst a commit is effectively a hard copy that destroys
     # whatever is on the master making it exactly reflect the branch's current state.
     #
-    # The three addition state changes prophesized by a checkout can also occur on
-    # checkins. However checkins can also prophesize that
+    # The three addition state changes prophesized by a refresh can also occur on
+    # commits. However commits can also prophesize that
     #
     # - this master's line value will be overwritten with the branch's value
     # - this chapter will be removed
     # - this verse will be removed
     # - this line will be removed
     #
-    # Examine the sister method {checkin_diff} that prophesizes on the
-    # state changes a checkin will invoke.
+    # Examine the sister method {commit_diff} that prophesizes on the
+    # state changes a commit will invoke.
     #
     # @param master_data [Hash] data structure from the master line of the book
     # @param branch_data [Hash] data structure from the current working branch
-    def self.checkin_prophecies( master_data, branch_data )
+    def self.commit_prophecies( master_data, branch_data )
 
-      puts " = safe diff --checkin"
+      puts " = safe diff --commit"
       puts " = outgoing from working branch to master"
       puts ""
 

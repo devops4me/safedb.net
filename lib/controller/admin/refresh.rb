@@ -2,22 +2,22 @@
 	
 module SafeDb
 
-  # The <b>checkout use case</b> commits any changes made to the safe book into
+  # The <b>refresh use case</b> commits any changes made to the safe book into
   # master. This is straightforward if the master's state has not been forwarded
   # by a ckeckin from another (shell) branch.
   #
   # == master and branch not in sync
   #
-  # Checkins cannot occur when the master's state has been moved forward by another
-  # branch checkin. In these cases one needs to use the below sequence.
+  # Commits cannot occur when the master's state has been moved forward by another
+  # branch commit. In these cases one needs to use the below sequence.
   #
-  # - <tt>safe diff --checkout</tt> | diff will list what will the state changes during checkout
-  # - <tt>safe checkout</tt> | the actual merge down (from master to branch) that never deletes keys
-  # - <tt>safe checkin</tt> | now the checkin can proceed as the branch is in line with the master
+  # - <tt>safe diff --refresh</tt> | diff will list what will the state changes during refresh
+  # - <tt>safe refresh</tt> | the actual merge down (from master to branch) that never deletes keys
+  # - <tt>safe commit</tt> | now the commit can proceed as the branch is in line with the master
   #
-  # == checkout | merge up mechanics
+  # == refresh | merge up mechanics
   #
-  # The mechanics of a simple in-sync checkout is to
+  # The mechanics of a simple in-sync refresh is to
   #
   # - sync the master crypts to exactly mimic the branch crypts
   # - tell master the content id of the book index file
@@ -25,10 +25,10 @@ module SafeDb
   # - create a new commit ID and set it on both master and branch
   # - set the master's last updated date and time
   #
-  class CheckOut < UseCase
+  class Refresh < UseCase
 
 
-    # The <b>checkout use case</b> commits any changes made to the safe book into
+    # The <b>refresh use case</b> commits any changes made to the safe book into
     # master. This is straightforward if the master's state has not been forwarded
     # by a ckeckin from another (shell) branch.
     def execute
@@ -41,10 +41,10 @@ module SafeDb
       puts " == Book Mark := #{book.get_open_chapter_name()}/#{book.get_open_verse_name()}\n" if book.is_opened?()
       puts ""
 
-      StateMigrate.checkout( book )
+      StateMigrate.refresh( book )
       StateMigrate.copy_commit_id_to_branch( book )
 
-      puts "Checkout from master to branch was successful.\n"
+      puts "Refresh from master to branch was successful.\n"
       puts ""
 
 

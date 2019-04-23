@@ -4,12 +4,12 @@ module SafeDb
 
   # The <b>diff use case</b> spells out the key differences between the safe book
   # on the master line the one on the current working branch. There are two types
-  # of diff - a checkout diff or a checkin diff.
+  # of diff - a refresh diff or a commit diff.
   #
-  # == a checkout diff
+  # == a refresh diff
   #
-  # A checkout is effectively an incoming merge of the master's data
-  # structure into the working branch. With checkouts nothing ever gets
+  # A refresh is effectively an incoming merge of the master's data
+  # structure into the working branch. With refreshs nothing ever gets
   # deleted.
   #
   # No delete is self-evident in this list of only <tt>4 prophetic</tt>
@@ -20,13 +20,13 @@ module SafeDb
   # - this line will be added
   # - this branch's line value will be overwritten with the value from master
   #
-  # == a checkin diff
+  # == a commit diff
   #
-  # A checkout merges whilst a checkin is effectively a hard copy that destroys
+  # A refresh merges whilst a commit is effectively a hard copy that destroys
   # whatever is on the master making it exactly reflect the branch's current state.
   #
-  # The three addition state changes prophesized by a checkout can also occur on
-  # checkins. However checkins can also prophesize that
+  # The three addition state changes prophesized by a refresh can also occur on
+  # commits. However commits can also prophesize that
   #
   # - this master's line value will be overwritten with the branch's value
   # - this chapter will be removed
@@ -35,8 +35,8 @@ module SafeDb
   #
   class Diff < UseCase
 
-    # The checkin and checkout boolean flags that signal which way round to do the diff
-    attr_writer :checkin, :checkout
+    # The commit and refresh boolean flags that signal which way round to do the diff
+    attr_writer :commit, :refresh
 
     # The <b>diff use case</b> compares the database state of the branch with
     # that of the master and displays the results without masking sensitive
@@ -45,9 +45,9 @@ module SafeDb
 
       book = Book.new()
 
-      print_both = @checkin.nil?() && @checkout.nil?()
-      print_checkin = !@checkin.nil?() || print_both
-      print_checkout = !@checkout.nil?() || print_both
+      print_both = @commit.nil?() && @refresh.nil?()
+      print_commit = !@commit.nil?() || print_both
+      print_refresh = !@refresh.nil?() || print_both
 
       puts ""
       puts " == Birth Day := #{book.init_time()}\n"
@@ -58,8 +58,8 @@ module SafeDb
       master_data = book.to_master_data()
       branch_data = book.to_branch_data()
 
-      StateInspect.checkout_prophecies( master_data, branch_data ) if print_checkout
-      StateInspect.checkin_prophecies( master_data, branch_data ) if print_checkin
+      StateInspect.refresh_prophecies( master_data, branch_data ) if print_refresh
+      StateInspect.commit_prophecies( master_data, branch_data ) if print_commit
 
       puts ""
       puts "   master has #{master_data.length()} chapters, and #{book.get_master_verse_count()} verses.\n"

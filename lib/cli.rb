@@ -204,19 +204,19 @@ class CLI < Thor
 
 
   # Description of the diff use case command from the point of view
-  # of either a checkout from master to branch, a checkin from branch
+  # of either a refresh from master to branch, a commit from branch
   # to master or a diff listing prophesying about both.
-  desc "diff", "master and branch diff with --checkin (-i), --checkout (-o) or both."
+  desc "diff", "master and branch diff with --commit (-i), --refresh (-o) or both."
 
-  # A checkin is basically a copy-overwrite operation which does not finesse
-  # like the merging checkout does. The diff report illustrates that the master
+  # A commit is basically a copy-overwrite operation which does not finesse
+  # like the merging refresh does. The diff report illustrates that the master
   # will essentially reflect the working branch's current state.
-  method_option :checkin, :type => :boolean, :aliases => "-i"
+  method_option :commit, :type => :boolean, :aliases => "-i"
 
-  # A checkout is effectively an incoming merge of the master's data
-  # structure into the working branch. With checkouts nothing ever gets
+  # A refresh is effectively an incoming merge of the master's data
+  # structure into the working branch. With refreshs nothing ever gets
   # deleted.
-  method_option :checkout, :type => :boolean, :aliases => "-o"
+  method_option :refresh, :type => :boolean, :aliases => "-o"
 
   # The <b>diff use case</b> spells out the key differences between the safe book
   # on the master line the one on the current working branch.
@@ -224,37 +224,37 @@ class CLI < Thor
   # By default when conflicts occur, priority is given to the current working branch.
   # No parameters are required to perform a diff.
   def diff
-    log.info(x) { "prophesy list of checkout and/or checkin actions. CLI options are #{options.to_s()}" }
+    log.info(x) { "prophesy list of refresh and/or commit actions. CLI options are #{options.to_s()}" }
     diff_uc = SafeDb::Diff.new()
-    diff_uc.checkin = true if options[ :checkin ]
-    diff_uc.checkout = true if options[ :checkout ]
+    diff_uc.commit = true if options[ :commit ]
+    diff_uc.refresh = true if options[ :refresh ]
     diff_uc.flow()
   end
 
 
 
-  # Description of the checkin use case command.
-  desc "checkin", "commit (save) the branch changes by putting them into master."
+  # Description of the commit use case command.
+  desc "commit", "commit (save) the branch changes by putting them into master."
 
-  # The <b>checkin use case</b> commits any changes made to the safe book into
+  # The <b>commit use case</b> commits any changes made to the safe book into
   # master. This is straightforward if the master's state has not been forwarded
   # by a ckeckin from another (shell) branch.
-  def checkin
+  def commit
     log.info(x) { "commit (save) any changes made to this branch into the master." }
-    SafeDb::CheckIn.new.flow()
+    SafeDb::Commit.new.flow()
   end
 
 
 
-  # Description of the checkout use case command.
-  desc "checkout", "refresh (update) the working branch with changes from the master."
+  # Description of the refresh use case command.
+  desc "refresh", "refresh (update) the working branch with changes from the master."
 
-  # The <b>checkout use case</b> commits any changes made to the safe book into
+  # The <b>refresh use case</b> commits any changes made to the safe book into
   # master. This is straightforward if the master's state has not been forwarded
   # by a ckeckin from another (shell) branch.
-  def checkout
+  def refresh
     log.info(x) { "refresh (update) the working branch with changes from the master." }
-    SafeDb::CheckOut.new.flow()
+    SafeDb::Refresh.new.flow()
   end
 
 

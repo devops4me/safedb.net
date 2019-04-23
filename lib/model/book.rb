@@ -372,9 +372,9 @@ module SafeDb
 
 
     # Return true if the commit identifiers for the master and the branch match
-    # meaning that we can commit (checkin).
-    # @return [Boolean] true if can checkin, false otherwise
-    def can_checkin?()
+    # meaning that we can commit (commit).
+    # @return [Boolean] true if can commit, false otherwise
+    def can_commit?()
       return @branch_keys.get( Indices::COMMIT_IDENTIFIER ).eql?( @master_keys.get( Indices::COMMIT_IDENTIFIER ) )
     end
 

@@ -46,7 +46,7 @@ module SafeDb
     # The AES symmetric encryption initialization vector
     CONTENT_RANDOM_IV  = "content.iv"
 
-    # The commit identifiers of the master and branch are compared to ascertain eligibility for checkins
+    # The commit identifiers of the master and branch are compared to ascertain eligibility for commits
     COMMIT_IDENTIFIER = "commit.identifier"
 
     # The bootup id is set on machine boot and lasts until the reboot or shutdown.

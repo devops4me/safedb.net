@@ -7,8 +7,8 @@ module SafeDb
   #
   # - <tt>initialization</tt> - a new master state box is created
   # - <tt>login</tt> - branch state is created that mirrors master
-  # - <tt>checkin</tt> - transfers state from branch to master
-  # - <tt>checkout</tt> - transfers state from master to branch
+  # - <tt>commit</tt> - transfers state from branch to master
+  # - <tt>refresh</tt> - transfers state from master to branch
   #
   class StateMigrate
 
@@ -30,7 +30,7 @@ module SafeDb
     # The high entropy key is recycled only on the first login into a book since the
     # machine reboot. This is because subsequent branch logins that protect the
     # random key will need to check back with the master branch when performing either
-    # a diff or checkout operations. Also the checkin operation must maintain the
+    # a diff or refresh operations. Also the commit operation must maintain the
     # same content encryption key for readability by validated agents.
     #
     # @param book_keys [DataMap]
@@ -120,12 +120,12 @@ module SafeDb
     end
 
 
-    # In the main, the <tt>checkin use case</tt> changes the master so that it mirrors
-    # the branch's state. A check-in syncs the master's state to mirror the branch.
+    # In the main, the <tt>commit use case</tt> changes the master so that it mirrors
+    # the branch's state. A commit syncs the master's state to mirror the branch.
     #
     # == The Simple Check In
     #
-    # The simplest case is when no other branch has issued a check-in since this branch
+    # The simplest case is when no other branch has issued a commit since this branch
     #
     # - <tt>logged in</tt>
     # - <tt>checked in</tt> or
@@ -142,16 +142,16 @@ module SafeDb
     # A new commit ID is only created during
     #
     # - <tt>either the first login</tt> since the machine booted up
-    # - <tt>or a branch checkin</tt>
+    # - <tt>or a branch commit</tt>
     #
     # The commit ID is copied from master to branch during
     #
     # - <tt>either subsequent logins</tt>
-    # - <tt>or a branch checkout</tt>
+    # - <tt>or a branch refresh</tt>
     #
-    def self.checkin( book )
+    def self.commit( book )
 
-# @todo => If mismatch in commit IDs then print message instructing to first do safe checkout
+# @todo => If mismatch in commit IDs then print message instructing to first do safe refresh
 
       FileUtils.remove_entry( FileTree.master_crypts_folder( book.book_id() ) )
       FileUtils.mkdir_p( FileTree.master_crypts_folder( book.book_id() ) )
@@ -162,9 +162,9 @@ module SafeDb
       branch_keys = DataMap.new( FileTree.branch_indices_filepath( book.branch_id() ) )
       branch_keys.use( book.book_id() )
 
-      checkin_commit_id = Identifier.get_random_identifier( 16 )
-      branch_keys.set( Indices::COMMIT_IDENTIFIER, checkin_commit_id )
-      master_keys.set( Indices::COMMIT_IDENTIFIER, checkin_commit_id )
+      commit_id = Identifier.get_random_identifier( 16 )
+      branch_keys.set( Indices::COMMIT_IDENTIFIER, commit_id )
+      master_keys.set( Indices::COMMIT_IDENTIFIER, commit_id )
 
       master_keys.set( Indices::CONTENT_IDENTIFIER, branch_keys.get( Indices::CONTENT_IDENTIFIER ) )
       master_keys.set( Indices::CONTENT_RANDOM_IV,  branch_keys.get( Indices::CONTENT_RANDOM_IV  ) )
@@ -173,13 +173,13 @@ module SafeDb
 
 
 
-    # A checkout merges down the master's data into the data of this working branch.
-    # The <tt>commit ID</tt> of the working branch after the checkout is made to be
-    # equivalent with that of the master. This act signifies that a checkin is now 
-    # allowed (as long as another branch doesn't checkin in the meantime).
+    # A refresh merges down the master's data into the data of this working branch.
+    # The <tt>commit ID</tt> of the working branch after the refresh is made to be
+    # equivalent with that of the master. This act signifies that a commit is now 
+    # allowed (as long as another branch doesn't commit in the meantime).
     #
     # @param book [Book] the book whose master data will be merged down into the branch.
-    def self.checkout( book )
+    def self.refresh( book )
 
       master_data = book.to_master_data()
       branch_data = book.to_branch_data()
@@ -200,7 +200,7 @@ module SafeDb
 
 
     # Copy the master commit identifier to the branch. This signifies that the branch
-    # is aligned (and ready) to checkin its changes into the master.
+    # is aligned (and ready) to commit its changes into the master.
     # @param book [Book] the book whose commit IDs will be manipulated
     def self.copy_commit_id_to_branch( book )
 
