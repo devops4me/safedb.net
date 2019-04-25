@@ -8,9 +8,6 @@ module SafeDb
   class StateInspect
 
     # Return true if this book has been logged in during this session.
-    # This method uses {TextChunk.not_logged_in_message} to print out a helpful message
-    # detailing how to login.
-    #
     # @return [Boolean] true if not logged into this book
     def self.not_logged_in?()
 

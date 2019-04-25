@@ -43,7 +43,7 @@ module SafeDb
       return if is_login_uc
 
       not_logged_in = StateInspect.not_logged_in?()
-      TextChunk.not_logged_in_message() if not_logged_in
+      puts TextChunk.not_logged_in_message() if not_logged_in
       exit(100) if not_logged_in
 
       @book = Book.new()

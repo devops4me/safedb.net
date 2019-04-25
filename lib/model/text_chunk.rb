@@ -42,7 +42,8 @@ CRYPT_HEADER
      #{Indices::COMMANDER} login websites --password=secret123
     #{Indices::COMMANDER} login websites --clip
 
-  A space before the command keeps it out of ~/.bash_history
+  A space before the command skips history logging.
+
 NOT_LOGGED_IN_MESSAGE
 
     end
