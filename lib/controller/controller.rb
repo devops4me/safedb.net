@@ -176,13 +176,8 @@ module SafeDb
     private
 
 
-    ENV_VAR_PREFIX_A = "evar."
-    ENV_VAR_PREFIX_B = "@evar."
     COMMANDMENT = "safe"
     ENV_VAR_KEY_NAME = "SAFE_TTY_TOKEN"
-    ENV_PATH = "env.path"
-    KEY_PATH = "key.path"
-    ENVELOPE_KEY_PREFIX = "envelope@"
 
 
 # -->    def add_secret_facts fact_db

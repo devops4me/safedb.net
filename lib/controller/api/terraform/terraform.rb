@@ -22,6 +22,18 @@ module SafeDb
     # and convert for consumption into module input variables.
     TERRAFORM_EVAR_PREFIX = "TF_VAR_"
 
+    # Prefix for environment variable key (line). Before safe runs the
+    # <tt>terraform apply</tt> command, it examines the lines at the opened
+    # chapter and verse and any that start with this prefix will be substringed
+    # to create an environment variable with the substringed name and key value.
+    ENV_VAR_PREFIX_A = "env-var."
+
+    # Secure var prefix for environment variable key (line). Before safe runs the
+    # <tt>terraform apply</tt> command, it examines the lines at the opened
+    # chapter and verse and any that start with this prefix will be substringed
+    # to create an environment variable with the substringed name and key value.
+    ENV_VAR_PREFIX_B = "@env-var."
+
     def query_verse()
 
       # ############## | ############################################################

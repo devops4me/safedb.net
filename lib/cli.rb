@@ -122,6 +122,7 @@ class CLI < Thor
     login_uc.book_name = book_name unless book_name.nil?
     login_uc.password = options[ :password ] if options[ :password ]
     login_uc.clip = true if options[ :clip ]
+    login_uc.clip = false unless options[ :clip ]
     login_uc.flow()
   end
 

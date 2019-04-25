@@ -49,8 +49,8 @@ module SafeDb
 
 # @todo => search for password in environment variable
 
-####      book_password = Clipboard.read_password() if @clip
-      book_password = KeyPass.password_from_shell( false ) if( @password.nil?() && @clip.nil?() )
+      book_password = Clipboard.read_password() if @clip
+      book_password = KeyPass.password_from_shell( false ) if( @password.nil?() && !@clip )
       book_password = @password unless @password.nil?()
 
 # @todo => if password is correct - if not print out an error.

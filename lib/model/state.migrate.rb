@@ -58,6 +58,7 @@ module SafeDb
 
       the_book_id = book_keys.section()
 
+puts "The secret is [ #{secret} ]"
       old_human_key = KdfApi.regenerate_from_salts( secret, book_keys )
       the_crypt_key = old_human_key.do_decrypt_key( book_keys.get( Indices::CRYPT_CIPHER_TEXT ) )
       plain_content = Content.unlock_master( the_crypt_key, book_keys )
