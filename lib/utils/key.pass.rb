@@ -40,6 +40,8 @@ module SafeDb
       # @raise [ArgumentError] if the minimum size is less than one
       def self.password_from_shell prompt_twice
 
+        require "io/console"
+
         assert_min_size MINIMUM_PASSWORD_SIZE
 
         sleep(1)

@@ -37,12 +37,16 @@ module SafeDb
       class_name = self.class.name.split(":").last.downcase
       is_no_token_uc = [ "token", "init", "id" ].include? class_name
       return if is_no_token_uc
-
       exit(100) unless ops_key_exists?
 
-      # Chop off all fact work for now. May need to resurrect for VPN functionality.
+      is_login_uc = class_name.eql?( "login" )
+      return if is_login_uc
+
       return
 
+=begin
+      Fact Functionality
+      ======================
       fact_filepath = File.sister_filepath( self, "ini", :execute )
       log.info(x) { "Search location for INI factfile is [#{fact_filepath}]" }
       return unless File.exists?( fact_filepath )
@@ -51,6 +55,7 @@ module SafeDb
       add_secret_facts @facts
       @facts.assimilate_ini_file( fact_filepath )
       @dictionary = @facts.f[ @facts.to_symbol( class_name ) ]
+=end
 
     end
 

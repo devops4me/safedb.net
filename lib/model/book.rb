@@ -68,6 +68,7 @@ module SafeDb
       return @master_verse_count
     end
 
+
     # Get the hash data structure representing the branch's state. This state
     # may or may not be equivalent to the current master state as gettable by
     # the {to_master_data} method.
@@ -87,6 +88,7 @@ module SafeDb
       return @branch_data
 
     end
+
 
     # Get the number of verses in the branch's data structure.
     # @return [Number] the number of verses in the branch's data.
