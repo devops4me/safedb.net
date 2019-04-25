@@ -7,7 +7,7 @@ module SafeDb
     #     safe docker login
     #     safe docker logout
 
-    class Docker < UseCase
+    class Docker < Controller
 
         # The command which currently must be login, logout or
         # an empty string.

@@ -6,7 +6,7 @@ module SafeDb
   # to the workstation and shell environment. See the root README.md on how
   # to export it and create a simple command alias for it in the ~/.bash_aliases
   # script which is executed when the shell starts.
-  class Token < UseCase
+  class Token < Controller
 
 
     def execute

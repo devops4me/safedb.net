@@ -2,7 +2,7 @@
 	
 module SafeDb
 
-  # Any {UseCase} class wishing to edit a safe verse can make use of the functionality
+  # Any {Controller} class wishing to edit a safe verse can make use of the functionality
   # in this parent by exposing an edit_verse() method.
   #
   # Classes extending this class will have access to
@@ -16,7 +16,7 @@ module SafeDb
   #
   # After the edit method completes the amended chapter data structure will be encrypted
   # and streamed to a ciphertext file.
-  class EditVerse < UseCase
+  class EditVerse < Controller
 
     # This parental behaviour sets up common ubiquitous chapter and verse data structures
     # and indices. It then calls the child's query_verse() behaviour and once that is complete

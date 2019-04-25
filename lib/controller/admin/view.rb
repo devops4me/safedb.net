@@ -9,21 +9,19 @@ module SafeDb
   # Goto with the number effectively shortcuts the open pinpointer.
   # Show prints out the verse lines at the opened path but masks any secrets.
   # Tell also prints out the verse lines but unabashedly displays secrets.
-  class View < UseCase
+  class View < Controller
 
     def execute
 
-      book = Book.new()
-
       puts ""
-      puts " == Birth Day := #{book.init_time()}\n"
-      puts " == Book Name := #{book.book_name()} [#{book.book_id}]\n"
-      puts " == Book Mark := #{book.get_open_chapter_name()}/#{book.get_open_verse_name()}\n" if book.is_opened?()
+      puts " == Birth Day := #{@book.init_time()}\n"
+      puts " == Book Name := #{@book.book_name()} [#{@book.book_id}]\n"
+      puts " == Book Mark := #{@book.get_open_chapter_name()}/#{@book.get_open_verse_name()}\n" if @book.is_opened?()
       puts ""
 
       verse_count = 0
       chapter_index = 0
-      book.branch_chapter_keys().each_pair do | chapter_name, chapter_keys |
+      @book.branch_chapter_keys().each_pair do | chapter_name, chapter_keys |
 
         chapter_index += 1
         verse_index = 0
@@ -32,9 +30,9 @@ module SafeDb
 
           verse_index += 1
           verse_count += 1
-          is_open = book.is_open?( chapter_name, verse_name )
+          is_open = @book.is_open?( chapter_name, verse_name )
           isnt_first = verse_count != 1
-          isnt_last = ( chapter_index != book.branch_chapter_keys().length() ) || ( verse_index != chapter_data.length() )
+          isnt_last = ( chapter_index != @book.branch_chapter_keys().length() ) || ( verse_index != chapter_data.length() )
           mark_open = is_open ? "<< " : ""
           mark_close = is_open ? " >>" : ""
           fixdint = format( "%02d", verse_count )
@@ -47,7 +45,7 @@ module SafeDb
       end
 
       puts ""
-      puts " == There are #{book.branch_chapter_keys().length()} chapters and #{verse_count} verses."
+      puts " == There are #{@book.branch_chapter_keys().length()} chapters and #{verse_count} verses."
       puts ""
 
       return

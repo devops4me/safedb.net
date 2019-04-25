@@ -11,7 +11,7 @@ module SafeDb
     #
     #     safe jenkins post <<[ aws | docker | git ]>> <<jenkins-host-url>>
 
-    class Jenkins < UseCase
+    class Jenkins < Controller
 
         # The three instance variables provided through the command line like
         # for example  $ safe jenkins post aws http://localhost:8080

@@ -2,7 +2,7 @@
 	
 module SafeDb
 
-  class Visit < UseCase
+  class Visit < Controller
 
     def execute
 

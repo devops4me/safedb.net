@@ -16,7 +16,7 @@ module SafeDb
   # Error - if the domain name is not listed in the configuration file.
   # Error - if the (dictionary) path to the domain's base does not exist
   #
-  class Use < UseCase
+  class Use < Controller
 
     attr_writer :domain_name
 

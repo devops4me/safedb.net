@@ -7,7 +7,7 @@ module SafeDb
   #
   #     safe vpn up
   #     safe vpn down
-  class Vpn < UseCase
+  class Vpn < Controller
 
     attr_writer :command
 

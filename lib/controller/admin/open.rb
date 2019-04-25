@@ -12,17 +12,16 @@ module SafeDb
   # exists you use the <tt>safe reopen</tt> command. This command produces an error
   # if it cannot find specified chapter and verse.
   #
-  class Open < UseCase
+  class Open < Controller
 
     # The chapter and verse of this book that are to be opened.
     attr_writer :chapter, :verse
 
     def execute
 
-      book = Book.new()
-      book.set_open_chapter_name( @chapter )
-      book.set_open_verse_name( @verse )
-      book.write()
+      @book.set_open_chapter_name( @chapter )
+      @book.set_open_verse_name( @verse )
+      @book.write()
 
       # Show the mini dictionary at the opened chapter and verse location
       # More work is needed when for when only the chapter is opened in

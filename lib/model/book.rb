@@ -172,16 +172,19 @@ module SafeDb
     end
 
 
-    # Return true if this book has been opened at a chapter and verse location.
+    # Return true if this book has NOT been opened at a chapter and verse location.
     # This method uses {TextChunk.not_open_message} to print out a helpful message
     # detailing how to open a chapter and verse.
     #
     # Note that an open chapter need not contain any data. The same goes for an
     # open verse. In these cases the {open_chapter} and {open_verse} methods both
     # return empty data structures.
-    def unopened_chapter_verse()
-      return if has_open_chapter_name?() and has_open_verse_name?()
+    #
+    # @return [Boolean] true if no chapter and verse for this book is open
+    def unopened_chapter_verse?()
+      return false if( has_open_chapter_name?() and has_open_verse_name?() )
       TextChunk.not_open_message()
+      return true
     end
 
 

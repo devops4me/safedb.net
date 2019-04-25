@@ -3,7 +3,7 @@
 module SafeDb
 
 
-  class Id < UseCase
+  class Id < Controller
 
 
     def execute

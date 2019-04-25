@@ -7,6 +7,24 @@ module SafeDb
   #
   class StateInspect
 
+    # Return true if this book has been logged in during this session.
+    # This method uses {TextChunk.not_logged_in_message} to print out a helpful message
+    # detailing how to login.
+    #
+    # @return [Boolean] true if not logged into this book
+    def self.not_logged_in?()
+
+      branch_id = Identifier.derive_branch_id( Branch.to_token() )
+      return true unless File.exists?( FileTree.branch_indices_filepath( branch_id ) )
+      branch_keys = DataMap.new( FileTree.branch_indices_filepath( branch_id ) )
+      return true unless branch_keys.has_section?( Indices::BRANCH_DATA )
+      book_id = branch_keys.read( Indices::BRANCH_DATA, Indices::CURRENT_BRANCH_BOOK_ID )
+      return true unless branch_keys.has_section?( book_id )
+      return !is_logged_in?( book_id )
+
+    end
+
+
     # Returns true if valid credentials have been provided earlier on in this
     # session against the book specified in the parameter.
     #

@@ -2,7 +2,7 @@
 	
 module SafeDb
 
-  # Any {UseCase} class wishing to query a safe verse can make use of the functionality
+  # Any {Controller} class wishing to query a safe verse can make use of the functionality
   # in this parent by exposing an query_verse() method.
   #
   # Classes extending this class will have access to
@@ -16,7 +16,7 @@ module SafeDb
   #
   # The query_verse() method is not succeeded by any behaviour in the parent. Chilc classes
   # must do their own output management.
-  class QueryVerse < UseCase
+  class QueryVerse < Controller
 
     # This parental behaviour sets up common ubiquitous chapter and verse data structures
     # and indices.

@@ -14,7 +14,7 @@ module SafeDb
   # - create a new commit ID and set it on both master and branch
   # - set the master's last updated date and time
   #
-  class Commit < UseCase
+  class Commit < Controller
 
 
     # The <b>commit use case</b> commits any changes made to the safe book into
@@ -22,10 +22,9 @@ module SafeDb
     # by a ckeckin from another (shell) branch.
     def execute
 
-      book = Book.new()
-      book.print_book_mark()
+      @book.print_book_mark()
 
-      unless book.can_commit?()
+      unless @book.can_commit?()
 
         puts "Cannot commit as master has moved forward."
         puts "First see the difference, then refresh, and then commit."
@@ -38,7 +37,7 @@ module SafeDb
 
       end
 
-      StateMigrate.commit( book )
+      StateMigrate.commit( @book )
 
       puts "The commit was on #{KeyNow.readable()}\n"
       puts "Commit from branch to master was successful.\n"

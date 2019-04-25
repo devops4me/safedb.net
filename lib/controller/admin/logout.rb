@@ -2,7 +2,7 @@
 	
 module SafeDb
 
-  class Logout < UseCase
+  class Logout < Controller
 
     def execute
 

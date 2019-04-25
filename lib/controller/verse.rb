@@ -2,7 +2,7 @@
 	
 module SafeDb
 
-  class Verse < UseCase
+  class Verse < Controller
 
     def execute
 

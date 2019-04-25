@@ -10,7 +10,7 @@ module SafeDb
   #
   # == Common Use Case Behaviour
   #
-  # This {SafeDb::UseCase} use case is designed to be extended and does preparatory
+  # This {SafeDb::Controller} use case is designed to be extended and does preparatory
   # work to create favourable and useful conditions to make use cases readable,
   # less repetitive, simpler and concise.
   #
@@ -26,7 +26,7 @@ module SafeDb
   # - {stash} put directive key/value pair in default section
   # - {read} read the value at key_name from the parameter section
   # - {write} put directive key/value pair in parameter section
-  class UseCase
+  class Controller
 
     # All controllers are initialized here meaning that there will be automatic
     # execution of very frequently used setup behaviour. This includes
@@ -42,6 +42,11 @@ module SafeDb
       is_login_uc = class_name.eql?( "login" )
       return if is_login_uc
 
+      not_logged_in = StateInspect.not_logged_in?()
+      TextChunk.not_logged_in_message() if not_logged_in
+      exit(100) if not_logged_in
+
+      @book = Book.new()
       return
 
 =begin
@@ -64,10 +69,7 @@ module SafeDb
     # data structures and indices.
     def read_verse()
 
-# @todo => consider doing the book index opening with initializer UNLESS token/admin use case
-
-      @book = Book.new()
-      return if @book.unopened_chapter_verse()
+      exit(100) if @book.unopened_chapter_verse?()
       @verse = @book.get_open_verse_data()
 
     end

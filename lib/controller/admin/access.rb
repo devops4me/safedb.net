@@ -4,7 +4,7 @@ module SafeDb
 
   # Parent to use cases like Init and Login that perform early
   # initialize workflows.
-  class AccessUc < UseCase
+  class AccessUc < Controller
 
     attr_writer :password, :book_name
 

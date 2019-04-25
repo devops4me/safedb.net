@@ -86,7 +86,7 @@ module SafeDb
     def self.gems( gem_filepath )
 
       require_relative "../version"
-      require_relative "../controller/usecase"
+      require_relative "../controller/controller"
       require_relative "../controller/admin/access"
       require_relative "../controller/edit/editverse"
       require_relative "../controller/query/queryverse"

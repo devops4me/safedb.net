@@ -29,35 +29,54 @@ CRYPT_HEADER
     end
 
 
+    # Print a message stating that the book cannot be accessed until
+    # a successful login has occured.
+    def self.not_logged_in_message()
+
+      <<-NOT_LOGGED_IN_MESSAGE
+
+  Please login to access the credentials in this book.
+  Suppose you initialized a book called websites.
+
+    #{Indices::COMMANDER} login websites
+     #{Indices::COMMANDER} login websites --password=secret123
+    #{Indices::COMMANDER} login websites --clip
+
+  A space before the command keeps it out of ~/.bash_history
+NOT_LOGGED_IN_MESSAGE
+
+    end
+
+
     # Print a message stating that the book has not been opened at any
     # chapter and verse location.
     def self.not_open_message()
 
       <<-UNOPENED_MESSAGE
 
-      Please open a chapter and verse to put, edit or query data.
+  Please open a chapter and verse to put, edit or query data.
 
-          #{Indices::COMMANDER} open contacts monica
+     #{Indices::COMMANDER} open contacts monica
 
-       then add monica's contact details
+  then add monica's contact details
 
-          #{Indices::COMMANDER} put email monica.lewinsky@gmail.com
-          #{Indices::COMMANDER} put phone +1-357-246-8901
-          #{Indices::COMMANDER} put twitter @monica_x
-          #{Indices::COMMANDER} put skype.id 6363430539
-          #{Indices::COMMANDER} put birthday \"1st April 1978\"
+     #{Indices::COMMANDER} put email monica.lewinsky@gmail.com
+     #{Indices::COMMANDER} put phone +1-357-246-8901
+     #{Indices::COMMANDER} put twitter @monica_x
+     #{Indices::COMMANDER} put skype.id 6363430539
+     #{Indices::COMMANDER} put birthday \"1st April 1978\"
 
-       also hilary's
+  also hilary's
 
-          #{Indices::COMMANDER} open contacts hilary
-          #{Indices::COMMANDER} put email hilary@whitehouse.gov
+     #{Indices::COMMANDER} open contacts hilary
+     #{Indices::COMMANDER} put email hilary@whitehouse.gov
 
-       then save the changes to your book and logout."
+  then save the changes to your book and logout."
 
-          #{Indices::COMMANDER} commit"
-          #{Indices::COMMANDER} logout"
+     #{Indices::COMMANDER} commit"
+     #{Indices::COMMANDER} logout"
 
-      UNOPENED_MESSAGE
+UNOPENED_MESSAGE
 
     end
 

@@ -33,7 +33,7 @@ module SafeDb
   # - this verse will be removed
   # - this line will be removed
   #
-  class Diff < UseCase
+  class Diff < Controller
 
     # The commit and refresh boolean flags that signal which way round to do the diff
     attr_writer :commit, :refresh
@@ -43,27 +43,25 @@ module SafeDb
     # credentials.
     def execute
 
-      book = Book.new()
-
       print_both = @commit.nil?() && @refresh.nil?()
       print_commit = !@commit.nil?() || print_both
       print_refresh = !@refresh.nil?() || print_both
 
       puts ""
-      puts " == Birth Day := #{book.init_time()}\n"
-      puts " == Book Name := #{book.book_name()} [#{book.book_id}]\n"
-      puts " == Book Mark := #{book.get_open_chapter_name()}/#{book.get_open_verse_name()}\n" if book.is_opened?()
+      puts " == Birth Day := #{@book.init_time()}\n"
+      puts " == Book Name := #{@book.book_name()} [#{@book.book_id}]\n"
+      puts " == Book Mark := #{@book.get_open_chapter_name()}/#{@book.get_open_verse_name()}\n" if @book.is_opened?()
       puts ""
 
-      master_data = book.to_master_data()
-      branch_data = book.to_branch_data()
+      master_data = @book.to_master_data()
+      branch_data = @book.to_branch_data()
 
       StateInspect.refresh_prophecies( master_data, branch_data ) if print_refresh
       StateInspect.commit_prophecies( master_data, branch_data ) if print_commit
 
       puts ""
-      puts "   master has #{master_data.length()} chapters, and #{book.get_master_verse_count()} verses.\n"
-      puts "   branch has #{branch_data.length()} chapters, and #{book.get_branch_verse_count()} verses.\n"
+      puts "   master has #{master_data.length()} chapters, and #{@book.get_master_verse_count()} verses.\n"
+      puts "   branch has #{branch_data.length()} chapters, and #{@book.get_branch_verse_count()} verses.\n"
       puts ""
 
     end

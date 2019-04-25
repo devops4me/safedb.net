@@ -12,7 +12,7 @@ module SafeDb
   # Goto with the number effectively shortcuts the open pinpointer.
   # Show prints out the verse lines at the opened path but masks any secrets.
   # Tell also prints out the verse lines but unabashedly displays secrets.
-  class Goto < UseCase
+  class Goto < Controller
 
     # The index (number) starting with 1 of the envelope and key-path
     # combination that should be opened.
@@ -20,9 +20,8 @@ module SafeDb
 
     def execute
 
-      book = Book.new()
       goto_location = 0
-      book.branch_chapter_keys().each_pair do | chapter_name, chapter_keys |
+      @book.branch_chapter_keys().each_pair do | chapter_name, chapter_keys |
 
         chapter_data = Content.unlock_branch_chapter( chapter_keys )
         chapter_data.each_key do | verse_name |

@@ -13,7 +13,7 @@ module SafeDb
   # The configuration directive will either be created or overwriten within the
   # book's configuration store.
   #
-  class Set < UseCase
+  class Set < Controller
 
     attr_writer :directive_name, :directive_value
 

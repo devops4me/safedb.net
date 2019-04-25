@@ -25,7 +25,7 @@ module SafeDb
   # - create a new commit ID and set it on both master and branch
   # - set the master's last updated date and time
   #
-  class Refresh < UseCase
+  class Refresh < Controller
 
 
     # The <b>refresh use case</b> commits any changes made to the safe book into
@@ -33,16 +33,14 @@ module SafeDb
     # by a ckeckin from another (shell) branch.
     def execute
 
-      book = Book.new()
-
       puts ""
-      puts " == Birth Day := #{book.init_time()}\n"
-      puts " == Book Name := #{book.book_name()} [#{book.book_id}]\n"
-      puts " == Book Mark := #{book.get_open_chapter_name()}/#{book.get_open_verse_name()}\n" if book.is_opened?()
+      puts " == Birth Day := #{@book.init_time()}\n"
+      puts " == Book Name := #{@book.book_name()} [#{@book.book_id}]\n"
+      puts " == Book Mark := #{@book.get_open_chapter_name()}/#{@book.get_open_verse_name()}\n" if @book.is_opened?()
       puts ""
 
-      StateMigrate.refresh( book )
-      StateMigrate.copy_commit_id_to_branch( book )
+      StateMigrate.refresh( @book )
+      StateMigrate.copy_commit_id_to_branch( @book )
 
       puts "Refresh from master to branch was successful.\n"
       puts ""
