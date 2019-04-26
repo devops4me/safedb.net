@@ -6,6 +6,8 @@ module SafeDb
   # initialize workflows.
   class AccessUc < Controller
 
+    # This authorization use case should always have a book name
+    # provided and sometimes may have a password parameter.
     attr_writer :password, :book_name
 
 
@@ -28,7 +30,6 @@ module SafeDb
       return contains_all_master_book_indices( data_map )
 
     end
-
 
     def contains_all_master_book_indices( data_map )
       return false unless data_map.contains?( Indices::CONTENT_RANDOM_IV )

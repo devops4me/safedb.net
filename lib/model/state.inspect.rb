@@ -137,6 +137,7 @@ module SafeDb
     private
 
 
+
     def self.data_differences( this_data, that_data )
 
       this_data.each_pair do | chapter_name, master_verse_data |
@@ -171,6 +172,7 @@ module SafeDb
 
     end
 
+
     def self.drop_differences( this_data, that_data )
 
       this_data.each_pair do | chapter_name, master_verse_data |
@@ -199,6 +201,7 @@ module SafeDb
       end
 
     end
+
 
     def self.print_chapter_2b_added( fq_chap_name )
       puts " + Chapter 2b added -> #{fq_chap_name}"
