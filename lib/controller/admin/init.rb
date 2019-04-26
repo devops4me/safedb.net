@@ -28,7 +28,7 @@ module SafeDb
   # - the book name ( maybe from SAFE_BOOK_NAME ) follows convention
   # - the shell must have a SAFE_TTY_TOKEN environment variable
   #
-  class Init < AccessUc
+  class Init < Auth
 
 
     def execute

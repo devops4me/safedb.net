@@ -4,7 +4,7 @@ module SafeDb
 
   # Parent to use cases like Init and Login that perform early
   # initialize workflows.
-  class AccessUc < Controller
+  class Auth < Controller
 
     # This authorization use case should always have a book name
     # provided and sometimes may have a password parameter.

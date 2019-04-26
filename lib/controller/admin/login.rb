@@ -23,7 +23,7 @@ module SafeDb
   # - a file in the present directory (with a pre-agreed name)
   # - a URL from a parameter or pre-agreed
   # - the shell's secure password reader
-  class Login < AccessUc
+  class Login < Auth
 
     # If the clip switch is present it signifies that the password should
     # be read in from the clipboard. Any text selection puts text into the
