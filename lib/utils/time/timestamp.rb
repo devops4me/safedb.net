@@ -10,7 +10,7 @@ module SafeDb
   # The central idea behind the pattern is to link every infrastructure
   # object created during a branch with a reference accurate to the nearest
   # centi-second denoting the moment the software runtime (branch) began.
-  class KeyNow
+  class TimeStamp
     include Singleton
 
     attr_reader :time_now
@@ -19,7 +19,7 @@ module SafeDb
     # @example 02 => in February
     #
     def self.mo
-      return KeyNow.instance.time_now.strftime "%m"
+      return TimeStamp.instance.time_now.strftime "%m"
     end
 
 
@@ -27,7 +27,7 @@ module SafeDb
     # @example feb => in February
     #
     def self.mmm
-      return KeyNow.instance.time_now.strftime( "%b" ).downcase
+      return TimeStamp.instance.time_now.strftime( "%b" ).downcase
     end
 
 
@@ -36,7 +36,7 @@ module SafeDb
     # @example tue => on Tuesday
     #
     def self.ddd
-      return KeyNow.instance.time_now.strftime( "%a" ).downcase
+      return TimeStamp.instance.time_now.strftime( "%a" ).downcase
     end
 
 
@@ -45,7 +45,7 @@ module SafeDb
     # @example 22 => between 22.00.00 and 22.59.59 inclusive
     #
     def self.hh
-      return KeyNow.instance.time_now.strftime "%H"
+      return TimeStamp.instance.time_now.strftime "%H"
     end
 
 
@@ -53,7 +53,7 @@ module SafeDb
     # Return two digit minute of hour from [00] to [59].
     #
     def self.mm
-      return KeyNow.instance.time_now.strftime "%M"
+      return TimeStamp.instance.time_now.strftime "%M"
     end
 
 
@@ -61,7 +61,7 @@ module SafeDb
     # Return two digit second of minute from [00] to [59].
     #
     def self.ss
-      return KeyNow.instance.time_now.strftime "%S"
+      return TimeStamp.instance.time_now.strftime "%S"
     end
 
 
@@ -93,7 +93,7 @@ module SafeDb
     #
     #
     def self.sst
-      millisec_string = KeyNow.instance.time_now.strftime "%L"
+      millisec_string = TimeStamp.instance.time_now.strftime "%L"
       return "#{ss}#{millisec_string[0]}"
     end
 
@@ -103,7 +103,7 @@ module SafeDb
     # that we are currently in.
     #
     def self.yy
-      return KeyNow.instance.time_now.strftime("%Y")[2..-1]
+      return TimeStamp.instance.time_now.strftime("%Y")[2..-1]
     end
 
 
@@ -112,7 +112,7 @@ module SafeDb
     # that we are currently in.
     #
     def self.yyyy
-      return KeyNow.instance.time_now.strftime("%Y")
+      return TimeStamp.instance.time_now.strftime("%Y")
     end
 
 
@@ -120,7 +120,7 @@ module SafeDb
     # Return 3 digit julian day of year [001] to [366]. -- #
     # ------------------------------------------------- -- #
     def self.jjj
-      return KeyNow.instance.time_now.strftime "%j"
+      return TimeStamp.instance.time_now.strftime "%j"
     end
 
 
@@ -257,11 +257,6 @@ module SafeDb
     # hour, 2 digit minute, 2 digit second and 1 digit rounded
     # down tenth of second.
     #
-    # @example
-    #   => 19003.1025
-    #   => 10:25 am on January 3rd 2019
-    #
-    #
     # Return the time of day to a TENTH of a second accuracy.
     # [8] characters will always be returned with the 5th one
     # being the (period) separator.
@@ -311,7 +306,7 @@ module SafeDb
     #    23 characters are always returned with three (3) period
     #    separators at the 6th, 11th and 14th positions.
     def self.yyjjj_hhmm_ss_nanosec
-      nanosec_str = KeyNow.instance.time_now.strftime "%9N"
+      nanosec_str = TimeStamp.instance.time_now.strftime "%9N"
       return "#{yyjjj}.#{hhmm}.#{ss}.#{nanosec_str}"
     end
 
@@ -375,7 +370,7 @@ module SafeDb
 
     # Return the Rubyfied time zone being used.
     def self.zone
-      return KeyNow.instance.time_now.zone
+      return TimeStamp.instance.time_now.zone
     end
 
 
@@ -385,7 +380,7 @@ module SafeDb
     def self.log_instance_time
 
       log.debug(x) { "[stamp] -------------- => -------------------------------- #" }
-      log.debug(x) { "[stamp] eco time stamp => [#{KeyNow.instance.time_now.ctime}]" }
+      log.debug(x) { "[stamp] eco time stamp => [#{TimeStamp.instance.time_now.ctime}]" }
       log.debug(x) { "[stamp] -------------- => -------------------------------- #" }
       log.debug(x) { "[stamp] Univ Time Zone => #{zone}"  }
       log.debug(x) { "[stamp] Month Index is => #{mo}"    }
@@ -413,7 +408,7 @@ module SafeDb
     end
 
 
-    KeyNow.log_instance_time
+    TimeStamp.log_instance_time
 
 
   end

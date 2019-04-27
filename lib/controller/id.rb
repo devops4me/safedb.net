@@ -9,8 +9,8 @@ module SafeDb
     def execute
 
       puts ""
-      puts KeyNow.grab()
-      puts KeyNow.fetch()
+      puts TimeStamp.grab()
+      puts TimeStamp.fetch()
       puts ""
 
       return

@@ -72,7 +72,7 @@ class CLI < Thor
 
     puts ""
     puts "safedb gem version => v#{SafeDb::VERSION}"
-    puts "time and date now  => #{SafeDb::KeyNow.human_readable()}"
+    puts "time and date now  => #{SafeDb::TimeStamp.human_readable()}"
     puts "safedb @github.com => https://github.com/devops4me/safedb.net"
     puts "safe @rubygems.org => https://rubygems.org/gems/safedb"
     puts ""

@@ -243,7 +243,7 @@ module SafeDb
 
       keypairs = DataMap.new( Indices::MASTER_INDICES_FILEPATH )
       keypairs.use( book_identifier )
-      keypairs.set( Indices::SAFE_BOOK_INITIALIZE_TIME, KeyNow.readable() )
+      keypairs.set( Indices::SAFE_BOOK_INITIALIZE_TIME, TimeStamp.readable() )
       keypairs.set( Indices::COMMIT_IDENTIFIER, Identifier.get_random_identifier( 16 ) )
     end
 
@@ -314,14 +314,14 @@ module SafeDb
       branch_exists = File.exists? FileTree.branch_indices_filepath( branch_id )
       branch_keys = DataMap.new( FileTree.branch_indices_filepath( branch_id ) )
       branch_keys.use( Indices::BRANCH_DATA )
-      branch_keys.set( Indices::BRANCH_INITIAL_LOGIN_TIME, KeyNow.readable() ) unless branch_exists
-      branch_keys.set( Indices::BRANCH_LAST_ACCESSED_TIME, KeyNow.readable() )
+      branch_keys.set( Indices::BRANCH_INITIAL_LOGIN_TIME, TimeStamp.readable() ) unless branch_exists
+      branch_keys.set( Indices::BRANCH_LAST_ACCESSED_TIME, TimeStamp.readable() )
       branch_keys.set( Indices::CURRENT_BRANCH_BOOK_ID, book_id )
 
       logged_in = branch_keys.has_section?( book_id )
       branch_keys.use( book_id )
-      branch_keys.set( Indices::BOOK_BRANCH_LOGIN_TIME, KeyNow.readable() ) unless logged_in
-      branch_keys.set( Indices::BOOK_LAST_ACCESSED_TIME, KeyNow.readable() )
+      branch_keys.set( Indices::BOOK_BRANCH_LOGIN_TIME, TimeStamp.readable() ) unless logged_in
+      branch_keys.set( Indices::BOOK_LAST_ACCESSED_TIME, TimeStamp.readable() )
 
       return branch_keys
 

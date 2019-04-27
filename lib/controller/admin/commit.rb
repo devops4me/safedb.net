@@ -39,7 +39,7 @@ module SafeDb
 
       StateMigrate.commit( @book )
 
-      puts "The commit was on #{KeyNow.readable()}\n"
+      puts "The commit was on #{TimeStamp.readable()}\n"
       puts "Commit from branch to master was successful.\n"
       puts ""
 

@@ -20,7 +20,7 @@ module SafeDb
 #{Indices::SAFE_URL_NAME} ciphertext block
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Safe Book Id := #{book_id}
-Time Created := #{KeyNow.readable()}
+Time Created := #{TimeStamp.readable()}
 Safe Version := #{Indices::SAFE_VERSION_STRING}
 Safe Website := #{Indices::SAFE_GEM_WEBSITE}
 RubyGems.org := https://rubygems.org/gems/safedb

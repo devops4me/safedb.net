@@ -32,7 +32,7 @@ module SafeDb
       destination_dir = @to_dir unless @to_dir.nil?
 
       file_full_path = File.join( destination_dir, simple_filename )
-      backup_filename = KeyNow.yyjjj_hhmm_sst() + "-" + simple_filename
+      backup_filename = TimeStamp.yyjjj_hhmm_sst() + "-" + simple_filename
       backup_file_path = File.join( destination_dir, backup_filename )
       will_clobber = File.file?( file_full_path )
 

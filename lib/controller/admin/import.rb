@@ -26,7 +26,7 @@ module SafeDb
       puts " Book Name   := #{@book.book_name()}\n"
       puts " Book Id     := #{@book.book_id()}\n"
       puts " Import from := #{@import_filepath}\n"
-      puts " Import time := #{KeyNow.readable()}\n"
+      puts " Import time := #{TimeStamp.readable()}\n"
       puts ""
 
       new_verse_count = 0

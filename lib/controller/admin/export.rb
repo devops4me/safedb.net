@@ -23,7 +23,7 @@ module SafeDb
       puts " Open Verse   := #{@book.get_open_verse_name()}\n"   if @book.has_open_verse_name?()
       puts ""
 
-      export_filename = "safedb.#{KeyNow.yyjjj_hhmm_ss_nanosec()}.#{@book.book_id()}.json"
+      export_filename = "safedb.#{TimeStamp.yyjjj_hhmm_ss_nanosec()}.#{@book.book_id()}.json"
       export_filepath = File.join( Dir.pwd, export_filename )
 
       exported_struct = {}

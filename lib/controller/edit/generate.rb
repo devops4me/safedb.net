@@ -17,10 +17,10 @@ module SafeDb
     # stored against within the current opened chapter and verse.
     attr_writer :line
 
-    # A default median length of 12 characters with a give or take
-    # span of two means that the resulting password could contain
-    # 10, 11, 12, 13 or 14 characters.
-    MEDIAN_LENGTH = 12
+    # A default median length of 14 characters with a give or take
+    # span of two means that the resulting password length could be
+    # one of either 12, 13, 14, 15 or 16 characters.
+    MEDIAN_LENGTH = 14
 
     # If a median length of 15 is required with give or take set
     # at 3 - the resulting password length could be anything from
@@ -60,16 +60,12 @@ module SafeDb
     # credentials characters will be a subset of.
     def edit_verse()
 
-      for index in 0 .. 1000
       credential_length = Random.new().rand( LENGTH_RANGE )
       credential_stream = %x[ #{GENERATE_CMD} ]
       credential_string = credential_stream.chomp()[ 0 .. ( credential_length - 1 ) ]
-
-      fixdint = format( "%04d", (index+1) )
-      puts "[#{fixedint}] => The credential of length #{credential_length} is #{credential_string}"
-      end
-
-#########      @verse.store( @credential_id, @credential_value )
+      
+      @verse.store( "#{@line}-#{TimeStamp.yyjjj_hhmm_sst()}", @verse[ @line ] ) if @verse.has_key?( @line )
+      @verse.store( @line, credential_string )
 
     end
 

@@ -71,7 +71,7 @@ module SafeDb
     def virginal_book()
 
       initial_db = DataStore.new()
-      initial_db.store( Indices::SAFE_BOOK_INITIALIZE_TIME, KeyNow.readable() )
+      initial_db.store( Indices::SAFE_BOOK_INITIALIZE_TIME, TimeStamp.readable() )
       initial_db.store( Indices::SAFE_BOOK_NAME, @book_name )
       initial_db.store( Indices::SAFE_BOOK_INIT_VERSION, Indices::SAFE_VERSION_STRING )
       initial_db.store( Indices::SAFE_BOOK_CHAPTER_KEYS, {} )
