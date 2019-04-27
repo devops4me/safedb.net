@@ -17,6 +17,9 @@ module SafeDb
     # wants to delete only one line (key/value pair).
     def edit_verse()
 
+      # @todo refactor to recognise file values using isMap rather than the string prefix
+      # @todo refactor the Rename, Show, Read and Write use cases as well as this one.
+
       @verse.delete( @line_id )
       @verse.delete( "#{Indices::INGESTED_FILE_LINE_NAME_KEY}#{@line_id}" )
 

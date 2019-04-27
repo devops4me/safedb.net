@@ -87,24 +87,17 @@ module SafeDb
 
       require_relative "../version"
       require_relative "../controller/controller"
-      require_relative "../controller/admin/access"
+      require_relative "../controller/admin/auth"
       require_relative "../controller/edit/editverse"
       require_relative "../controller/query/queryverse"
 
       gem_basepath = File.expand_path "..", gem_filepath
-
-      log.debug(x) { "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" }
-      log.debug(x) { "@@@@ Require Gems In or Under [#{gem_basepath}]" }
-      log.debug(x) { "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" }
-
       Dir["#{gem_basepath}/**/*.rb"].each do |gem_path|
 
         log.debug(x) { "@@@@ => #{gem_path}" }
         require gem_path
 
       end
-
-      log.debug(x) { "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" }
 
     end
 

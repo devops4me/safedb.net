@@ -325,6 +325,25 @@ class CLI < Thor
 
 
 
+  # Description of the generate command.
+  desc "generate <line>", "generate a string password that conforms to configured properties"
+
+  # The <b>generate use case</b> generates a random string credential that abides by
+  # the laws set out by configured and/or default parameter properties. These properties
+  # include the character superset to which all credential characters belong, the median
+  # length of the credential and the (give or take) span denoting the shortest and
+  # longest possible credentials.
+  #
+  # @param line [String] name of line the credential is stored against. Defaults to @password
+  def generate( line = "@password" )
+    log.info(x) { "generate a string credential and store it against line [#{line}]." }
+    generate_uc = SafeDb::Generate.new()
+    generate_uc.line = line
+    generate_uc.flow()
+  end
+
+
+
   # Description of the remove command.
   desc "remove <line_id>", "remove a line (key/value pair), or a verse, chapter and even a book"
 
@@ -337,6 +356,22 @@ class CLI < Thor
     remove_uc = SafeDb::Remove.new()
     remove_uc.line_id = line_id
     remove_uc.flow()
+  end
+
+
+
+  # Description of the rename command.
+  desc "rename <now_name> <new_name>", "rename an existing chapter, verse or line"
+
+  # The <b>rename use case</b> can rename an existing chapter, verse or line.
+  # @param now_name [String] the existing name of the chapter, verse or line
+  # @param new_name [String] the new name the chapter, verse or line goes by
+  def rename now_name, new_name
+    log.info(x) { "rename the existing chapter, verse or line from [ #{now_name} ] to [ #{new_name} ]." }
+    rename_uc = SafeDb::Rename.new()
+    rename_uc.now_name = now_name
+    rename_uc.new_name = new_name
+    rename_uc.flow()
   end
 
 
