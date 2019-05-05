@@ -9,7 +9,7 @@ You can contriubute software, documentation, issues and even good ideas. Most co
 To contribute software you'll need to setup a development environment.
 
 ```
-sudo apt-get install --assume-yes ruby-full libicu-dev git
+sudo apt install --assume-yes ruby-full libicu-dev git
 sudo chown -R $USER:$USER /var/lib/gems
 sudo chown -R $USER:$USER /usr/local/bin
 sudo chown -R $USER:$USER /usr/local/lib

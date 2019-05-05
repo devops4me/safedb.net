@@ -205,19 +205,9 @@ class CLI < Thor
 
 
   # Description of the diff use case command from the point of view
-  # of either a refresh from master to branch, a commit from branch
-  # to master or a diff listing prophesying about both.
-  desc "diff", "master and branch diff with --commit (-i), --refresh (-o) or both."
-
-  # A commit is basically a copy-overwrite operation which does not finesse
-  # like the merging refresh does. The diff report illustrates that the master
-  # will essentially reflect the working branch's current state.
-  method_option :commit, :type => :boolean, :aliases => "-c"
-
-  # A refresh is effectively an incoming merge of the master's data
-  # structure into the working branch. With refreshs nothing ever gets
-  # deleted.
-  method_option :refresh, :type => :boolean, :aliases => "-r"
+  # of either a refresh from master to branch, or a commit from branch
+  # to master, depending on what is permissible given the state.
+  desc "diff", "master and branch diff that indicates whether a commit or refresh can happen."
 
   # The <b>diff use case</b> spells out the key differences between the safe book
   # on the master line the one on the current working branch.
@@ -225,11 +215,8 @@ class CLI < Thor
   # By default when conflicts occur, priority is given to the current working branch.
   # No parameters are required to perform a diff.
   def diff
-    log.info(x) { "prophesy list of refresh and/or commit actions. CLI options are #{options.to_s()}" }
-    diff_uc = SafeDb::Diff.new()
-    diff_uc.commit = true if options[ :commit ]
-    diff_uc.refresh = true if options[ :refresh ]
-    diff_uc.flow()
+    log.info(x) { "prophesy list of either refresh or commit actions." }
+    SafeDb::Diff.new().flow()
   end
 
 

@@ -95,13 +95,7 @@ module SafeDb
     # @param master_data [Hash] data structure from the master line of the book
     # @param branch_data [Hash] data structure from the current working branch
     def self.refresh_prophecies( master_data, branch_data )
-
-      puts " = safe diff --refresh"
-      puts " = incoming from master to working branch"
-      puts ""
-
       data_differences( master_data, branch_data )
-
     end
 
 
@@ -122,14 +116,8 @@ module SafeDb
     # @param master_data [Hash] data structure from the master line of the book
     # @param branch_data [Hash] data structure from the current working branch
     def self.commit_prophecies( master_data, branch_data )
-
-      puts " = safe diff --commit"
-      puts " = outgoing from working branch to master"
-      puts ""
-
       data_differences( branch_data, master_data )
       drop_differences( master_data, branch_data )
-
     end
 
 
@@ -204,31 +192,31 @@ module SafeDb
 
 
     def self.print_chapter_2b_added( fq_chap_name )
-      puts " + Chapter 2b added -> #{fq_chap_name}"
+      puts "     + Chapter 2b added -> #{fq_chap_name}"
     end
 
     def self.print_verse_2_be_added( fq_vers_name )
-      puts " + Verse 2 be added -> #{fq_vers_name}"
+      puts "     + Verse 2 be added -> #{fq_vers_name}"
     end
 
     def self.print_line_to_be_added( fq_line_name )
-      puts " + Line to be added -> #{fq_line_name}"
+      puts "     + Line to be added -> #{fq_line_name}"
     end
 
     def self.print_line_will_change( fq_line_name )
-      puts " + Line will change -> #{fq_line_name}"
+      puts "     + Line will change -> #{fq_line_name}"
     end
 
     def self.print_chapter_2b_removed( fq_chap_name )
-      puts " - Chapter 2b removed -> #{fq_chap_name}"
+      puts "     - Chapter 2b removed -> #{fq_chap_name}"
     end
 
     def self.print_verse_2_be_removed( fq_vers_name )
-      puts " - Verse 2 be removed -> #{fq_vers_name}"
+      puts "     - Verse 2 be removed -> #{fq_vers_name}"
     end
 
     def self.print_line_to_be_removed( fq_line_name )
-      puts " - Line to be removed -> #{fq_line_name}"
+      puts "     - Line to be removed -> #{fq_line_name}"
     end
 
 
