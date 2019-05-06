@@ -17,7 +17,8 @@ module SafeDb
     # indices can be pushed to an external (removable drive).
     def execute()
 
-      if directive_name.eql?( "folder" )
+
+      if @directive_name.eql?( Indices::MACHINE_EXTERNAL_FOLDER )
 
         folder_not_exists_msg = "Absolute folder path #{@directive_value} does not exist."
         folder_exists = (File.exist?( @directive_value )) && (File.directory?( @directive_value ))
@@ -25,14 +26,37 @@ module SafeDb
 
         machine_config = DataMap.new( Indices::MACHINE_CONFIG_FILEPATH )
         machine_config.use( Indices::MACHINE_CONFIG_SECTION_NAME )
-        machine_config.set( Indices::MACHINE_EXTERNAL_FOLDER_DIRECTIVE, @directive_value )
+        machine_config.set( @directive_name, @directive_value )
 
         puts ""
-        puts "The external folder cradling the safe database indices is set."
-        puts @direcitve_value
+        puts "The external safe database folder is set."
+        puts @directive_value
         puts ""
+
+        return
 
       end
+
+
+      if( @directive_name.eql?( Indices::REMOTE_DATABASE_GIT_PULL_URL ) || @directive_name.eql?( Indices::REMOTE_DATABASE_GIT_PUSH_URL ) )
+
+        master_data = DataMap.new( Indices::MASTER_INDICES_FILEPATH )
+        master_data.use( Indices::REMOTE_DATABASE_SECTION_NAME )
+        master_data.set( @directive_name, @directive_value )
+
+        puts ""
+        puts "The remote database git url is set."
+        puts @directive_value
+        puts ""
+
+        return
+
+      end
+
+      puts ""
+      puts "Error. Remote config directive #{@directive_name} not recognized."
+      puts "No changes were made."
+      puts ""
 
     end
 

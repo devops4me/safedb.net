@@ -5,7 +5,7 @@ module SafeDb
 
   require 'json'
 
-  # A Key/Value database knows how to manipulate a JSON backed data structure
+  # A Key/Value database knows how to manipulate a JSON backend data structure
   # (put, add etc) <b>after reading and then decrypting it</b> from a
   # file and <b>before encrypting and then writing it</b> to a file.
   #

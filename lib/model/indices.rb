@@ -22,13 +22,13 @@ module SafeDb
     # The safe database github clonable url for the ruby software
     SAFE_GITHUB_URL = "https://github.com/devops4me/#{SAFE_URL_NAME}"
 
-    # The name ofthe master crypts folder.
+    # The name of the master crypts folder.
     MASTER_CRYPTS_FOLDER_NAME = "safedb-master-crypts"
 
-    # The name ofthe branch indices folder.
+    # The name of the branch indices folder.
     BRANCH_INDICES_FOLDER_NAME = "safedb-branch-indices"
 
-    # The name ofthe branch crypts folder.
+    # The name of the branch crypts folder.
     BRANCH_CRYPTS_FOLDER_NAME = "safedb-branch-crypts"
 
     # The file-system location of the safe database tree
@@ -36,6 +36,24 @@ module SafeDb
 
     # The path to the master indices file
     MASTER_INDICES_FILEPATH = File.join( SAFE_DATABASE_FOLDER, "safedb-master-indices.ini" )
+
+    # The path to the machine configuration INI file
+    MACHINE_CONFIG_FILEPATH = File.join( SAFE_DATABASE_FOLDER, "safedb-machine-config.ini" )
+
+    # The machine configuration section (header) name
+    MACHINE_CONFIG_SECTION_NAME = "safe.machine.config"
+
+    # The name of the machine external folder directive
+    MACHINE_EXTERNAL_FOLDER = "external.folder"
+
+    # The remote database configuration section (header) name
+    REMOTE_DATABASE_SECTION_NAME = "remote.database"
+
+    # The name of the remote database git pull url key
+    REMOTE_DATABASE_GIT_PULL_URL = "git.pull.url"
+
+    # The name of the remote database git push url key
+    REMOTE_DATABASE_GIT_PUSH_URL = "git.push.url"
 
     # The desired length of a content identifier
     CONTENT_ID_LENGTH  = 14
