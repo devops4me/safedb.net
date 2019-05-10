@@ -38,10 +38,10 @@ module SafeDb
     MASTER_INDICES_FILEPATH = File.join( SAFE_DATABASE_FOLDER, "safedb-master-indices.ini" )
 
     # The path to the machine configuration INI file
-    MACHINE_CONFIG_FILEPATH = File.join( SAFE_DATABASE_FOLDER, "safedb-machine-config.ini" )
+    MACHINE_CONFIG_FILEPATH = File.join( SAFE_DATABASE_FOLDER, "safedb-remote-config.ini" )
 
     # The machine configuration section (header) name
-    MACHINE_CONFIG_SECTION_NAME = "safe.machine.config"
+    MACHINE_CONFIG_SECTION_NAME = "remote.database"
 
     # The name of the machine external folder directive
     MACHINE_EXTERNAL_FOLDER = "external.folder"
