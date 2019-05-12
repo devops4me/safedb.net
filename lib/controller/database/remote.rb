@@ -17,6 +17,21 @@ module SafeDb
     # indices can be pushed to an external (removable drive).
     def execute()
 
+      require "octokit"
+
+############client = Octokit::Client.new(:login => 'defunkt', :password => 'c0d3b4ssssss!')
+
+
+client = Octokit::Client.new(:access_token => '')
+user = client.user
+puts "Company Name => #{user[:company]}"
+puts "User Name => #{user[:name]}"
+puts "User ID => #{user[:id]}"
+puts "Email => #{user[:email]}"
+puts "Login => #{user[:login]}"
+puts "Biography => #{user[:bio]}"
+
+  return
 
       if @directive_name.eql?( Indices::MACHINE_EXTERNAL_FOLDER )
 
