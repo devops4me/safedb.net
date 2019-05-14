@@ -293,21 +293,21 @@ class CLI < Thor
 
 
 
-  # Description of the remote database configuration command.
-  desc "remote <key> <value>", "set directive into either indices or machine config file"
+  # Description of the configure database configuration command.
+  desc "configure <key> <value>", "set directive into either indices or machine config file"
 
-  # The <b>remote use case</b> sets configuration so that the database backend
-  # crypts can be pushed to a remote git repository and the corresponding master
+  # The <b>configure use case</b> sets configuration so that the database backend
+  # crypts can be pushed to a configure git repository and the corresponding master
   # indices can be pushed to an external (removable drive).
   #
   # @param directive_name [String] the name of the directive to set
   # @param directive_value [String] the value of the directive to set
-  def remote directive_name, directive_value
-    log.info(x) { "setting the remote directive name [ #{directive_name} ] to value [ #{directive_value} ]." }
-    remote_uc = SafeDb::Remote.new
-    remote_uc.directive_name = directive_name
-    remote_uc.directive_value = directive_value
-    remote_uc.flow()
+  def configure directive_name, directive_value
+    log.info(x) { "setting the configure directive name [ #{directive_name} ] to value [ #{directive_value} ]." }
+    configure_uc = SafeDb::Configure.new
+    configure_uc.directive_name = directive_name
+    configure_uc.directive_value = directive_value
+    configure_uc.flow()
   end
 
 

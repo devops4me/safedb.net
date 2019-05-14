@@ -43,8 +43,8 @@ module SafeDb
     # The machine configuration section (header) name
     MACHINE_CONFIG_SECTION_NAME = "remote.database"
 
-    # The name of the machine external folder directive
-    MACHINE_EXTERNAL_FOLDER = "external.folder"
+    # The name of the machine removable drive path location directive
+    MACHINE_REMOVABLE_DRIVE_PATH = "removable.drive.path"
 
     # The remote database configuration section (header) name
     REMOTE_DATABASE_SECTION_NAME = "remote.database"

@@ -2,13 +2,13 @@
 	
 module SafeDb
 
-  # The <b>remote use case</b> sets configuration so that the database backend
+  # The <b>configure use case</b> sets configuration so that the database backend
   # crypts can be pushed to a remote git repository and the corresponding master
   # indices can be pushed to an external (removable drive).
   #
   # The converse is also true thus allowing the local machine to mirror a remote
   # safe database that was either created or forwarded on another machine.
-  class Remote < Controller
+  class Configure < Controller
 
     attr_writer :directive_name, :directive_value
 
@@ -33,7 +33,7 @@ puts "Biography => #{user[:bio]}"
 
   return
 
-      if @directive_name.eql?( Indices::MACHINE_EXTERNAL_FOLDER )
+      if @directive_name.eql?( Indices::MACHINE_REMOVABLE_DRIVE_PATH )
 
         folder_not_exists_msg = "Absolute folder path #{@directive_value} does not exist."
         folder_exists = (File.exist?( @directive_value )) && (File.directory?( @directive_value ))
