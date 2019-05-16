@@ -17,16 +17,25 @@ module SafeDb
     # indices can be pushed to an external (removable drive).
     def execute()
 
+      require "octokit"
+############client = Octokit::Client.new(:login => 'defunkt', :password => 'c0d3b4ssssss!')
+
+client = Octokit::Client.new(:access_token => '')
+user = client.user
+puts "Company Name => #{user[:company]}"
+puts "User Name => #{user[:name]}"
+puts "User ID => #{user[:id]}"
+puts "Email => #{user[:email]}"
+puts "Login => #{user[:login]}"
+puts "Biography => #{user[:bio]}"
+
+  return
+
       if @directive_name.eql?( Indices::MACHINE_REMOVABLE_DRIVE_PATH )
 
-        folder_exists = File.exist?( @directive_value ) && File.directory?( @directive_value )
-        unless folder_exists
-          puts ""
-          puts "Folder path => #{@directive_value}"
-          puts "This path does not exist or it is not a folder."
-          puts ""
-          return
-        end
+        folder_not_exists_msg = "Absolute folder path #{@directive_value} does not exist."
+        folder_exists = (File.exist?( @directive_value )) && (File.directory?( @directive_value ))
+        raise ArgumentError, folder_not_exists_msg unless folder_exists
 
         machine_config = DataMap.new( Indices::MACHINE_CONFIG_FILEPATH )
         machine_config.use( Indices::MACHINE_CONFIG_SECTION_NAME )

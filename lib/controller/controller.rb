@@ -35,7 +35,7 @@ module SafeDb
     def initialize
 
       class_name = self.class.name.split(":").last.downcase
-      is_no_token_uc = [ "token", "init", "id", "remote" ].include? class_name
+      is_no_token_uc = [ "token", "init", "id", "configure" ].include? class_name
       return if is_no_token_uc
       exit(100) unless ops_key_exists?
 
