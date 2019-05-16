@@ -16,6 +16,9 @@ module SafeDb
     # The desired length of a safe book ergonomic identifier.
     SAFE_BOOK_ID_LENGTH = 12
 
+    # The file-system location of the safe database tree
+    SAFE_DATABASE_FOLDER = File.join( Dir.home, ".#{SAFE_URL_NAME}" )
+
     # The fully qualified domain name of the safedb home website
     SAFE_GEM_WEBSITE = "https://www.#{SAFE_URL_NAME}"
 
@@ -25,17 +28,26 @@ module SafeDb
     # The name of the master crypts folder.
     MASTER_CRYPTS_FOLDER_NAME = "safedb-master-crypts"
 
+    # The path to the master crypts folder.
+    MASTER_CRYPTS_FOLDER_PATH = File.join( SAFE_DATABASE_FOLDER, MASTER_CRYPTS_FOLDER_NAME )
+
     # The name of the branch indices folder.
     BRANCH_INDICES_FOLDER_NAME = "safedb-branch-indices"
+
+    # The path to the branch indices folder.
+    BRANCH_INDICES_FOLDER_PATH = File.join( SAFE_DATABASE_FOLDER, BRANCH_INDICES_FOLDER_NAME )
 
     # The name of the branch crypts folder.
     BRANCH_CRYPTS_FOLDER_NAME = "safedb-branch-crypts"
 
-    # The file-system location of the safe database tree
-    SAFE_DATABASE_FOLDER = File.join( Dir.home, ".#{SAFE_URL_NAME}" )
+    # The path to the branch crypts folder.
+    BRANCH_CRYPTS_FOLDER_PATH = File.join( SAFE_DATABASE_FOLDER, BRANCH_CRYPTS_FOLDER_NAME )
+
+    # The master indices file name
+    MASTER_INDICES_FILE_NAME = "safedb-master-indices.ini"
 
     # The path to the master indices file
-    MASTER_INDICES_FILEPATH = File.join( SAFE_DATABASE_FOLDER, "safedb-master-indices.ini" )
+    MASTER_INDICES_FILEPATH = File.join( SAFE_DATABASE_FOLDER, MASTER_INDICES_FILE_NAME )
 
     # The path to the machine configuration INI file
     MACHINE_CONFIG_FILEPATH = File.join( SAFE_DATABASE_FOLDER, "safedb-remote-config.ini" )

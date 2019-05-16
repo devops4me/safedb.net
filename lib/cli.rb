@@ -312,6 +312,20 @@ class CLI < Thor
 
 
 
+  # Description of the safe database push command.
+  desc "push", "push crypts to github and put index keys on removable drive"
+
+  # After backing up local assets the <b>push use case</b> creates a remoe github
+  # repository if necessary and initializes the master crypts as a git repository
+  # if necessary and then adds, commits and pushes the crypts up to the github
+  # remote for safe keeping.
+  def push
+    log.info(x) { "push crypt assets to github and refresh the index keys on removable drive." }
+    SafeDb::Push.new().flow()
+  end
+
+
+
   # Description of the set configuration directives command.
   desc "set <directive_name> <directive_value>", "set book-scoped configuration directive"
 

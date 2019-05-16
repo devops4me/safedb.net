@@ -22,9 +22,12 @@ module SafeDb
     end
 
 
+    # Get the path to the folder that holds the master crypts for the
+    # book ID specified in the parameter.
+    # @param book_id [String] the identifier of the book in question
+    # @return [File] path to the master crypts folder for the book
     def self.master_crypts_folder( book_id )
-      master_crypts_folder = File.join( Indices::SAFE_DATABASE_FOLDER, Indices::MASTER_CRYPTS_FOLDER_NAME )
-      return File.join( master_crypts_folder, "safedb.book.#{book_id}" )
+      return File.join( Indices::MASTER_CRYPTS_FOLDER_PATH, "safedb.book.#{book_id}" )
     end
 
 
@@ -34,14 +37,16 @@ module SafeDb
 
 
     def self.branch_crypts_folder( book_id, branch_id )
-      branch_crypts_folder = File.join( Indices::SAFE_DATABASE_FOLDER, Indices::BRANCH_CRYPTS_FOLDER_NAME  )
-      return File.join( branch_crypts_folder, "safedb-branch-#{book_id}-#{branch_id}" )
+      return File.join( Indices::BRANCH_CRYPTS_FOLDER_PATH, "safedb-branch-#{book_id}-#{branch_id}" )
     end
 
 
+    # Get the path to the branch indices file for the branch ID
+    # specified in the parameter.
+    # @param branch_id [String] the identifier of the branch in question
+    # @return [File] path to the branch indices file for the given branch
     def self.branch_indices_filepath( branch_id )
-      branch_indices_folder = File.join( Indices::SAFE_DATABASE_FOLDER, Indices::BRANCH_INDICES_FOLDER_NAME )
-      return File.join( branch_indices_folder, "safedb-indices-#{branch_id}.ini" )
+      return File.join( Indices::BRANCH_INDICES_FOLDER_PATH, "safedb-indices-#{branch_id}.ini" )
     end
 
 
