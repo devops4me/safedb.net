@@ -18,6 +18,72 @@ module SafeDb
     # remote for safe keeping.
     def execute()
 
+
+### OpenSSL::PKey::EC.send(:alias_method, :private?, :private_key?)
+
+the_256_key = OpenSSL::PKey::EC.new('prime256v1')
+the_256_key.generate_key!
+
+puts ""
+puts "#############################"
+puts "the 256 key"
+puts "#############################"
+puts the_256_key.to_pem()
+puts ""
+
+cipher = OpenSSL::Cipher.new 'AES-128-CBC'
+pass_phrase = 'secret123'
+
+key_secure = the_256_key.export( cipher, pass_phrase )
+puts "The secure key is #{key_secure}"
+
+
+public_key_hex = the_256_key.public_key.to_bn.to_s(16).downcase
+public_key_64 = [[public_key_hex].pack("H*")].pack("m0")
+
+github_public_key_64 = Base64.urlsafe_encode64(the_256_key.public_key.to_bn.to_s(2), padding: false)
+
+puts "Hex public key is => #{public_key_hex}"
+puts ""
+puts ""
+puts "GitHub Public Key is => ssh-ed25519 #{github_public_key_64}"
+puts "Base64 public key is => ssh-ed25519 #{public_key_64}"
+
+puts ""
+the_384_key = OpenSSL::PKey::EC.new('secp384r1')
+the_384_key.generate_key!
+
+puts "#############################"
+puts "the 384 key"
+puts "#############################"
+puts the_384_key.to_pem()
+puts ""
+
+github_384_public_key_64 = Base64.urlsafe_encode64(the_384_key.public_key.to_bn.to_s(2), padding: false)
+puts "GitHub Public Key is => ssh-ed25519 #{github_384_public_key_64}"
+
+########## puts "Bytes public key is => #{the_384_key.to_bytes()}"
+#################  puts the_384_key.public_key().get_public_key()
+
+puts ""
+return 
+
+ec_domain_key, ec_public = OpenSSL::PKey::EC.new('secp384r1'), OpenSSL::PKey::EC.new('secp384r1')
+ec_domain_key.generate_key!
+ec_public.public_key = ec_domain_key.public_key
+
+
+public_key_hex = ec_domain_key.public_key.to_bn.to_s(16).downcase
+puts "The public key HEX is #{public_key_hex}"
+puts "The basic public key is #{ec_domain_key.public_key.to_pem()}"
+return
+
+
+puts "the public key is #{ec_domain_key.public_key.export()}"
+puts "the public key is #{ec_domain_key.public_key.to_pem()}"
+puts "the private key is #{ec_domain_key.private_key.export()}"
+puts "the private key is #{ec_domain_key.private_key.to_pem()}"
+return
       puts ""
 
       drive_config = DataMap.new( Indices::MACHINE_CONFIG_FILEPATH )
@@ -36,15 +102,6 @@ module SafeDb
         File.write( drive_backup_filepath, File.read( removable_drive_file ) )
         puts "Backup of Clobbered File => #{drive_backup_filepath}"
       end
-
-      clobbered_crypts_name = TimeStamp.yyjjj_hhmm_sst() + "-" + Indices::MASTER_CRYPTS_FOLDER_NAME
-      clobbered_crypts_path = File.join( Indices::SAFE_DATABASE_FOLDER, clobbered_crypts_name )
-
-      FileUtils.mkdir_p( clobbered_crypts_path )
-      FileUtils.copy_entry( Indices::MASTER_CRYPTS_FOLDER_PATH, clobbered_crypts_path )
-
-
-      puts "Backup of Clobbered Crypts => #{clobbered_crypts_path}"
 
       is_git = File.exist?( Indices::MASTER_CRYPTS_GIT_PATH ) && File.directory?( Indices::MASTER_CRYPTS_GIT_PATH )
 
