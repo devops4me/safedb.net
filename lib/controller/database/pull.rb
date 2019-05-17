@@ -2,20 +2,16 @@
 	
 module SafeDb
 
-  # After backing up local assets the <b>push use case</b> creates a remoe github
-  # repository if necessary and initializes the master crypts as a git repository
-  # if necessary and then adds, commits and pushes the crypts up to the github
-  # remote for safe keeping.
-  #
-  # We also remember the commit reference and we add this to the master indices
-  # file before finally backing up, and then updating the master indices file on
-  # the locally accessible removable drive.
-  class Push < Controller
+  # If the removable drive path is configured and exists and contains the master
+  # index file, the pull use case backs up both file and master crypts (if necessary)
+  # and then refreshes them with the state that exists in the remote mirrored git
+  # directory and the indices on the removable drive path.
+  class Pull < Controller
 
-    # After backing up local assets the <b>push use case</b> creates a remoe github
-    # repository if necessary and initializes the master crypts as a git repository
-    # if necessary and then adds, commits and pushes the crypts up to the github
-    # remote for safe keeping.
+    # If the removable drive path is configured and exists and contains the master
+    # index file, the pull use case backs up both file and master crypts (if necessary)
+    # and then refreshes them with the state that exists in the remote mirrored git
+    # directory and the indices on the removable drive path.
     def execute()
 
       puts ""

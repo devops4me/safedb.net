@@ -31,6 +31,9 @@ module SafeDb
     # The path to the master crypts folder.
     MASTER_CRYPTS_FOLDER_PATH = File.join( SAFE_DATABASE_FOLDER, MASTER_CRYPTS_FOLDER_NAME )
 
+    # The path to the master crypts .git directory.
+    MASTER_CRYPTS_GIT_PATH = File.join( MASTER_CRYPTS_FOLDER_PATH, ".git" )
+
     # The name of the branch indices folder.
     BRANCH_INDICES_FOLDER_NAME = "safedb-branch-indices"
 
@@ -49,8 +52,8 @@ module SafeDb
     # The path to the master indices file
     MASTER_INDICES_FILEPATH = File.join( SAFE_DATABASE_FOLDER, MASTER_INDICES_FILE_NAME )
 
-    # The path to the machine configuration INI file
-    MACHINE_CONFIG_FILEPATH = File.join( SAFE_DATABASE_FOLDER, "safedb-remote-config.ini" )
+    # The path to the remote storage configuration INI file
+    MACHINE_CONFIG_FILEPATH = File.join( SAFE_DATABASE_FOLDER, "safedb-remote-storage.ini" )
 
     # The machine configuration section (header) name
     MACHINE_CONFIG_SECTION_NAME = "remote.database"
