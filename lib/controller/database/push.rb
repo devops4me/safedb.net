@@ -19,10 +19,76 @@ module SafeDb
     def execute()
 
 
+FileUtils.chmod 0755, 'somecommand'
+FileUtils.chmod 0644, %w(my.rb your.rb his.rb her.rb)
+FileUtils.chmod 0755, '/usr/bin/ruby', :verbose => true
+
+
+### read -d '' keytext << EOF
+
+## Command that will eject the public key starting like this
+## ecdsa-sha2-nistp384 AAAAE2VjZHNhLXNoYTItbmlzdHA
+ssh-keygen -f ec-private-key-file.pem -y
+
+ecdsa_public_key_str = %x[ #{convert_cmd} ]
+
+puts ""
+puts "===================================================="
+puts "ECDSA Public Key"
+puts "===================================================="
+puts ecdsa_public_key_str
+puts "===================================================="
+
+
+
+rsa_key = OpenSSL::PKey::RSA.new 2048
+
+puts ""
+puts "#############################"
+puts "RSA 2048 Private Key"
+puts "#############################"
+puts rsa_key.to_pem
+
+puts ""
+puts "#############################"
+puts "RSA 2048 Public Key"
+puts "#############################"
+puts rsa_key.public_key.to_pem
+
+
 ### OpenSSL::PKey::EC.send(:alias_method, :private?, :private_key?)
 
-the_256_key = OpenSSL::PKey::EC.new('prime256v1')
-the_256_key.generate_key!
+the_256_key = OpenSSL::PKey::EC.new('prime256v1').generate_key!
+
+puts ""
+puts "#####################################"
+puts "ED25519 to Public Key then 2 PEM"
+puts "#####################################"
+ed_key = the_256_key.to_text
+puts ed_key
+puts "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+puts the_256_key.public_key.to_octet_string( :compressed )
+puts "------------------------------------------------------------------------"
+puts the_256_key.public_key.to_octet_string( :uncompressed )
+puts "------------------------------------------------------------------------"
+puts the_256_key.public_key.to_octet_string( :hybrid )
+puts "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++="
+puts the_256_key.public_key.to_bn()
+puts "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++="
+puts the_256_key.public_key.to_bn().to_s
+puts "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++="
+puts the_256_key.public_key.to_bn().to_s(0)
+puts "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++="
+puts the_256_key.public_key.to_bn().to_s(2)
+puts "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++="
+puts the_256_key.public_key.to_bn().to_s(10)
+puts "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++="
+puts the_256_key.public_key.to_bn().to_s(16)
+
+#### puts the_256_key.public_key.to_text
+###### puts the_256_key.public_key.to_pem
+
+
 
 puts ""
 puts "#############################"
