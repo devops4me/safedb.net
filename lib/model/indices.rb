@@ -158,6 +158,18 @@ module SafeDb
     # Handle to the simple name of the ingested file in the submap verse
     INGESTED_FILE_BASE_NAME_KEY = "file.name"
 
+    # The file permissions chmod key
+    FILE_CHMOD_PERMISSIONS_KEY = "chmod.permissions"
+
+    # The keypair name prefix for private keys.
+    PRIVATE_KEY_PREFIX = "private.key"
+
+    # The keypair name prefix for public keys.
+    PUBLIC_KEY_PREFIX = "public.key"
+
+    # Elliptic Curve SSL Key Type
+    ELLIPTIC_CURVE_KEY_TYPE = "secp384r1"
+
 
   end
 

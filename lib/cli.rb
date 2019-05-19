@@ -400,11 +400,12 @@ class CLI < Thor
 
   # The default action of the <b>keypair use case</b> is to create a private and
   # public keypair and store them within the open chapter and verse.
-  # @param keypair_name [String] the name of the keypair (for example gitlab)
-  def keypair keypair_name
-    log.info(x) { "Generate a private and public keypair that is named #{keypair_name}" }
+  # @param keypair_name [String] optional name of the keypair (for example gitlab)
+  def keypair( keypair_name = nil )
+    log.info(x) { "Generate an elliptic curve private and public cryptographic keys." }
+    log.info(x) { "The keypair name [ #{keypair_name} ] was given." } if keypair_name
     keypair_uc = SafeDb::Keypair.new
-    keypair_uc.keypair_name = keypair_name
+    keypair_uc.keypair_name = keypair_name if keypair_name
     keypair_uc.flow()
   end
 

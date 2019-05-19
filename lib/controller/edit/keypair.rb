@@ -5,86 +5,60 @@ module SafeDb
   # The default action of the <b>keypair use case</b> is to create a private and
   # public keypair and store them within the open chapter and verse.
   #
-  # The keypair name parameter is used as a prefix to compose the private and
-  # public key keynames.
+  # The optional keypair name parameter (if given) is used as a prefix to compose
+  # the private and public key keynames. The prefix and descriptors will be period
+  # separated.
   #
   # Currently the only algorithm used is the super secure EC (eliptic curve)
   # with 384 bits.
+  #
+  # == Generating Public Key for Unit Test
+  #
+  # To validate public key generation for SSH we can use the below command that
+  # points to an on-disk private key file. The -y flag produces the magic.
+  #
+  #     ssh-keygen -f /path/to/private/key.pem -y
+  #
   class Keypair < EditVerse
+
+    attr_writer :keypair_name
 
     # The <b>keypair use case</b> creates a private and public keypair and stores
     # them within the open chapter and verse.
     def execute()
 
-      attr_writer :keypair_name
-
-      the_key = OpenSSL::PKey::EC.new('secp384r1')
-      the_key.generate_key!
+      ec_key = EcKey.new()
 
 =begin
 FileUtils.chmod 0755, 'somecommand'
 FileUtils.chmod 0644, %w(my.rb your.rb his.rb her.rb)
 FileUtils.chmod 0755, '/usr/bin/ruby', :verbose => true
-
-
-### read -d '' keytext << EOF
-
-## Command that will eject the public key starting like this
-## ecdsa-sha2-nistp384 AAAAE2VjZHNhLXNoYTItbmlzdHA
-ssh-keygen -f ec-private-key-file.pem -y
-
-ecdsa_public_key_str = %x[ #{convert_cmd} ]
 =end
 
-puts ""
+      name_postfix = ""
+      name_postfix = ".#{@keypair_name}" if @keypair_name
+      bcv_name = "#{@book.book_name()}.#{@book.get_open_chapter_name()}.#{@book.get_open_verse_name()}#{name_postfix}"
+      private_key_filename = "#{bcv_name}.private.key.pem"
+      private_key_keyname = "private.key#{name_postfix}"
+      public_key_keyname = "public.key#{name_postfix}"
 
-puts "#############################"
-puts "the 384 key"
-puts "#############################"
-puts the_key.private_key.to_pem()
-puts "#############################"
-puts the_key.private_key.export()
-puts "#############################"
-puts the_key.public_key.export()
-puts "#############################"
-puts the_key.public_key.to_pem()
-puts "#############################"
-puts the_key.to_pem()
-puts "#############################"
-puts the_key.to_text()
-puts ""
+      file_content64 = Base64.urlsafe_encode64( ec_key.private_key_pem() )
 
-ec_private_key_encoded = Base64.urlsafe_encode64( the_key.to_pem() )
+      log.info(x) { "Keypair prefix => #{@keypair_name}" } if @keypair_name
+      log.info(x) { "Size of base64 keypair private key => [#{file_content64.length}]" }
+      log.info(x) { "The keypair fully qualified name => [ #{private_key_filename} ]" }
+      log.info(x) { "Keynames are [ #{private_key_keyname} ] and [ #{public_key_keyname} ]" }
 
-puts "Private Key Encoded"
-puts "#{ec_private_key_encoded}"
-puts ""
-return 
+      filedata_map = {}
+      filedata_map.store( Indices::INGESTED_FILE_BASE_NAME_KEY, private_key_filename )
+      filedata_map.store( Indices::INGESTED_FILE_CONTENT64_KEY, file_content64 )
+      filedata_map.store( Indices::FILE_CHMOD_PERMISSIONS_KEY, "0600" )
 
-=begin
-      puts ""
+      @verse.store( Indices::INGESTED_FILE_LINE_NAME_KEY + private_key_keyname, filedata_map )
+      @verse.store( public_key_keyname, ec_key.public_key_ssh() )
 
-      drive_config = DataMap.new( Indices::MACHINE_CONFIG_FILEPATH )
-      drive_config.use( Indices::MACHINE_CONFIG_SECTION_NAME )
+      return 
 
-      removable_drive_path = drive_config.get( Indices::MACHINE_REMOVABLE_DRIVE_PATH )
-      removable_drive_file = File.join( removable_drive_path, Indices::MASTER_INDICES_FILE_NAME )
-      removable_drive_file_exists = File.exist?( removable_drive_file ) && File.file?( removable_drive_file )
-
-      puts "Removable Drive Location => #{removable_drive_path}"
-      puts "Removable Drive Filepath => #{removable_drive_file}"
-
-      if removable_drive_file_exists
-        drive_filename = TimeStamp.yyjjj_hhmm_sst() + "-" + Indices::MASTER_INDICES_FILE_NAME
-        drive_backup_filepath = File.join( removable_drive_path, drive_filename )
-        File.write( drive_backup_filepath, File.read( removable_drive_file ) )
-        puts "Backup of Clobbered File => #{drive_backup_filepath}"
-      end
-
-      is_git = File.exist?( Indices::MASTER_CRYPTS_GIT_PATH ) && File.directory?( Indices::MASTER_CRYPTS_GIT_PATH )
-
-      return
-=end
 
     end
 
