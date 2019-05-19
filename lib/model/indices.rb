@@ -159,7 +159,7 @@ module SafeDb
     INGESTED_FILE_BASE_NAME_KEY = "file.name"
 
     # The file permissions chmod key
-    FILE_CHMOD_PERMISSIONS_KEY = "chmod.permissions"
+    FILE_CHMOD_PERMISSIONS_KEY = "file.permissions"
 
     # The keypair name prefix for private keys.
     PRIVATE_KEY_PREFIX = "private.key"

@@ -25,15 +25,9 @@ module SafeDb
 
     # The <b>keypair use case</b> creates a private and public keypair and stores
     # them within the open chapter and verse.
-    def execute()
+    def edit_verse()
 
       ec_key = EcKey.new()
-
-=begin
-FileUtils.chmod 0755, 'somecommand'
-FileUtils.chmod 0644, %w(my.rb your.rb his.rb her.rb)
-FileUtils.chmod 0755, '/usr/bin/ruby', :verbose => true
-=end
 
       name_postfix = ""
       name_postfix = ".#{@keypair_name}" if @keypair_name

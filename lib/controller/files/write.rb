@@ -47,6 +47,17 @@ module SafeDb
       puts "File successfully written from safe to filesystem."
       puts ""
 
+# @todo - if the permissions key is found then change them please
+# @todo - if the permissions key is found then change them please
+# @todo - if the permissions key is found then change them please
+# @todo - if the permissions key is found then change them please
+
+=begin
+FileUtils.chmod 0755, 'somecommand'
+FileUtils.chmod 0644, %w(my.rb your.rb his.rb her.rb)
+FileUtils.chmod 0755, '/usr/bin/ruby', :verbose => true
+=end
+
       File.write( backup_file_path, File.read( file_full_path ) ) if will_clobber
       ::File.write( file_full_path, Base64.urlsafe_decode64( base64_content ) )
 
