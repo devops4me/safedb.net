@@ -395,6 +395,20 @@ class CLI < Thor
   end
 
 
+  # Description of the safe keypair command.
+  desc "keypair <name>", "create a public/private keypair against the given name."
+
+  # The default action of the <b>keypair use case</b> is to create a private and
+  # public keypair and store them within the open chapter and verse.
+  # @param keypair_name [String] the name of the keypair (for example gitlab)
+  def keypair keypair_name
+    log.info(x) { "Generate a private and public keypair that is named #{keypair_name}" }
+    keypair_uc = SafeDb::Keypair.new
+    keypair_uc.keypair_name = keypair_name
+    keypair_uc.flow()
+  end
+
+
 
   # Description of the read command.
   desc "read <file_url>", "read file into the open chapter and verse for safe keeping."

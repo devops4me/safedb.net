@@ -2,22 +2,24 @@
 	
 module SafeDb
 
-  # After backing up local assets the <b>push use case</b> creates a remoe github
-  # repository if necessary and initializes the master crypts as a git repository
-  # if necessary and then adds, commits and pushes the crypts up to the github
-  # remote for safe keeping.
+  # The default action of the <b>keypair use case</b> is to create a private and
+  # public keypair and store them within the open chapter and verse.
   #
-  # We also remember the commit reference and we add this to the master indices
-  # file before finally backing up, and then updating the master indices file on
-  # the locally accessible removable drive.
-  class Push < Controller
+  # The keypair name parameter is used as a prefix to compose the private and
+  # public key keynames.
+  #
+  # Currently the only algorithm used is the super secure EC (eliptic curve)
+  # with 384 bits.
+  class Keypair < EditVerse
 
-    # After backing up local assets the <b>push use case</b> creates a remoe github
-    # repository if necessary and initializes the master crypts as a git repository
-    # if necessary and then adds, commits and pushes the crypts up to the github
-    # remote for safe keeping.
+    # The <b>keypair use case</b> creates a private and public keypair and stores
+    # them within the open chapter and verse.
     def execute()
 
+      attr_writer :keypair_name
+
+      the_key = OpenSSL::PKey::EC.new('secp384r1')
+      the_key.generate_key!
 
 =begin
 FileUtils.chmod 0755, 'somecommand'
@@ -35,33 +37,31 @@ ecdsa_public_key_str = %x[ #{convert_cmd} ]
 =end
 
 puts ""
-the_384_key = OpenSSL::PKey::EC.new('secp384r1')
-the_384_key.generate_key!
 
 puts "#############################"
 puts "the 384 key"
 puts "#############################"
-puts the_384_key.private_key.to_pem()
+puts the_key.private_key.to_pem()
 puts "#############################"
-puts the_384_key.private_key.export()
+puts the_key.private_key.export()
 puts "#############################"
-puts the_384_key.public_key.export()
+puts the_key.public_key.export()
 puts "#############################"
-puts the_384_key.public_key.to_pem()
+puts the_key.public_key.to_pem()
 puts "#############################"
-puts the_384_key.to_pem()
+puts the_key.to_pem()
 puts "#############################"
-puts the_384_key.to_text()
+puts the_key.to_text()
 puts ""
 
-ec_private_key_encoded = Base64.urlsafe_encode64( the_384_key.to_pem() )
+ec_private_key_encoded = Base64.urlsafe_encode64( the_key.to_pem() )
 
 puts "Private Key Encoded"
-puts "ec_private_key_encoded"
+puts "#{ec_private_key_encoded}"
 puts ""
 return 
 
-return
+=begin
       puts ""
 
       drive_config = DataMap.new( Indices::MACHINE_CONFIG_FILEPATH )
@@ -83,24 +83,8 @@ return
 
       is_git = File.exist?( Indices::MASTER_CRYPTS_GIT_PATH ) && File.directory?( Indices::MASTER_CRYPTS_GIT_PATH )
 
-
-
-=begin
-      require "octokit"
-############client = Octokit::Client.new(:login => 'defunkt', :password => 'c0d3b4ssssss!')
-
-client = Octokit::Client.new(:access_token => '')
-user = client.user
-puts "Company Name => #{user[:company]}"
-puts "User Name => #{user[:name]}"
-puts "User ID => #{user[:id]}"
-puts "Email => #{user[:email]}"
-puts "Login => #{user[:login]}"
-puts "Biography => #{user[:bio]}"
-=end
-
       return
-
+=end
 
     end
 
