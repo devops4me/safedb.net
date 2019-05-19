@@ -27,19 +27,18 @@ module SafeDb
     # them within the open chapter and verse.
     def edit_verse()
 
-      ec_key = Keypair.new()
+      keypair = Keypair.new()
 
-      name_postfix = ""
+      name_postfix = "" unless @keypair_name
       name_postfix = ".#{@keypair_name}" if @keypair_name
       bcv_name = "#{@book.book_name()}.#{@book.get_open_chapter_name()}.#{@book.get_open_verse_name()}#{name_postfix}"
       private_key_filename = "#{bcv_name}.private.key.pem"
       private_key_keyname = "private.key#{name_postfix}"
       public_key_keyname = "public.key#{name_postfix}"
 
-      file_content64 = Base64.urlsafe_encode64( ec_key.private_key_pem() )
+      file_content64 = Base64.urlsafe_encode64( keypair.private_key_pem() )
 
       log.info(x) { "Keypair prefix => #{@keypair_name}" } if @keypair_name
-      log.info(x) { "Size of base64 keypair private key => [#{file_content64.length}]" }
       log.info(x) { "The keypair fully qualified name => [ #{private_key_filename} ]" }
       log.info(x) { "Keynames are [ #{private_key_keyname} ] and [ #{public_key_keyname} ]" }
 
@@ -49,7 +48,7 @@ module SafeDb
       filedata_map.store( Indices::FILE_CHMOD_PERMISSIONS_KEY, "0600" )
 
       @verse.store( Indices::INGESTED_FILE_LINE_NAME_KEY + private_key_keyname, filedata_map )
-      @verse.store( public_key_keyname, ec_key.public_key_ssh() )
+      @verse.store( public_key_keyname, keypair.public_key_ssh() )
 
       return 
 
