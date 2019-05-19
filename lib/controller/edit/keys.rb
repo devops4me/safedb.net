@@ -2,7 +2,7 @@
 	
 module SafeDb
 
-  # The default action of the <b>keypair use case</b> is to create a private and
+  # The default action of the <b>keys use case</b> is to create a private and
   # public keypair and store them within the open chapter and verse.
   #
   # The optional keypair name parameter (if given) is used as a prefix to compose
@@ -19,7 +19,7 @@ module SafeDb
   #
   #     ssh-keygen -f /path/to/private/key.pem -y
   #
-  class Keypair < EditVerse
+  class Keys < EditVerse
 
     attr_writer :keypair_name
 
@@ -27,7 +27,7 @@ module SafeDb
     # them within the open chapter and verse.
     def edit_verse()
 
-      ec_key = EcKey.new()
+      ec_key = Keypair.new()
 
       name_postfix = ""
       name_postfix = ".#{@keypair_name}" if @keypair_name
