@@ -128,6 +128,17 @@ class CLI < Thor
 
 
 
+  # Description of the tell use case command line call.
+  desc "tell", "detail the secret key/value pairs that start with the @ symbol"
+
+  # Detail the secret key/value pairs that start with the @ symbol.
+  def tell
+    log.info(x) { "tell the secret key/value pairs that begin with the @ symbol." }
+    SafeDb::Tell.new().flow()
+  end
+
+
+
   # Description of the print use case command line call.
   desc "print <key_name>", "print the key value at the opened chapter and verse"
 
