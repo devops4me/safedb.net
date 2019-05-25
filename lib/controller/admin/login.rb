@@ -47,8 +47,6 @@ module SafeDb
         return
       end
 
-# @todo => search for password in environment variable
-
       book_password = Clipboard.read_password() if @clip
       book_password = KeyPass.password_from_shell( false ) if( @password.nil?() && !@clip )
       book_password = @password unless @password.nil?()
@@ -65,21 +63,6 @@ module SafeDb
 
 
     private
-
-
-    def print_already_logged_in
-
-      puts ""
-      puts "We are already logged in. Open a secret envelope, put, then seal."
-      puts ""
-      puts "    #{COMMANDMENT} open aws.credentials:s3reader"
-      puts "    #{COMMANDMENT} put access_key ABCD1234"
-      puts "    #{COMMANDMENT} put secret_key FGHIJ56789"
-      puts "    #{COMMANDMENT} put region_key eu-central-1"
-      puts "    #{COMMANDMENT} seal"
-      puts ""
-
-    end
 
 
     def print_not_initialized

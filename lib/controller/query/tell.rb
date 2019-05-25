@@ -13,7 +13,7 @@ module SafeDb
       @book.print_book_mark()
       if @verse.empty?()
 
-        puts "No lines are in this chapter and verse location."
+        puts "    No lines in this chapter and verse location."
         puts ""
         return
 
