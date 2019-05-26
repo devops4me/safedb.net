@@ -10,7 +10,7 @@ module SafeDb
   # - <tt>commit</tt> - transfers state from branch to master
   # - <tt>refresh</tt> - transfers state from master to branch
   #
-  class StateMigrate
+  class EvolveState
 
     # The login process recycles the content encryption key by regenerating the human
     # key from the password text and salts and then accessing the old crypt key, generating
@@ -42,7 +42,7 @@ module SafeDb
     #    used for the asymmetric decryption of the content ciphertext which is in a
     #    file marked with the content identifier also within the book keys.
     #
-    # @param secret [String]
+    # @param human_secret [String]
     #    the secret text that can potentially be cryptographically weak (low entropy).
     #    This text is severely strengthened and morphed into a key using multiple key
     #    derivation functions like <b>PBKDF2, BCrypt</b> and <b>SCrypt</b>.
@@ -54,21 +54,29 @@ module SafeDb
     #    The key ring only stores the salts. This means the secret text based key can
     #    only be regenerated at the next login, which explains the inter-branch label.
     #
-    def self.login( book_keys, secret )
+    # @return [Boolean]
+    #    return false if failure decrypting with human password occurs.
+    #    True is returned if the login logic completes naturally.
+    def self.login( book_keys, human_secret )
 
       the_book_id = book_keys.section()
 
-      old_human_key = KdfApi.regenerate_from_salts( secret, book_keys )
+      old_human_key = KdfApi.regenerate_from_salts( human_secret, book_keys )
+      is_correct_password = old_human_key.can_decrypt_key( book_keys.get( Indices::CRYPT_CIPHER_TEXT ) )
+      return false unless is_correct_password
+
       the_crypt_key = old_human_key.do_decrypt_key( book_keys.get( Indices::CRYPT_CIPHER_TEXT ) )
       plain_content = Content.unlock_master( the_crypt_key, book_keys )
 
       first_login_since_boot = StateInspect.is_first_login?( book_keys )
       the_crypt_key = Key.from_random if first_login_since_boot
-      recycle_keys( the_crypt_key, the_book_id, secret, book_keys, plain_content )
+      recycle_keys( the_crypt_key, the_book_id, human_secret, book_keys, plain_content )
       set_bootup_id( book_keys ) if first_login_since_boot
 
       branch_id = Identifier.derive_branch_id( Branch.to_token() )
       clone_book_into_branch( the_book_id, branch_id, book_keys, the_crypt_key )
+
+      return true
 
     end
 

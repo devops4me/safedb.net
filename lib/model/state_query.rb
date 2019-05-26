@@ -2,7 +2,7 @@
 
 module SafeDb
 
-  # State queries are related to {StateMigrate} but they simple ask for information
+  # State queries are related to {EvolveState} but they simple ask for information
   # about the state without changing any state.
   #
   class StateInspect
@@ -42,6 +42,9 @@ module SafeDb
       branch_key_ciphertext = branch_keys.get( Indices::CRYPT_CIPHER_TEXT )
       branch_key = KeyDerivation.regenerate_shell_key( Branch.to_token() )
 
+      return branch_key.can_decrypt_key( branch_key_ciphertext )
+
+=begin
       begin
         branch_key.do_decrypt_key( branch_key_ciphertext )
         return true
@@ -50,6 +53,7 @@ module SafeDb
         log.warn(x) { "Login failure error message is #{e.message}" }
         return false
       end
+=end
 
     end
 

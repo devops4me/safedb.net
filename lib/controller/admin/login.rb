@@ -42,7 +42,7 @@ module SafeDb
       end
 
       if( StateInspect.is_logged_in?( @book_id ) )
-        StateMigrate.use_book( @book_id )
+        EvolveState.use_book( @book_id )
         View.new().flow()
         return
       end
@@ -51,12 +51,12 @@ module SafeDb
       book_password = KeyPass.password_from_shell( false ) if( @password.nil?() && !@clip )
       book_password = @password unless @password.nil?()
 
-# @todo => if password is correct - if not print out an error.
-
       book_keys = DataMap.new( Indices::MASTER_INDICES_FILEPATH )
       book_keys.use( @book_id )
+      is_login_successful = EvolveState.login( book_keys, book_password )
+      print_login_failure() unless is_login_successful
+      return unless is_login_successful
 
-      StateMigrate.login( book_keys, book_password )
       View.new().flow()
 
     end
@@ -65,7 +65,18 @@ module SafeDb
     private
 
 
-    def print_not_initialized
+    def print_login_failure()
+
+      puts ""
+      puts "The login into book [ #{@book_name} ] has failed."
+      puts "Please check the book name and password combination."
+      puts "Also visit login docs on how to present passwords."
+      puts ""
+
+    end
+
+
+    def print_not_initialized()
 
       puts ""
       puts "This book [ #{@book_name} ] has not yet been initialized."

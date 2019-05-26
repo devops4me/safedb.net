@@ -39,8 +39,8 @@ module SafeDb
       puts " == Book Mark := #{@book.get_open_chapter_name()}/#{@book.get_open_verse_name()}\n" if @book.is_opened?()
       puts ""
 
-      StateMigrate.refresh( @book )
-      StateMigrate.copy_commit_id_to_branch( @book )
+      EvolveState.refresh( @book )
+      EvolveState.copy_commit_id_to_branch( @book )
 
       puts "Refresh from master to branch was successful.\n"
       puts ""

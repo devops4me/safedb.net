@@ -478,6 +478,50 @@ module SafeDb
     end
 
 
+    # Return true if this key object can decrypt the parameter ciphertext that
+    # represents a key.
+    #
+    # The parameter cipher text must comprise of an 80 character key and a 16
+    # character random initialization vector (IV). When transformed to a bit string
+    # of ones and zeroes, the bit string length must be <tt>96 * 8 = 768</tt>.
+    #
+    # @param key_iv_ciphertext [String]
+    #    Provide the ciphertext produced by our sister key encryption method.
+    #    The ciphertext should hold 96 bytes which equates to 128 base64 characters.
+    #    The random initialization vector (iv) accounts for the first 16 bytes.
+    #    The actual crypt ciphertext then accounts for the final 80 bytes.
+    #
+    # @return [Boolean]
+    #    return true if the ciphertext is of the expected length and the
+    #    <tt>dry run of the decrypt operation</tt> completes without a
+    #    cipher error from {OpenSSL::Cipher::CipherError} being thrown.
+    #
+    def can_decrypt_key( key_iv_ciphertext )
+
+      bit_text = Key64.to_bits( key_iv_ciphertext )
+      ciphertext_size_msg = "Expected bit length of #{EXPECTED_CIPHER_BIT_LENGTH} not #{bit_text.length}."
+      is_expected_length = bit_text.length == EXPECTED_CIPHER_BIT_LENGTH
+      log.warn(x) { ciphertext_size_msg } unless is_expected_length
+      return false unless is_expected_length
+
+      the_cipher = OpenSSL::Cipher::AES256.new(:CBC)
+      the_cipher.decrypt()
+      rawbytes = [ bit_text ].pack("B*")
+      the_cipher.key = to_aes_key()
+      the_cipher.iv  = rawbytes[ 0 .. ( RANDOM_IV_BYTE_COUNT - 1 ) ]
+
+      begin
+        the_cipher.update( rawbytes[ RANDOM_IV_BYTE_COUNT .. -1 ] ) + the_cipher.final
+        return true
+      rescue OpenSSL::Cipher::CipherError => e
+        log.warn(x) { "Auth failure decrypting this ciphertext ~~ #{key_iv_ciphertext}" }
+        log.warn(x) { "Auth (maybe login failure) error message is ~~ #{e.message}" }
+        return false
+      end
+
+    end
+
+
     # Use the {OpenSSL::Cipher::AES256} block cipher in CBC mode and the binary
     # 256bit representation of this key to encrypt the parameter plaintext using
     # the parameter random initialization vector.
