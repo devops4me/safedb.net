@@ -1,11 +1,36 @@
 
-#### Use `safe push` and `safe pull` to remotely store and retrieve your safe books.
+#### create a remote backend store from which you can `safe push` and `safe pull` your encrypted database assets.
 
-<span style="font-family:Papyrus; font-size:2em;">Currently safe only supports a github backend, but this will be expanded to include s3 buckets, git repositories, ssh and sftp, dropbox, google drive and even key-value stores like etcd, redis and Amazon's dynamo db.</span>
+# create a safe database backend
 
-# safe push | safe pull
+A remote stored database from which you an push crypts to, and then pull from, consists of
 
-**We want safe to push its crypts to, and then pull them from a remote github repository.**
+- a **backend crypt store** in Github (or Gitlab, S3, dropbox, SFTP, GoogleDrive)
+- one **frontend file** called <tt>safedb-dataase-tracker.ini</tt> on one or more removable drives
+- a set of configuration directives at a safe book, chapter and verse location
+
+Let's create our remote configuration directives and then use the **`safe remote`** command to point out the **`book/chapter/verse`** that carries the directives.
+
+After that we issue a **`safe remote create`** to provision the remote (backend) database store.
+
+Visit the [safe push](push-pull) and [safe pull](push-pull) documentation to discover howto use your safe database on as many machines as you need.
+
+## configure your safe database backend
+
+Let's use Github as the storage engine for our remote database backend.
+
+```
+safe init db.admin
+safe login db.admin
+safe open remote.backend github
+```
+
+| **Directive** | **Description**     | **Command Example** |
+|:------------- |:------------------- |:------------------- |
+| github.token  | Access to the Github Rest API is enabled via this OAuth2 token. [Github Token Documentation](https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line) | **`safe put @github.token 43210fedcba43210fedcba43210fedcba43210fedcba`**
+
+
+
 
 Let's use Github as the remote backend store for safe crypts and a usb key (removable drive) to store salts and other information that is worthless to an attacker without your passwords.
 

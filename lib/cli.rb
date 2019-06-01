@@ -155,18 +155,6 @@ class CLI < Thor
 
 
 
-  # Description of the verse use case command line call.
-  desc "verse", "print the verse name at the opened chapter and verse"
-
-  # Print the name of the verse at the opened chapter and verse location.
-  def verse
-    log.info(x) { "print the verse name at the opened chapter and verse." }
-    verse_uc = SafeDb::Verse.new
-    verse_uc.flow()
-  end
-
-
-
   # Description of the safe token use case.
   desc "token", "generate and print out an encrypted (shell bound) shell token"
 
@@ -300,6 +288,21 @@ class CLI < Thor
     put_uc.credential_id = credential_id
     put_uc.credential_value = credential_value
     put_uc.flow()
+  end
+
+
+
+  # Description of the remote command.
+  desc "remote [create]", "create a safe database backend store"
+
+  # Create a safe database backend store.
+  #
+  # @param usecase [String] which usecase to execute - simply type [create]
+  def remote usecase
+    log.info(x) { "execute the remote use case named #{usecase}." }
+    remote_uc = SafeDb::Remote.new
+    remote_uc.usecase = usecase
+    remote_uc.flow()
   end
 
 

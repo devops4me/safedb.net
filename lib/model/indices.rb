@@ -56,13 +56,19 @@ module SafeDb
     MACHINE_CONFIG_FILEPATH = File.join( SAFE_DATABASE_FOLDER, "safedb-remote-storage.ini" )
 
     # The machine configuration section (header) name
-    MACHINE_CONFIG_SECTION_NAME = "remote.database"
+    MACHINE_CONFIG_SECTION_NAME = "remote.backend"
 
     # The name of the machine removable drive path location directive
     MACHINE_REMOVABLE_DRIVE_PATH = "removable.drive"
 
     # The remote database configuration section (header) name
-    REMOTE_DATABASE_SECTION_NAME = "remote.database"
+    REMOTE_DATABASE_SECTION_NAME = "remote.backend"
+
+    # Points to the book/chapter/verse coordinates for the remote backend
+    REMOTE_BACKEND_PROPERTIES_NAME = "backend.properties"
+
+    # The parameter key name to configure the backend coordinates
+    CONFIGURE_BACKEND_KEY_NAME = "backend"
 
     # The name of the remote database git pull url key
     REMOTE_DATABASE_GIT_PULL_URL = "git.pull.url"

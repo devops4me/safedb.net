@@ -42,6 +42,24 @@ module SafeDb
       end
 
 
+      if( @directive_name.eql?( Indices::CONFIGURE_BACKEND_KEY_NAME ) )
+
+        master_data = DataMap.new( Indices::MASTER_INDICES_FILEPATH )
+        master_data.use( Indices::REMOTE_DATABASE_SECTION_NAME )
+        master_data.set( Indices::REMOTE_BACKEND_PROPERTIES_NAME, @directive_value )
+
+        verse = Verse.new( @directive_value )
+
+        puts ""
+        puts "book/chapter/verse with remote backend properties"
+        puts @directive_value
+        puts ""
+
+        return
+
+      end
+
+
       if( @directive_name.eql?( Indices::REMOTE_DATABASE_GIT_PULL_URL ) || @directive_name.eql?( Indices::REMOTE_DATABASE_GIT_PUSH_URL ) )
 
         master_data = DataMap.new( Indices::MASTER_INDICES_FILEPATH )
