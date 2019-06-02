@@ -1,3 +1,3 @@
 module SafeDb
-  VERSION = "0.6.1001"
+  VERSION = "0.6.1010"
 end
