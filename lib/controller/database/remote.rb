@@ -27,7 +27,6 @@ module SafeDb
       repository_name = "safedb-crypts-#{TimeStamp.yyjjj_hhmm_sst()}"
       backend_properties = Master.new().get_backend_coordinates()
 
-
     end
 
 

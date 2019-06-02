@@ -28,12 +28,12 @@ module SafeDb
   # - the book name ( maybe from SAFE_BOOK_NAME ) follows convention
   # - the shell must have a SAFE_TTY_TOKEN environment variable
   #
-  class Init < Auth
+  class Init < Authenticate
 
 
     def execute
 
-# @todo => in parent class Auth validate the book name
+# @todo => in parent class Authenticate validate the book name
 
 
       @book_id = Identifier.derive_ergonomic_identifier( @book_name, Indices::SAFE_BOOK_ID_LENGTH )

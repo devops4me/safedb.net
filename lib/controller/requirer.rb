@@ -86,10 +86,10 @@ module SafeDb
     def self.gems( gem_filepath )
 
       require_relative "../version"
-      require_relative "../controller/controller"
-      require_relative "../controller/admin/auth"
-      require_relative "../controller/edit/editverse"
-      require_relative "../controller/query/queryverse"
+      require_relative "../controller/abstract/controller"
+      require_relative "../controller/abstract/authenticate"
+      require_relative "../controller/abstract/edit_verse"
+      require_relative "../controller/abstract/query_verse"
 
       gem_basepath = File.expand_path "..", gem_filepath
       Dir["#{gem_basepath}/**/*.rb"].each do |gem_path|

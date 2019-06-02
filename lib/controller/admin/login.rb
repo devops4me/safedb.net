@@ -23,7 +23,7 @@ module SafeDb
   # - a file in the present directory (with a pre-agreed name)
   # - a URL from a parameter or pre-agreed
   # - the shell's secure password reader
-  class Login < Auth
+  class Login < Authenticate
 
     # If the clip switch is present it signifies that the password should
     # be read in from the clipboard. Any text selection puts text into the
@@ -32,7 +32,7 @@ module SafeDb
 
     def execute
 
-# @todo => in parent class Auth validate the book name
+# @todo => in parent class Authenticate validate the book name
 
       @book_id = Identifier.derive_ergonomic_identifier( @book_name, Indices::SAFE_BOOK_ID_LENGTH )
 
