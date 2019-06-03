@@ -11,19 +11,19 @@ module SafeDb
 
     # Initialize coordinates to a location within a book and/or chapter and/or verse.
     #
-    # @param the_coordinates [String]
+    # @param coordinates_str [String]
     #    this parameter should be a book/chapter/verse separated
     #    by forward slashes.
-    def initialize( coordinates )
+    def initialize( coordinates_str )
 
-      KeyError.not_new( coordinates, self )
-      coordinates = coordinates.split( "/" )
-      bcv_error_msg = "Invalid / separated book chapter and verse coordinate ~> #{coordinates}"
-      raise ArgumentError.new( bcv_error_msg ) unless coordinates.length() == 3
+      KeyError.not_new( coordinates_str, self )
+      @coords_list = @coords_list.split( "/" )
+      bcv_error_msg = "Invalid / separated book chapter and verse coordinates ~> #{@coords_list}"
+      raise ArgumentError.new( bcv_error_msg ) unless @coords_list.length() == 3
       
-      @book_name = coordinates[ 0 ]
-      @chapter_name = coordinates[ 1 ]
-      @verse_name = coordinates[ 1 ]
+      @book_name = @coords_list[ 0 ].strip()
+      @chapter_name = @coords_list[ 1 ].strip()
+      @verse_name = @coords_list[ 2 ].strip()
 
       log.info(x) { "Initializing a book chapter and verse coordinate within book [#{@book_name}]." }
 

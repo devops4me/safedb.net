@@ -44,10 +44,13 @@ module SafeDb
 
       if( @directive_name.eql?( Indices::CONFIGURE_BACKEND_KEY_NAME ) )
 
-        Master.new().set_backend_coordinates( @directive_value )
+        @book.set_open_chapter_name( @directive_value.split( "/" )[0].strip() )
+        @book.set_open_verse_name( @directive_value.split( "/" )[1].strip() )
+        @book.write()
+        Master.new().set_backend_coordinates( "#{@book.book_id()}/#{@directive_value}" )
+        Show.new.flow()
 
         puts ""
-        puts @directive_value
         puts "successfully set backend property coordinates"
         puts ""
 
