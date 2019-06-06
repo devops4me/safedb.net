@@ -11,7 +11,7 @@ safe login db.admin
 safe open remote.backend github
 safe put @github.token 43210fedcba43210fedcba43210fedcba43210fedcba
 safe configure backend db.admin/remote.backend/github
-safe remote --create
+safe remote --provision
 ```
 
 ## safe put @github.token

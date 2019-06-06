@@ -111,7 +111,7 @@ safe open <<chapter>> <<verse>>
 cd ~/.ssh
 safe eject github.ssh.config
 safe eject safedb.code.private.key
-chmod 600 safedb.code.private.key
+chmod 600 safedb.code.private.key.pem
 cd <<repositories-folder>>
 ssh -i ~/.ssh/safedb.code.private.key.pem -vT git@safedb.code
 git clone https://github.com/devops4me/safedb.net safedb.net

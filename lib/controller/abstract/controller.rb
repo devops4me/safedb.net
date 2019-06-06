@@ -65,6 +65,13 @@ module SafeDb
     end
 
 
+    # Set the verse data structure for this controller. Usually called
+    # from another controller that wants to pass in a predefined map.
+    # @param incoming_verse [Hash] the incoming verse map to set
+    def set_verse( incoming_verse )
+      @verse = incoming_verse
+    end
+
     # This parental behaviour decrypts and reads the ubiquitous chapter and verse
     # data structures and indices.
     def read_verse()

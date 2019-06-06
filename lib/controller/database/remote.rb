@@ -16,16 +16,68 @@ module SafeDb
   #
   class Remote < Controller
 
-    attr_writer :create
+    attr_writer :provision
 
     # We want to provision (create) the safe's remote (github) backend.
     # A number of setup tasks are executed when you ask that the backend repository be created.
     def execute()
 
-      return unless @create
+      return unless @provision
+
+      require "etc"
+      require "socket"
+      require "octokit"
 
       repository_name = "safedb-crypts-#{TimeStamp.yyjjj_hhmm_sst()}"
       backend_properties = Master.new().get_backend_coordinates()
+
+      @book.set_open_chapter_name( backend_properties.split("/")[1] )
+      @book.set_open_verse_name( backend_properties.split("/")[2] )
+      @verse = @book.get_open_verse_data()
+      @verse.store( Indices::GITHUB_REPOSITORY_KEYNAME, repository_name )
+      github_access_token = @verse[ Indices::GITHUB_ACCESS_TOKEN ]
+      return unless is_github_access_token_valid( github_access_token )
+      key_creator = Keys.new()
+      key_creator.set_verse( @verse )
+      key_creator.edit_verse()
+      repo_public_key = @verse[ Indices::PUBLIC_KEY_DEFAULT_KEY_NAME ]
+
+      github_client = Octokit::Client.new( :access_token => github_access_token )
+      github_user = github_client.user
+      repo_creator = "#{Etc.getlogin()}@#{Socket.gethostname()}"
+      repo_description = "This github repository was auto-created by safedb.net to be a remote database backend on behalf of #{repo_creator} on #{TimeStamp.readable()}."
+      repo_homepage = "https://github.com/devops4me/safedb.net/"
+      repository_id = "#{github_user[:login]}/#{repository_name}"
+
+      puts ""
+      puts "Repository Name  =>  #{repository_id}"
+      puts "Github Company   =>  #{github_user[:company]}"
+      puts "Account Owner    =>  #{github_user[:name]}"
+      puts "Github User ID   =>  #{github_user[:id]}"
+      puts "Github Username  =>  #{github_user[:login]}"
+      puts "SSH Deploy Key   =>  #{repo_public_key[0..40]}..."
+
+      puts "Property Coords  =>  #{backend_properties}"
+      puts "Creation Entity  =>  #{repo_creator}"
+      puts "Repo Descriptor  =>  #{repo_description}"
+      puts "Repo Homepage    =>  #{repo_homepage}"
+      puts ""
+
+      options_hash = {
+        :description => repo_description,
+        :repo_homepage => repo_homepage,
+        :private => false,
+        :has_issues => false,
+        :has_wiki => false,
+        :has_downloads => false,
+        :auto_init => true
+      }
+
+      github_client.create_repository( repository_name, options_hash  )
+      github_client.add_deploy_key( repository_id, "safedb.net database deployment key with ID #{TimeStamp.yyjjj_hhmm_sst()}", repo_public_key )
+
+      @book.write()
+      Show.new.flow()
 
 =begin
 
@@ -102,6 +154,16 @@ git push --set-upstream origin master
 =end
 
     end
+
+    def is_github_access_token_valid( github_access_token )
+
+      is_invalid = github_access_token.nil?() || github_access_token.strip().length() < GITHUB_TOKEN_MIN_LENGTH
+      puts "No valid github access token found." if is_invalid
+      return !is_invalid
+
+    end
+
+    GITHUB_TOKEN_MIN_LENGTH = 7
 
 
   end

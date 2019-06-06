@@ -88,7 +88,7 @@ module LogImpl
   def get_logger
 
     file_logger = Logger.new @@log_path
-    file_logger.level = Logger::INFO
+    file_logger.level = Logger::DEBUG
     original_formatter = Logger::Formatter.new
 
     file_logger.formatter = proc { |severity, datetime, progname, msg|

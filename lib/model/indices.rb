@@ -67,6 +67,18 @@ module SafeDb
     # Points to the book/chapter/verse coordinates for the remote backend
     REMOTE_BACKEND_PROPERTIES_NAME = "backend.properties"
 
+    # Github repository keyname
+    GITHUB_REPOSITORY_KEYNAME = "github.reponame"
+
+    # Private Key Default Key Name
+    PRIVATE_KEY_DEFAULT_KEY_NAME = "private.key"
+
+    # Public Key Default Key Name
+    PUBLIC_KEY_DEFAULT_KEY_NAME = "public.key"
+
+    # This access token allows us to talk to the Github API
+    GITHUB_ACCESS_TOKEN = "@github.access.token"
+
     # The parameter key name to configure the backend coordinates
     CONFIGURE_BACKEND_KEY_NAME = "backend"
 
@@ -129,7 +141,7 @@ module SafeDb
 
     # Character (randomly) repeated to mask credentials
     # Asterices, hyphens, plus and equal signs are common alternatives.
-    SECRET_MASK_STRING = "*" * rand( 7 .. 17 )
+    SECRET_MASK_STRING = "*" * rand( 18 .. 30 )
 
     # The birthday (initialization time) of this safe book.
     SAFE_BOOK_INITIALIZE_TIME = "book.init.time"

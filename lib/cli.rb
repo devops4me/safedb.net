@@ -293,15 +293,19 @@ class CLI < Thor
 
 
   # Description of the remote command.
-  desc "remote [create]", "create a safe database backend store"
+  desc "remote --provision", "Create (provision) remote storage for the safe database (backend) crypt files."
 
-  # Create a safe database backend store.
-  #
-  # @param usecase [String] which usecase to execute - simply type [create]
-  def remote usecase
-    log.info(x) { "execute the remote use case named #{usecase}." }
-    remote_uc = SafeDb::Remote.new
-    remote_uc.usecase = usecase
+  # The <tt>--provision</tt> option conveys that we want to carve out
+  # some remote storage so that our database can be accessed by multiple
+  # machines in different corners of the globe.
+  method_option :provision, :type => :boolean, :aliases => "-p"
+
+  # Creates remote storage for the safe database crypt files.
+  def remote
+    log.info(x) { "performing a remote storage use case. The provision flag is set to #{options[ :provision ]}." }
+    remote_uc = SafeDb::Remote.new()
+    remote_uc.provision = true if options[ :provision ]
+    remote_uc.provision = false unless options[ :provision ]
     remote_uc.flow()
   end
 
@@ -443,7 +447,7 @@ class CLI < Thor
 
 
   # Description of the write command.
-  desc "write <file_key>", "write out file to current folder or use --to_dir=</path/to/dir."
+  desc "write <file_key>", "write out file to current folder or use --to_dir=/path/to/dir."
 
   # The <b>write use case</b> writes out a file that was previously ingested
   # and coccooned inside the safe.

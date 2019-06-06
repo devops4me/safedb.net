@@ -33,8 +33,8 @@ module SafeDb
       name_postfix = ".#{@keypair_name}" if @keypair_name
       bcv_name = "#{@book.book_name()}.#{@book.get_open_chapter_name()}.#{@book.get_open_verse_name()}#{name_postfix}"
       private_key_filename = "#{bcv_name}.private.key.pem"
-      private_key_keyname = "private.key#{name_postfix}"
-      public_key_keyname = "public.key#{name_postfix}"
+      private_key_keyname = "#{Indices::PRIVATE_KEY_DEFAULT_KEY_NAME}#{name_postfix}"
+      public_key_keyname = "#{Indices::PUBLIC_KEY_DEFAULT_KEY_NAME}#{name_postfix}"
 
       file_content64 = Base64.urlsafe_encode64( keypair.private_key_pem() )
 
@@ -49,9 +49,6 @@ module SafeDb
 
       @verse.store( Indices::INGESTED_FILE_LINE_NAME_KEY + private_key_keyname, filedata_map )
       @verse.store( public_key_keyname, keypair.public_key_ssh() )
-
-      return 
-
 
     end
 

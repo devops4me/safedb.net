@@ -10,6 +10,34 @@ module SafeDb
   # We also remember the commit reference and we add this to the master indices
   # file before finally backing up, and then updating the master indices file on
   # the locally accessible removable drive.
+  #
+  # What does a safe push do?
+  #
+  # - it logs in to the book specified in the master indices
+  # - it pays attention to the verse at the specified coordinates
+  # - if need be it writes the private key and secures it
+  # - if need be it creates an entry within ~/.ssh/config
+  # - if need be it does a git init in the master crypts folder
+  # - if need be it connects to the created remote repository
+  # - it then adds to the commit set and pushes
+  # - 
+  # - 
+
+=begin
+safe login safe.ecosystem
+safe open <<chapter>> <<verse>>
+cd ~/.ssh
+safe eject github.ssh.config
+safe eject safedb.code.private.key
+chmod 600 safedb.code.private.key
+cd <<repositories-folder>>
+ssh -i ~/.ssh/safedb.code.private.key.pem -vT git@safedb.code
+git clone https://github.com/devops4me/safedb.net safedb.net
+git remote set-url --push origin git@safedb.code:devops4me/safedb.net.git
+=end
+
+  # - 
+  #
   class Push < Controller
 
     # After backing up local assets the <b>push use case</b> creates a remoe github
@@ -84,20 +112,6 @@ return
       is_git = File.exist?( Indices::MASTER_CRYPTS_GIT_PATH ) && File.directory?( Indices::MASTER_CRYPTS_GIT_PATH )
 
 
-
-=begin
-      require "octokit"
-############client = Octokit::Client.new(:login => 'defunkt', :password => 'c0d3b4ssssss!')
-
-client = Octokit::Client.new(:access_token => '')
-user = client.user
-puts "Company Name => #{user[:company]}"
-puts "User Name => #{user[:name]}"
-puts "User ID => #{user[:id]}"
-puts "Email => #{user[:email]}"
-puts "Login => #{user[:login]}"
-puts "Biography => #{user[:bio]}"
-=end
 
       return
 

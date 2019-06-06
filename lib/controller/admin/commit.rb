@@ -39,8 +39,7 @@ module SafeDb
 
       EvolveState.commit( @book )
 
-      puts "The commit was on #{TimeStamp.readable()}\n"
-      puts "Commit from branch to master was successful.\n"
+      puts "Commit at #{TimeStamp.readable()} successful."
       puts ""
 
 
