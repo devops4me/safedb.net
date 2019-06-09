@@ -21,7 +21,7 @@ The first use case is importing the IAM user credentials into safe.
     $ safe put @secret.key 5678uvwx4321abcd9876 # Put IAM secret key in safe
     $ safe put region.key eu-west-1             # infrastructure in Dublin
 
-    safe logout
+    $ safe logout
 
 Take care to specify these 3 key names **@access.key**, **@secret.key**, **region.key** and note that safe's convention is to sensitively treat the value's of keys beginning with an **@** sign. **safe show** and other readers **mask out (redact)** these sensitive values.
 
