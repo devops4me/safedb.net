@@ -23,18 +23,11 @@ module SafeDb
     def execute()
 
       return unless @provision
-
-      require "etc"
-      require "socket"
-      require "octokit"
+      initialize_remote_store()
 
       repository_name = "safedb-crypts-#{TimeStamp.yyjjj_hhmm_sst()}"
-      backend_properties = Master.new().get_backend_coordinates()
-
-      @book.set_open_chapter_name( backend_properties.split("/")[1] )
-      @book.set_open_verse_name( backend_properties.split("/")[2] )
-      @verse = @book.get_open_verse_data()
       @verse.store( Indices::GITHUB_REPOSITORY_KEYNAME, repository_name )
+
       github_access_token = @verse[ Indices::GITHUB_ACCESS_TOKEN ]
       return unless is_github_access_token_valid( github_access_token )
       key_creator = Keys.new()
@@ -42,12 +35,17 @@ module SafeDb
       key_creator.edit_verse()
       repo_public_key = @verse[ Indices::PUBLIC_KEY_DEFAULT_KEY_NAME ]
 
+      require "etc"
+      require "socket"
+      require "octokit"
+
       github_client = Octokit::Client.new( :access_token => github_access_token )
       github_user = github_client.user
       repo_creator = "#{Etc.getlogin()}@#{Socket.gethostname()}"
       repo_description = "This github repository was auto-created by safedb.net to be a remote database backend on behalf of #{repo_creator} on #{TimeStamp.readable()}."
       repo_homepage = "https://github.com/devops4me/safedb.net/"
       repository_id = "#{github_user[:login]}/#{repository_name}"
+      @verse.store( Indices::GITHUB_USERNAME_KEYNAME, github_user[:login] )
 
       puts ""
       puts "Repository Name  =>  #{repository_id}"
@@ -57,7 +55,6 @@ module SafeDb
       puts "Github Username  =>  #{github_user[:login]}"
       puts "SSH Deploy Key   =>  #{repo_public_key[0..40]}..."
 
-      puts "Property Coords  =>  #{backend_properties}"
       puts "Creation Entity  =>  #{repo_creator}"
       puts "Repo Descriptor  =>  #{repo_description}"
       puts "Repo Homepage    =>  #{repo_homepage}"

@@ -67,17 +67,29 @@ module SafeDb
     # Points to the book/chapter/verse coordinates for the remote backend
     REMOTE_BACKEND_PROPERTIES_NAME = "backend.properties"
 
+    # This access token allows us to talk to the Github API
+    GITHUB_ACCESS_TOKEN = "@github.access.token"
+
     # Github repository keyname
     GITHUB_REPOSITORY_KEYNAME = "github.reponame"
+
+    # Github Username Keyname
+    GITHUB_USERNAME_KEYNAME = "github.username"
+
+    # Keyname for when the last backend push occured
+    REMOTE_LAST_PUSH_ON = "last.push.on"
+
+    # Keyname for the user and hostname that evoked the last push
+    REMOTE_LAST_PUSH_BY = "last.push.by"
+
+    # Keyname for the ID of the last push (Usually Git Commit Reference)
+    REMOTE_LAST_PUSH_ID = "last.push.id"
 
     # Private Key Default Key Name
     PRIVATE_KEY_DEFAULT_KEY_NAME = "private.key"
 
     # Public Key Default Key Name
     PUBLIC_KEY_DEFAULT_KEY_NAME = "public.key"
-
-    # This access token allows us to talk to the Github API
-    GITHUB_ACCESS_TOKEN = "@github.access.token"
 
     # The parameter key name to configure the backend coordinates
     CONFIGURE_BACKEND_KEY_NAME = "backend"

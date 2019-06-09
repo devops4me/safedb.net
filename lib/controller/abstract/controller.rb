@@ -65,6 +65,22 @@ module SafeDb
     end
 
 
+    # Initialize the backed storage properties from the coordinates
+    # that are within the master index file. These coordinates are
+    # set with a call to safe configure.
+    #
+    # After this call the {@verse} key/value map will contain
+    # properties pertaining to the safe database remote store.
+    def initialize_remote_store
+      verse_coordinates = Master.new().get_backend_coordinates()
+      puts "Storage Coords   =>  #{verse_coordinates}"
+      @book.set_open_chapter_name( verse_coordinates.split("/")[1] )
+      @book.set_open_verse_name( verse_coordinates.split("/")[2] )
+      @verse = @book.get_open_verse_data()
+    end
+
+
+
     # Set the verse data structure for this controller. Usually called
     # from another controller that wants to pass in a predefined map.
     # @param incoming_verse [Hash] the incoming verse map to set
