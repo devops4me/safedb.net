@@ -34,9 +34,6 @@ module SafeDb
     # The path to the master crypts .git directory.
     MASTER_CRYPTS_GIT_PATH = File.join( MASTER_CRYPTS_FOLDER_PATH, ".git" )
 
-    # The name of the branch indices folder.
-    BRANCH_INDICES_FOLDER_NAME = "safedb-branch-indices"
-
     # The path to the branch indices folder.
     BRANCH_INDICES_FOLDER_PATH = File.join( SAFE_DATABASE_FOLDER, BRANCH_INDICES_FOLDER_NAME )
 
@@ -47,7 +44,10 @@ module SafeDb
     BRANCH_CRYPTS_FOLDER_PATH = File.join( SAFE_DATABASE_FOLDER, BRANCH_CRYPTS_FOLDER_NAME )
 
     # The master indices file name
-    MASTER_INDICES_FILE_NAME = "safedb-master-indices.ini"
+    MASTER_INDICES_FILE_NAME = "safedb-master-keys.ini"
+
+    # The name of the branch indices folder.
+    BRANCH_INDICES_FOLDER_NAME = "safedb-branch-keys"
 
     # The path to the master indices file
     MASTER_INDICES_FILEPATH = File.join( SAFE_DATABASE_FOLDER, MASTER_INDICES_FILE_NAME )
@@ -55,17 +55,30 @@ module SafeDb
     # The path to the remote storage configuration INI file
     MACHINE_CONFIG_FILEPATH = File.join( SAFE_DATABASE_FOLDER, "safedb-remote-storage.ini" )
 
-    # The machine configuration section (header) name
-    MACHINE_CONFIG_SECTION_NAME = "remote.backend"
-
     # The name of the machine removable drive path location directive
     MACHINE_REMOVABLE_DRIVE_PATH = "removable.drive"
 
-    # The remote database configuration section (header) name
-    REMOTE_DATABASE_SECTION_NAME = "remote.backend"
+
+
+    # The name of the keys section that holds remote mirror properties
+    REMOTE_MIRROR_SECTION_NAME = "remote.mirror"
+
+    # The name of the property that points to the book/chapter/verse (page)
+    REMOTE_MIRROR_PAGE_NAME = "remote.mirror.page"
+
+    # The ending of the private key filename for remote mirror push access
+    REMOTE_MIRROR_PRIVATE_KEY_POSTFIX = "private-key.pem"
+
+    # The key name that holds the remote mirror private key filename
+    REMOTE_MIRROR_PRIVATE_KEY_FILE_KEYNAME = "private.key.filename"
+
+    # The key name that holds the remote mirror ssh config host value
+    REMOTE_MIRROR_SSH_HOST_KEYNAME = "ssh.config.host"
 
     # Points to the book/chapter/verse coordinates for the remote backend
     REMOTE_BACKEND_PROPERTIES_NAME = "backend.properties"
+
+
 
     # This access token allows us to talk to the Github API
     GITHUB_ACCESS_TOKEN = "@github.access.token"

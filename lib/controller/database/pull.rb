@@ -16,10 +16,7 @@ module SafeDb
 
       puts ""
 
-      drive_config = DataMap.new( Indices::MACHINE_CONFIG_FILEPATH )
-      drive_config.use( Indices::MACHINE_CONFIG_SECTION_NAME )
-
-      removable_drive_path = drive_config.get( Indices::MACHINE_REMOVABLE_DRIVE_PATH )
+      removable_drive_path = ~~~~ read this from the --to variable
       removable_drive_file = File.join( removable_drive_path, Indices::MASTER_INDICES_FILE_NAME )
       removable_drive_file_exists = File.exist?( removable_drive_file ) && File.file?( removable_drive_file )
 

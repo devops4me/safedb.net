@@ -5,6 +5,17 @@
 
 We want to provision (create) the safe's remote (github) backend so that we can access it from different machines. This is how we provision a Github remote backend do it.
 
+### safe remote --provision
+
+Before you use safe remote to provision a github git repository backend for your crypts ensure that
+
+- you have a github account (with username)
+- you have created a (40 character hexadecimal) github access token
+- you have inserted this data at a suitable chapter and verse
+- you run **`safe remote --provision`** from this opened book/chapter/verse
+
+Below is the sequence of commands leading up to **`safe remote --provision`**
+
 ```
 safe init db.admin
 safe login db.admin
@@ -14,21 +25,23 @@ safe configure backend db.admin/remote.backend/github
 safe remote --provision
 ```
 
-## safe put @github.token
+## focus | safe put @github.token
 
-safe knows how to talk to the Github Rest API as long as you provide a github access token. [How o acquire your Github access token](https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line).
+**@todo** - *we need to refactor out this business of configuring the backend. This should be done **automagically** by the remote commaand expecting to be at the correct book/chapter/verse*
+
+safe knows how to talk to the Github Rest API as long as you provide a github access token. [Visit how to acquire a Github access token](https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line).
 
 ## safe configure @github.token
 
 The **`safe configure`** command tell's safe which book, chapter and verse (in our case db.admin/remote.backend/github) that contains the backend repository access properties.
 
-## safe remote --create
+## safe remote --provision
 
 A number of setup tasks are executed when you ask that the backend repository be created.
 
 - a repository is created in github
 - the git fetch (https) and git push (ssh) urls are fabricated
-- the fetch url is written to the **`safedb-master-indices.ini`**
+- the fetch url is written into the master keys file
 - the push url is written to the configured chapter/verse location
 - a ssh public/private keypair (using EC25519) is created
 - the private and public keys are placed within the chapter/verse

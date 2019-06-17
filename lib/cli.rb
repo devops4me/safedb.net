@@ -155,6 +155,28 @@ class CLI < Thor
 
 
 
+  # Description of the copy use case command line call.
+  desc "copy <line>", "copy into the clipboard the value of the named line at the current chapter and verse."
+
+  # Copy into the clipboard the value held by the named line at the
+  # current book's open chapter and verse.
+  #
+  # This is more accurate and more secure than echoing the password and
+  # then performing a SELECT then COPY and then PASTE.
+  # 
+  # Use <b>safe clear</b> to wipe (overwrite) the sensitive value in
+  # the clipboard.
+  #
+  # @param line [String] the name of the line whose data will be copied
+  def copy line
+    log.info(x) { "copy the line value at the current chpater/verse into the clipboard." }
+    copy_uc = SafeDb::Copy.new
+    copy_uc.line = line
+    copy_uc.flow()
+  end
+
+
+
   # Description of the safe token use case.
   desc "token", "generate and print out an encrypted (shell bound) shell token"
 

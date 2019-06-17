@@ -59,21 +59,6 @@ module SafeDb
       end
 
 
-      if( @directive_name.eql?( Indices::REMOTE_DATABASE_GIT_PULL_URL ) || @directive_name.eql?( Indices::REMOTE_DATABASE_GIT_PUSH_URL ) )
-
-        master_data = DataMap.new( Indices::MASTER_INDICES_FILEPATH )
-        master_data.use( Indices::REMOTE_DATABASE_SECTION_NAME )
-        master_data.set( @directive_name, @directive_value )
-
-        puts ""
-        puts "The remote database git url is set."
-        puts @directive_value
-        puts ""
-
-        return
-
-      end
-
       puts ""
       puts "Error. Remote config directive #{@directive_name} not recognized."
       puts "No changes were made."

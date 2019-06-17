@@ -15,7 +15,7 @@ module SafeDb
     # this entity can point to a book, chapter, verse or line. If no
     # parameter entity is provided, the --all switch must be present
     # to avoid an error message.
-    attr_writer :entity
+    attr_writer :line
 
     # The copy use case copies one or more chapters, one or more verses and
     # one or more lines to the clipboard so Ctrl-v can be used outside the
