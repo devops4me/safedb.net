@@ -21,7 +21,7 @@ module SafeDb
     # @return [String] the backend coordinates to set
     def get_backend_coordinates()
       @master.use( Indices::REMOTE_MIRROR_SECTION_NAME )
-      return @master.get( Indices::REMOTE_BACKEND_PROPERTIES_NAME )
+      return @master.get( Indices::REMOTE_MIRROR_PAGE_NAME )
     end
 
 
@@ -30,7 +30,7 @@ module SafeDb
     # @param backend_coordinates [String] the backend coordinates to set
     def set_backend_coordinates( backend_coordinates )
       @master.use( Indices::REMOTE_MIRROR_SECTION_NAME )
-      @master.set( Indices::REMOTE_BACKEND_PROPERTIES_NAME, backend_coordinates )
+      @master.set( Indices::REMOTE_MIRROR_PAGE_NAME, backend_coordinates )
     end
 
 

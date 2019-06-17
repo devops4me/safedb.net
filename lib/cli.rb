@@ -333,25 +333,6 @@ class CLI < Thor
 
 
 
-  # Description of the configure database configuration command.
-  desc "configure <key> <value>", "set directive into either indices or machine config file"
-
-  # The <b>configure use case</b> sets configuration so that the database backend
-  # crypts can be pushed to a configure git repository and the corresponding master
-  # indices can be pushed to an external (removable drive).
-  #
-  # @param directive_name [String] the name of the directive to set
-  # @param directive_value [String] the value of the directive to set
-  def configure directive_name, directive_value
-    log.info(x) { "setting the configure directive name [ #{directive_name} ] to value [ #{directive_value} ]." }
-    configure_uc = SafeDb::Configure.new
-    configure_uc.directive_name = directive_name
-    configure_uc.directive_value = directive_value
-    configure_uc.flow()
-  end
-
-
-
   # Description of the safe database push command.
   desc "push", "push crypts to github and put index keys on removable drive"
 

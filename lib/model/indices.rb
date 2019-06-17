@@ -75,9 +75,6 @@ module SafeDb
     # The key name that holds the remote mirror ssh config host value
     REMOTE_MIRROR_SSH_HOST_KEYNAME = "ssh.config.host"
 
-    # Points to the book/chapter/verse coordinates for the remote backend
-    REMOTE_BACKEND_PROPERTIES_NAME = "backend.properties"
-
 
 
     # This access token allows us to talk to the Github API
