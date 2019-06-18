@@ -70,7 +70,8 @@ StrictHostKeyChecking no
       file_writer.file_key = SAFE_PRIVATE_KEY_KEYNAME
       file_writer.to_dir = File.join( Dir.home(), ".ssh" )
       file_writer.query_verse()
-SAFE_PRIVATE_KEY_KEYNAME
+
+# SAFE_PRIVATE_KEY_KEYNAME
 
       # @todo - Write the chunk of text into .ssh/config file (name is git_reponame)
       # @todo - the User is git_username
@@ -83,12 +84,11 @@ SAFE_PRIVATE_KEY_KEYNAME
       end # end the unless block
 
 
-
-  SAFE_REMOTE_SSH_HOST = "safe.remote"
-  SAFE_REMOTE_HOST_NAME = "github.com"
+# --  SAFE_REMOTE_SSH_HOST = "safe.remote"
+# --  SAFE_REMOTE_HOST_NAME = "github.com"
 
   # @todo - link this to the Keys class to use the same string constant
-  SAFE_PRIVATE_KEY_KEYNAME = "private.key"
+# --  SAFE_PRIVATE_KEY_KEYNAME = "private.key"
 
 
 
@@ -248,7 +248,7 @@ return
 return
       puts ""
 
-      removable_drive_path = ~~~~ read this from the --to variable
+      removable_drive_path = xxx # ~~~~ read this from the --to variable
       removable_drive_file = File.join( removable_drive_path, Indices::MASTER_INDICES_FILE_NAME )
       removable_drive_file_exists = File.exist?( removable_drive_file ) && File.file?( removable_drive_file )
 

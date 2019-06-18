@@ -16,7 +16,7 @@ module SafeDb
 
       puts ""
 
-      removable_drive_path = ~~~~ read this from the --to variable
+      removable_drive_path = xxx # ~~~~ read this from the --to variable
       removable_drive_file = File.join( removable_drive_path, Indices::MASTER_INDICES_FILE_NAME )
       removable_drive_file_exists = File.exist?( removable_drive_file ) && File.file?( removable_drive_file )
 
