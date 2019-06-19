@@ -64,14 +64,16 @@ module SafeDb
 
     end
 
-
-    # Initialize the backed storage properties from the coordinates
-    # that are within the master index file. These coordinates are
-    # set with a call to safe configure.
+    # Login to the book and open the chapter and verse location that holds
+    # information about the remote backend that we push and pull to.
     #
-    # After this call the {@verse} key/value map will contain
-    # properties pertaining to the safe database remote store.
-    def initialize_remote_store
+    # To do this we must discover which book, chapter and verse holds
+    # the backend storage properties. This information should be available
+    # in the master keys file set by <tt>safe remote --provision</tt>
+    #
+    # After this call the @verse key/value map will contain properties
+    # pertaining to the safe#s backend remote store.
+    def open_remote_backend_location
       verse_coordinates = Master.new().get_backend_coordinates()
       puts "Storage Coords   =>  #{verse_coordinates}"
       @book.set_open_chapter_name( verse_coordinates.split("/")[1] )

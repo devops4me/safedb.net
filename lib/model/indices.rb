@@ -34,6 +34,9 @@ module SafeDb
     # The path to the master crypts .git directory.
     MASTER_CRYPTS_GIT_PATH = File.join( MASTER_CRYPTS_FOLDER_PATH, ".git" )
 
+    # The name of the branch indices folder.
+    BRANCH_INDICES_FOLDER_NAME = "safedb-branch-keys"
+
     # The path to the branch indices folder.
     BRANCH_INDICES_FOLDER_PATH = File.join( SAFE_DATABASE_FOLDER, BRANCH_INDICES_FOLDER_NAME )
 
@@ -45,9 +48,6 @@ module SafeDb
 
     # The master indices file name
     MASTER_INDICES_FILE_NAME = "safedb-master-keys.ini"
-
-    # The name of the branch indices folder.
-    BRANCH_INDICES_FOLDER_NAME = "safedb-branch-keys"
 
     # The path to the master indices file
     MASTER_INDICES_FILEPATH = File.join( SAFE_DATABASE_FOLDER, MASTER_INDICES_FILE_NAME )

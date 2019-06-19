@@ -57,7 +57,7 @@ StrictHostKeyChecking no
     # remote for safe keeping.
     def execute()
 
-      initialize_remote_store()
+      open_remote_backend_location()
 
       git_username = @verse[ Indices::GITHUB_USERNAME_KEYNAME ]
       git_reponame = @verse[ Indices::GITHUB_REPOSITORY_KEYNAME ]

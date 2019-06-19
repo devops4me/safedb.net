@@ -21,7 +21,14 @@ module SafeDb
   #
   class Keys < EditVerse
 
-    attr_writer :keypair_name
+    # You must send the keypair_name when you are inserting many keys into the
+    # same verse. The keypair name fashions the key name of the embodied private
+    # key file. Omit it and it will be simply set to "private.key".
+    #
+    # Set the keyfile_name to fashion the name of the private key file that will
+    # be ejected (in the future) into the `~/.ssh` folder. Omit it and the filename
+    # will be formatted with the book, chapter and verse name followed by a .pem
+    attr_writer :keypair_name, :keyfile_name
 
     # The <b>keypair use case</b> creates a private and public keypair and stores
     # them within the open chapter and verse.
@@ -29,12 +36,15 @@ module SafeDb
 
       keypair = Keypair.new()
 
-      name_postfix = "" unless @keypair_name
-      name_postfix = ".#{@keypair_name}" if @keypair_name
-      bcv_name = "#{@book.book_name()}.#{@book.get_open_chapter_name()}.#{@book.get_open_verse_name()}#{name_postfix}"
-      private_key_filename = "#{bcv_name}.private.key.pem"
-      private_key_keyname = "#{Indices::PRIVATE_KEY_DEFAULT_KEY_NAME}#{name_postfix}"
-      public_key_keyname = "#{Indices::PUBLIC_KEY_DEFAULT_KEY_NAME}#{name_postfix}"
+      keyname_postfix = "" unless @keypair_name
+      keyname_postfix = ".#{@keypair_name}" if @keypair_name
+      bcv_name = "#{@book.book_name()}.#{@book.get_open_chapter_name()}.#{@book.get_open_verse_name()}#{keyname_postfix}"
+      filename_prefix = bcv_name unless @keyfile_name
+      filename_prefix = @keyfile_name if @keyfile_name
+
+      private_key_filename = "#{filename_prefix}.pem"
+      private_key_keyname = "#{Indices::PRIVATE_KEY_DEFAULT_KEY_NAME}#{keyname_postfix}"
+      public_key_keyname = "#{Indices::PUBLIC_KEY_DEFAULT_KEY_NAME}#{keyname_postfix}"
 
       file_content64 = Base64.urlsafe_encode64( keypair.private_key_pem() )
 

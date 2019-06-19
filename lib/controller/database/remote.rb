@@ -29,13 +29,14 @@ module SafeDb
       @verse.store( Indices::GITHUB_REPOSITORY_KEYNAME, repository_name )
       private_key_filename = "safedb-#{TimeStamp.yyjjj_hhmm_sst()}-#{Indices::REMOTE_MIRROR_PRIVATE_KEY_POSTFIX}"
       @verse.store( Indices::REMOTE_MIRROR_PRIVATE_KEY_FILE_KEYNAME, private_key_filename )
-      @verse.store( Indices::REMOTE_MIRROR_SSH_HOST_KEYNAME, "safedb-#{TimeStamp.yyjjj_hhmm_sst()}" )
+      @verse.store( Indices::REMOTE_MIRROR_SSH_HOST_KEYNAME, "safe-#{TimeStamp.yyjjjhhmmsst()}" )
 
       remote_mirror_page = "#{@book.book_id()}/#{@book.get_open_chapter_name()}/#{@book.get_open_verse_name()}"
       Master.new().set_backend_coordinates( remote_mirror_page )
 
       key_creator = Keys.new()
       key_creator.set_verse( @verse )
+      key_creator.keyfile_name = "safe.#{@book.get_open_chapter_name()}.#{@book.get_open_verse_name()}.#{TimeStamp.yyjjj_hhmm_sst()}"
       key_creator.edit_verse()
       repo_public_key = @verse[ Indices::PUBLIC_KEY_DEFAULT_KEY_NAME ]
 
@@ -65,7 +66,7 @@ module SafeDb
       puts "Account Owner    =>  #{github_user[:name]}"
       puts "Github User ID   =>  #{github_user[:id]}"
       puts "Github Username  =>  #{github_user[:login]}"
-      puts "SSH Deploy Key   =>  #{repo_public_key[0..40]}..."
+      puts "SSH Public Key   =>  #{repo_public_key[0..40]}..."
 
       puts "Creation Entity  =>  #{repo_creator}"
       puts "Repo Descriptor  =>  #{repo_description}"
@@ -83,7 +84,7 @@ module SafeDb
       }
 
       github_client.create_repository( repository_name, options_hash  )
-      github_client.add_deploy_key( repository_id, "safedb.net database deployment key with ID #{TimeStamp.yyjjj_hhmm_sst()}", repo_public_key )
+      github_client.add_deploy_key( repository_id, "your safe crypts deployment key with ID #{TimeStamp.yyjjj_hhmm_sst()}", repo_public_key )
 
     end
 

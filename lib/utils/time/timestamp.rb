@@ -284,6 +284,36 @@ module SafeDb
 
     # Return a string timestampt that is a period separated
     # amalgam of the 2 digit year, 3 digit julian day, 2 digit
+    # hour, 2 digit minute, 2 digit second and 1 digit rounded
+    # down tenth of second.
+    #
+    # Return the time of day to a TENTH of a second accuracy.
+    # [8] characters will always be returned with the 5th one
+    # being the (period) separator.
+    #
+    # The first (separated) segment delivers a hhmm 24 hour
+    # clock representation of the stamped time.
+    #
+    # The 3 digits of the second segment comprise of
+    #
+    # - second of minute => 2 digits | [00] to [59]
+    # - tenth of second  => 1 digit from [0] to [9]
+    #
+    # @example
+    #   => The time at the 562nd millisecond  of the 49th
+    #      second of the 23rd minute of the 17th hour of
+    #      the day ( 17:23:49.562 )
+    #
+    #   => 8 chars
+    #   => 1723.495
+    #
+    def self.yyjjjhhmmsst
+      return "#{yyjjj}#{hhmm}#{sst}"
+    end
+
+
+    # Return a string timestampt that is a period separated
+    # amalgam of the 2 digit year, 3 digit julian day, 2 digit
     # hour, 2 digit minute, 2 digit second and <b>9 digit</b>
     # nanosecond.
     #
