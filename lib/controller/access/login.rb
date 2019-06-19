@@ -28,13 +28,19 @@ module SafeDb
     # If the clip switch is present it signifies that the password should
     # be read in from the clipboard. Any text selection puts text into the
     # the clipboard - no need specifically to use Ctrl-c (copy).
-    attr_writer :clip
+    #
+    # Either the @book_name or the @login_book_id may be provided. The
+    # @login_book_id takes precedence if both are provided.
+    attr_writer :clip, :login_book_id
 
     def execute
 
 # @todo => in parent class Authenticate validate the book name
 
-      @book_id = Identifier.derive_ergonomic_identifier( @book_name, Indices::SAFE_BOOK_ID_LENGTH )
+      @book_id = @login_book_id if @login_book_id
+      @book_id = Identifier.derive_ergonomic_identifier( @book_name, Indices::SAFE_BOOK_ID_LENGTH ) unless @login_book_id
+      @book_reference = @login_book_id if @login_book_id
+      @book_reference = @book_name unless @login_book_id
 
       unless ( is_book_initialized?() )
         print_not_initialized
@@ -68,7 +74,7 @@ module SafeDb
     def print_login_failure()
 
       puts ""
-      puts "The login into book [ #{@book_name} ] has failed."
+      puts "The login into book [ #{@book_reference} ] has failed."
       puts "Please check the book name and password combination."
       puts "Also visit login docs on how to present passwords."
       puts ""
@@ -79,10 +85,10 @@ module SafeDb
     def print_not_initialized()
 
       puts ""
-      puts "This book [ #{@book_name} ] has not yet been initialized."
+      puts "This book [ #{@book_reference} ] has not yet been initialized."
       puts "Please initialize it with this command."
       puts ""
-      puts "    #{COMMANDMENT} init #{@book_name}"
+      puts "    #{COMMANDMENT} init #{@book_reference}"
       puts ""
 
     end
