@@ -62,6 +62,9 @@ StrictHostKeyChecking no
       git_username = @verse[ Indices::GITHUB_USERNAME_KEYNAME ]
       git_reponame = @verse[ Indices::GITHUB_REPOSITORY_KEYNAME ]
 
+      puts ""
+      return
+
       unless ssh_config_file contains git_reponame
 
         #write out the SSH private key

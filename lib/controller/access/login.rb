@@ -63,7 +63,7 @@ module SafeDb
       print_login_failure() unless is_login_successful
       return unless is_login_successful
 
-      View.new().flow()
+      View.new().flow() unless @login_book_id
 
     end
 

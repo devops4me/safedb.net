@@ -39,7 +39,7 @@ module SafeDb
       return if is_no_token_uc
       exit(100) unless ops_key_exists?
 
-      is_login_uc = class_name.eql?( "login" )
+      is_login_uc = [ "login", "push", "pull" ].include? class_name
       return if is_login_uc
 
       not_logged_in = StateInspect.not_logged_in?()
@@ -64,6 +64,7 @@ module SafeDb
 
     end
 
+
     # Login to the book and open the chapter and verse location that holds
     # information about the remote backend that we push and pull to.
     #
@@ -74,11 +75,27 @@ module SafeDb
     # After this call the @verse key/value map will contain properties
     # pertaining to the safe#s backend remote store.
     def open_remote_backend_location
+
       verse_coordinates = Master.new().get_backend_coordinates()
-      puts "Storage Coords   =>  #{verse_coordinates}"
-      @book.set_open_chapter_name( verse_coordinates.split("/")[1] )
-      @book.set_open_verse_name( verse_coordinates.split("/")[2] )
+      the_book_id = verse_coordinates.split("/")[0]
+      the_chapter = verse_coordinates.split("/")[1]
+      the_verse = verse_coordinates.split("/")[2]
+
+      puts "" 
+      puts "Will login to book with id #{the_book_id}"
+
+      login_uc = Login.new()
+      login_uc.login_book_id = the_book_id
+      login_uc.flow()
+      
+      puts "Login successful. Opening #{the_chapter}/#{the_verse}"
+
+      @book = Book.new()
+      @book.set_open_chapter_name( the_chapter )
+      @book.set_open_verse_name( the_verse )
       @verse = @book.get_open_verse_data()
+      @book.write_open_chapter()
+
     end
 
 
