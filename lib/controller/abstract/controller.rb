@@ -86,6 +86,7 @@ module SafeDb
 
       login_uc = Login.new()
       login_uc.login_book_id = the_book_id
+      login_uc.suppress_output = true
       login_uc.flow()
       
       puts "Login successful. Opening #{the_chapter}/#{the_verse}"
@@ -240,8 +241,6 @@ module SafeDb
 
     def ops_key_exists?
 
-      log_env()
-
       if ( ENV.has_key? ENV_VAR_KEY_NAME )
         return true
       end
@@ -258,26 +257,6 @@ module SafeDb
       puts ""
 
       return false
-
-    end
-
-
-    def log_env()
-
-      log.debug(x) { "Gem Root Folder    => #{Gem.dir()}" }
-      log.debug(x) { "Gem Config File    => #{Gem.config_file()}" }
-      log.debug(x) { "Gem Binary Path    => #{Gem.default_bindir()}" }
-      log.debug(x) { "Gem Host Path      => #{Gem.host()}" }
-      log.debug(x) { "Gem Caller Folder  => #{Gem.location_of_caller()}" }
-      log.debug(x) { "Gem Paths List     => #{Gem.path()}" }
-      log.debug(x) { "Gem Platforms      => #{Gem.platforms()}" }
-      log.debug(x) { "Gem Ruby Version X => #{Gem.ruby()}" }
-      log.debug(x) { "Gem Ruby Version Y => #{Gem::VERSION}" }
-      log.debug(x) { "Gem Ruby Version Z => #{Gem.latest_rubygems_version()}" }
-      log.debug(x) { "Gem User Folder    => #{Gem.user_dir()}" }
-      log.debug(x) { "Gem User Home      => #{Gem.user_home()}" }
-
-      return
 
     end
 

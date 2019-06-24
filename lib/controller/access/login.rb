@@ -25,17 +25,22 @@ module SafeDb
   # - the shell's secure password reader
   class Login < Authenticate
 
+# DELETE ME #######################    attr_writer :clip, :login_book_id, :suppress_output
+
     # If the clip switch is present it signifies that the password should
     # be read in from the clipboard. Any text selection puts text into the
     # the clipboard - no need specifically to use Ctrl-c (copy).
-    #
+    attr_writer :clip
+
     # Either the @book_name or the @login_book_id may be provided. The
     # @login_book_id takes precedence if both are provided.
-    attr_writer :clip, :login_book_id
+    attr_writer :login_book_id
+
+    # The view of chapter and verse names within the book is not printed out
+    # after a successful login if this suppress_output flag is set to true.
+    attr_writer :suppress_output
 
     def execute
-
-# @todo => in parent class Authenticate validate the book name
 
       @book_id = @login_book_id if @login_book_id
       @book_id = Identifier.derive_ergonomic_identifier( @book_name, Indices::SAFE_BOOK_ID_LENGTH ) unless @login_book_id
@@ -49,7 +54,7 @@ module SafeDb
 
       if( StateInspect.is_logged_in?( @book_id ) )
         EvolveState.use_book( @book_id )
-        View.new().flow()
+        View.new().flow() unless @suppress_output
         return
       end
 
@@ -63,7 +68,7 @@ module SafeDb
       print_login_failure() unless is_login_successful
       return unless is_login_successful
 
-      View.new().flow() unless @login_book_id
+      View.new().flow() unless @suppress_output
 
     end
 

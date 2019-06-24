@@ -19,8 +19,6 @@ module SafeDb
 
       bcv_name = "#{@book.book_name()}/#{@book.get_open_chapter_name()}/#{@book.get_open_verse_name()}"
 
-      puts ""
-      puts "book/chapter/verse\n"
       puts "#{bcv_name} (#{@verse.length()})\n"
 
       base64_content = @verse[ Indices::INGESTED_FILE_LINE_NAME_KEY + @file_key ][ Indices::INGESTED_FILE_CONTENT64_KEY ]
@@ -45,7 +43,6 @@ module SafeDb
       puts "Written File Key = #{@file_key}"
       puts ""
       puts "File successfully written from safe to filesystem."
-      puts ""
 
 # @todo - if the permissions key is found then change them please
 # @todo - if the permissions key is found then change them please

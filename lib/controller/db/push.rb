@@ -17,7 +17,7 @@ module SafeDb
   #
   # - writes and secures the private key
   # - creates an entry within ~/.ssh/config
-  # - do a git init and set the git remote
+  # - does a git init and sets the git remote
   #
   # Subsequent pushes will always
   #
@@ -25,29 +25,6 @@ module SafeDb
   # - push crypts to the remote repository
   # - record the commit reference in the safe database tracker file
   # - copy the database tracker file to the removable drive
-
-=begin
-safe login safe.ecosystem
-safe open <<chapter>> <<verse>>
-cd ~/.ssh
-safe eject github.ssh.config
-safe eject safedb.code.private.key
-chmod 600 safedb.code.private.key
-cd <<repositories-folder>>
-ssh -i ~/.ssh/safedb.code.private.key.pem -vT git@safedb.code
-git clone https://github.com/devops4me/safedb.net safedb.net
-git remote set-url --push origin git@safedb.code:devops4me/safedb.net.git
-=end
-
-=begin
-Host safedb.crypt
-HostName github.com
-User devops4me
-IdentityFile ~/.ssh/safedb.crypt.private.key.pem
-StrictHostKeyChecking no
-=end
-
-  # - 
   #
   class Push < Controller
 
@@ -59,20 +36,75 @@ StrictHostKeyChecking no
 
       open_remote_backend_location()
 
-      git_username = @verse[ Indices::GITHUB_USERNAME_KEYNAME ]
-      git_reponame = @verse[ Indices::GITHUB_REPOSITORY_KEYNAME ]
+      # @todo ------------------------------------------------------------ >>
+      # @todo REFACTOR the below into lib/utils/keys/keypair.rb
+      # @todo REFACTOR And create a utiliy class for bulk of file Writer functionality
+      # @todo Methods in keypair should NOT know about the Indices constants
+      # @todo Refactor name from [Indices] to [Constants]
+      # @todo ------------------------------------------------------------ >>
+      # @todo Method Names
+      # @todo ------------------------------------------------------------ >>
+      # @todo   (1) - Constants.write_private_key()
+      # @todo ------------------------------------------------------------ >>
+
+      private_key_path = File.join( Indices::SSH_DIRECTORY_PATH, @verse[ Indices::REMOTE_PRIVATE_KEY_KEYNAME ] )
+      private_key_exists = File.file?( private_key_path )
+      puts "private key found at #{private_key_path}" if private_key_exists
+
+      unless private_key_exists
+
+        puts "private key will be created at #{private_key_path}"
+        file_writer = Write.new()
+        file_writer.file_key = Indices::PRIVATE_KEY_DEFAULT_KEY_NAME
+        file_writer.to_dir = Indices::SSH_DIRECTORY_PATH
+        file_writer.flow()
+
+        FileUtils.chmod( 0600, private_key_path, :verbose => true )
+
+      end
+
+      ssh_host_name = @verse[ Indices::REMOTE_MIRROR_SSH_HOST_KEYNAME ] 
+      ssh_config_exists = File.file?( Indices::SSH_CONFIG_FILE_PATH )
+      config_file_contents = File.read( Indices::SSH_CONFIG_FILE_PATH ) if ssh_config_exists
+      ssh_config_written = ssh_config_exists && config_file_contents.include?( ssh_host_name )
+      puts "ssh config for host #{ssh_host_name} has already been written" if ssh_config_written
+
+      unless ssh_config_written
+
+        puts "ssh config for host #{ssh_host_name} will be written"
+        config_backup_path = File.join( Indices::SSH_DIRECTORY_PATH, "safe.ssh.config-#{TimeStamp.yyjjj_hhmm_sst()}" )
+        File.write( config_backup_path, config_file_contents ) if ssh_config_exists
+        puts "previous ssh config is archived at #{config_backup_path}" if ssh_config_exists
+
+        File.open( Indices::SSH_CONFIG_FILE_PATH, "a" ) do  |line|
+          line.puts( "\n" )
+          line.puts( "Host #{ ssh_host_name }" )
+          line.puts( "HostName github.com" )
+          line.puts( "User #{ @verse[ Indices::GITHUB_USERNAME_KEYNAME ] }" )
+          line.puts( "IdentityFile #{ private_key_path }" )
+          line.puts( "StrictHostKeyChecking no" )
+        end
+
+        puts "ssh config has been successfully written"
+
+      end
 
       puts ""
       return
+
+=begin
+ssh -i ~/.ssh/safedb.code.private.key.pem -vT git@safedb.code
+git clone https://github.com/devops4me/safedb.net safedb.net
+git remote set-url --push origin git@safedb.code:devops4me/safedb.net.git
+=end
+
+      git_username = @verse[ Indices::GITHUB_USERNAME_KEYNAME ]
+      git_reponame = @verse[ Indices::GITHUB_REPOSITORY_KEYNAME ]
 
       unless ssh_config_file contains git_reponame
 
         #write out the SSH private key
         # @todo change the write method to change the file permissions
-      file_writer = Write.new()
-      file_writer.file_key = SAFE_PRIVATE_KEY_KEYNAME
-      file_writer.to_dir = File.join( Dir.home(), ".ssh" )
-      file_writer.query_verse()
 
 # SAFE_PRIVATE_KEY_KEYNAME
 
@@ -114,23 +146,6 @@ StrictHostKeyChecking no
 
       ## Now the git push --to=/path/to/this/dir => IF no path read from @verse
       ## If no verse with user@host path the WRITE to present working directory
-
-
-=begin
-FileUtils.chmod 0755, 'somecommand'
-FileUtils.chmod 0644, %w(my.rb your.rb his.rb her.rb)
-FileUtils.chmod 0755, '/usr/bin/ruby', :verbose => true
-
-
-### read -d '' keytext << EOF
-
-## Command that will eject the public key starting like this
-## ecdsa-sha2-nistp384 AAAAE2VjZHNhLXNoYTItbmlzdHA
-ssh-keygen -f ec-private-key-file.pem -y
-
-ecdsa_public_key_str = %x[ #{convert_cmd} ]
-=end
-
 
 
 

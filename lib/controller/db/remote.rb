@@ -30,7 +30,7 @@ module SafeDb
       repository_name = "safedb-crypts-#{TimeStamp.yyjjj_hhmm_sst()}"
       @verse.store( Indices::GITHUB_REPOSITORY_KEYNAME, repository_name )
       private_key_simple_filename = "safe.#{@book.get_open_chapter_name()}.#{@book.get_open_verse_name()}.#{TimeStamp.yyjjj_hhmm_sst()}"
-      @verse.store( Indices::REMOTE_MIRROR_PRIVATE_KEY_FILE_KEYNAME, "#{private_key_simple_filename}.pem" )
+      @verse.store( Indices::REMOTE_PRIVATE_KEY_KEYNAME, "#{private_key_simple_filename}.pem" )
       @verse.store( Indices::REMOTE_MIRROR_SSH_HOST_KEYNAME, "safe-#{TimeStamp.yyjjjhhmmsst()}" )
 
       remote_mirror_page = "#{@book.book_id()}/#{@book.get_open_chapter_name()}/#{@book.get_open_verse_name()}"

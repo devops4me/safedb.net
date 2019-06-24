@@ -60,6 +60,8 @@ module SafeDb
 
 
 
+
+
     # The name of the keys section that holds remote mirror properties
     REMOTE_MIRROR_SECTION_NAME = "remote.mirror"
 
@@ -70,10 +72,18 @@ module SafeDb
     REMOTE_MIRROR_PRIVATE_KEY_POSTFIX = "private-key.pem"
 
     # The key name that holds the remote mirror private key filename
-    REMOTE_MIRROR_PRIVATE_KEY_FILE_KEYNAME = "private.key.filename"
+    REMOTE_PRIVATE_KEY_KEYNAME = "private.key.filename"
 
     # The key name that holds the remote mirror ssh config host value
     REMOTE_MIRROR_SSH_HOST_KEYNAME = "ssh.config.host"
+
+    # The path to the SSH directory
+    SSH_DIRECTORY_PATH = File.join( Dir.home(), ".ssh" )
+
+    # The path to the SSH config file
+    SSH_CONFIG_FILE_PATH = File.join( SSH_DIRECTORY_PATH, "config" )
+
+
 
 
 
