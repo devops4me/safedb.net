@@ -72,7 +72,7 @@ module SafeDb
       unless ssh_config_written
 
         puts "ssh config for host #{ssh_host_name} will be written"
-        config_backup_path = File.join( Indices::SSH_DIRECTORY_PATH, "safe.ssh.config-#{TimeStamp.yyjjj_hhmm_sst()}" )
+        config_backup_path = File.join( Indices::SSH_DIRECTORY_PATH, "safe.clobbered.ssh.config-#{TimeStamp.yyjjj_hhmm_sst()}" )
         File.write( config_backup_path, config_file_contents ) if ssh_config_exists
         puts "previous ssh config is archived at #{config_backup_path}" if ssh_config_exists
 
