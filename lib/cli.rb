@@ -333,6 +333,47 @@ class CLI < Thor
 
 
 
+  # Description of the safe git command.
+  desc "git --clone", "Clone the remote repository whose properties are in the current chapter and verse."
+
+    # If the --clone switch is included this class will expect to be at a verse
+    # that contains either a github token, username, reponame combination or a
+    # publicly publicly clonable url, or ssh url with the private keys and SSH host
+    # configuration already setup.
+
+    # If the --push switch is included this class will expect to be at a verse
+    # that has a path to a git url within it. If this is missing the present working
+    # directory is assumed to be the git repository in question.
+    #
+    # If the verse contains a branch name which is not the current branch then
+    # we raise a query to the user instead of pushing to the wrong place. This is
+    # a good double (sanity) check.
+
+
+    # If the --push switch is included this class will expect to be at a verse
+    # that has a path to a git url within it. If this is missing the present working
+    # directory is assumed to be the git repository in question.
+
+    # If the --no-ssl-verify switch is passed into this class it will urge git not
+    # to worry when a site does not have a (presently) trusted SSL certificate.
+
+    # If the --to switch has a value which is a path to a local (possibly non-existing)
+    # folder to clone to - this will override the verse line git.clone.path
+
+#####  method_option :provision, :type => :boolean, :aliases => "-p"
+
+
+  def git
+    log.info(x) { "performing a git repository interaction." }
+####    git_uc = SafeDb::Git.new()
+#####    remote_uc.provision = true if options[ :provision ]
+#####    remote_uc.provision = false unless options[ :provision ]
+####    git_uc.flow()
+    SafeDb::Git.new().flow()
+  end
+
+
+
   # Description of the safe database push command.
   desc "push", "push crypts to github and put index keys on removable drive"
 
@@ -416,8 +457,8 @@ class CLI < Thor
   end
 
 
-  # Description of the safe keypair command.
-  desc "keypair <name>", "create a public/private keypair against the given name."
+  # Description of the safe keys command.
+  desc "keys <name>", "create a public/private keypair against the given name."
 
   # The default action of the <b>keys use case</b> is to create a private and
   # public keypair and store them within the open chapter and verse.

@@ -36,6 +36,27 @@ module SafeDb
 
       open_remote_backend_location()
 
+###########
+########### =========================================
+########### Instead of Private Keys Use Tokens  =====
+########### =========================================
+########### 
+########### git remote add origin https://<<GITHUB_TOKEN>>@github.com/<<REPO_USERNAME>>/<<REPO_NAME>>.git
+########### git remote set-url origin https://<<GITHUB_TOKEN>>@github.com/<<REPO_USERNAME>>/<<REPO_NAME>>.git
+########### git push origin master
+########### 
+########### Note ==== Query repository with git remote -v to see if an origin has been set
+###########      ==== If no origin set use the set-url variant otherwise use the add variant
+########### 
+########### ==========================================
+########### For Pulling (Cloning the Repository  =====
+########### ==========================================
+########### 
+########### git clone https://github.com/<<REPO_USERNAME>>/<<REPO_NAME>>.git [[safedb-master-crypts]]
+########### 
+########### 
+########### 
+
       # @todo ------------------------------------------------------------ >>
       # @todo REFACTOR the below into lib/utils/keys/keypair.rb
       # @todo REFACTOR And create a utiliy class for bulk of file Writer functionality
@@ -88,6 +109,8 @@ module SafeDb
         puts "ssh config has been successfully written"
 
       end
+
+## ==========>>> git rev-parse HEAD
 
 # git init    
 # git clone `URLTORepository`

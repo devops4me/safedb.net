@@ -60,6 +60,10 @@ module SafeDb
 
 
 
+    # The keyname whose value denotes a local folder path to clone to
+    GIT_CLONE_BASE_PATH = "git.clone.base.path"
+
+
 
 
     # The name of the keys section that holds remote mirror properties
