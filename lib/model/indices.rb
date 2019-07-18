@@ -95,10 +95,16 @@ module SafeDb
     GITHUB_ACCESS_TOKEN = "@github.access.token"
 
     # Github repository keyname
-    GITHUB_REPOSITORY_KEYNAME = "github.reponame"
+    GIT_REPOSITORY_NAME_KEYNAME = "repository.name"
 
     # Github Username Keyname
-    GITHUB_USERNAME_KEYNAME = "github.username"
+    GIT_REPOSITORY_USER_KEYNAME = "repository.user"
+
+    # Github Host Keyname
+    GIT_REPOSITORY_HOST_KEYNAME = "repository.host"
+
+
+
 
     # Keyname for when the last backend push occured
     REMOTE_LAST_PUSH_ON = "last.push.on"

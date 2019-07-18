@@ -28,7 +28,7 @@ module SafeDb
       return unless is_github_access_token_valid( github_access_token )
 
       repository_name = "safedb-crypts-#{TimeStamp.yyjjj_hhmm_sst()}"
-      @verse.store( Indices::GITHUB_REPOSITORY_KEYNAME, repository_name )
+      @verse.store( Indices::GIT_REPOSITORY_NAME_KEYNAME, repository_name )
       private_key_simple_filename = "safe.#{@book.get_open_chapter_name()}.#{@book.get_open_verse_name()}.#{TimeStamp.yyjjj_hhmm_sst()}"
       @verse.store( Indices::REMOTE_PRIVATE_KEY_KEYNAME, "#{private_key_simple_filename}.pem" )
       @verse.store( Indices::REMOTE_MIRROR_SSH_HOST_KEYNAME, "safe-#{TimeStamp.yyjjjhhmmsst()}" )
@@ -60,7 +60,7 @@ module SafeDb
       repo_description = "This github repository was auto-created by safedb.net to be a remote database backend on behalf of #{repo_creator} on #{TimeStamp.readable()}."
       repo_homepage = "https://github.com/devops4me/safedb.net/"
       repository_id = "#{github_user[:login]}/#{repository_name}"
-      @verse.store( Indices::GITHUB_USERNAME_KEYNAME, github_user[:login] )
+      @verse.store( Indices::GIT_REPOSITORY_USER_KEYNAME, github_user[:login] )
 
       puts ""
       puts "Repository Name  =>  #{repository_id}"

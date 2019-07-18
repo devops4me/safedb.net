@@ -21,14 +21,17 @@ module SafeDb
   #
   class Keys < EditVerse
 
-    # You must send the keypair_name when you are inserting many keys into the
-    # same verse. The keypair name fashions the key name of the embodied private
-    # key file. Omit it and it will be simply set to "private.key".
-    #
+
+    # To insert MORE THAN ONE KEY in the same verse you send the keypair_name.
+    # The keypair name fashions the key name of the embodied private key file.
+    # Omit it and it will be simply set to "private.key".
+    attr_writer :keypair_name
+
     # Set the keyfile_name to fashion the name of the private key file that will
     # be ejected (in the future) into the `~/.ssh` folder. Omit it and the filename
     # will be formatted with the book, chapter and verse name followed by a .pem
-    attr_writer :keypair_name, :keyfile_name
+    attr_writer :keyfile_name
+
 
     # The <b>keypair use case</b> creates a private and public keypair and stores
     # them within the open chapter and verse.

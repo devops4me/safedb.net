@@ -84,6 +84,9 @@ module SafeDb
 
       end
 
+      git_username = @verse[ Indices::GIT_REPOSITORY_USER_KEYNAME ]
+      git_reponame = @verse[ Indices::GIT_REPOSITORY_NAME_KEYNAME ]
+
       ssh_host_name = @verse[ Indices::REMOTE_MIRROR_SSH_HOST_KEYNAME ] 
       ssh_config_exists = File.file?( Indices::SSH_CONFIG_FILE_PATH )
       config_file_contents = File.read( Indices::SSH_CONFIG_FILE_PATH ) if ssh_config_exists
@@ -101,7 +104,7 @@ module SafeDb
           line.puts( "\n" )
           line.puts( "Host #{ ssh_host_name }" )
           line.puts( "HostName github.com" )
-          line.puts( "User #{ @verse[ Indices::GITHUB_USERNAME_KEYNAME ] }" )
+          line.puts( "User #{ git_username }" )
           line.puts( "IdentityFile #{ private_key_path }" )
           line.puts( "StrictHostKeyChecking no" )
         end
@@ -109,6 +112,34 @@ module SafeDb
         puts "ssh config has been successfully written"
 
       end
+
+      puts ""
+
+      ssh_test_cmd_string = "ssh -i #{private_key_path} -vT git@github.com"
+      system( ssh_test_cmd_string )
+      ssh_cmd_exit_status = $?.exitstatus
+
+      unless ssh_cmd_exit_status == 1
+
+        puts ""
+        puts "The command exit status is #{ssh_test_exitstatus}"
+        puts ""
+        puts "### ##### : ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        puts "### Error : SSH test result did not contain expected string."
+        puts "### Query : #{ ssh_test_cmd_string }"
+        puts "### ##### : ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        puts ""
+
+        return
+
+      end
+
+      puts ""
+      puts "### ####### : ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+      puts "### Success : The SSH connection test was a roaring success."
+      puts "### Command : #{ ssh_test_cmd_string }"
+      puts "### ####### : ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+      puts ""
 
 ## ==========>>> git rev-parse HEAD
 
@@ -125,9 +156,6 @@ ssh -i ~/.ssh/safedb.code.private.key.pem -vT git@safedb.code
 git clone https://github.com/devops4me/safedb.net safedb.net
 git remote set-url --push origin git@safedb.code:devops4me/safedb.net.git
 =end
-
-      git_username = @verse[ Indices::GITHUB_USERNAME_KEYNAME ]
-      git_reponame = @verse[ Indices::GITHUB_REPOSITORY_KEYNAME ]
 
       unless ssh_config_file contains git_reponame
 
