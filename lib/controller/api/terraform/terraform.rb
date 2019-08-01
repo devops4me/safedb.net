@@ -16,7 +16,9 @@ module SafeDb
   #     safe open <<chapter>> <<verse>>
   class Terraform < QueryVerse
 
+
     attr_writer :command
+
 
     # This prefix is tagged onto environment variables which Terraform will read
     # and convert for consumption into module input variables.
@@ -26,13 +28,14 @@ module SafeDb
     # <tt>terraform apply</tt> command, it examines the lines at the opened
     # chapter and verse and any that start with this prefix will be substringed
     # to create an environment variable with the substringed name and key value.
-    ENV_VAR_PREFIX_A = "env-var."
+    ENV_VAR_PREFIX_A = "tfvar."
 
     # Secure var prefix for environment variable key (line). Before safe runs the
     # <tt>terraform apply</tt> command, it examines the lines at the opened
     # chapter and verse and any that start with this prefix will be substringed
     # to create an environment variable with the substringed name and key value.
-    ENV_VAR_PREFIX_B = "@env-var."
+    ENV_VAR_PREFIX_B = "@#{ENV_VAR_PREFIX_A}"
+
 
     def query_verse()
 
