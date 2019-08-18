@@ -94,10 +94,19 @@ module SafeDb
 
       auto_approve = @command && @command.eql?( "plan" ) ? "" : "-auto-approve"
       command_name = @command ? @command : "apply"
-      system "terraform #{command_name} #{auto_approve}"
+      exit_success = system "terraform #{command_name} #{auto_approve}"
 
       puts ""
       puts "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+      puts ""
+
+      return if ( exit_success.nil?() || !exit_success )
+      return unless command_name.eql?( "apply" ) 
+
+      puts "Successful terraform apply."
+      graph_filename = "resource-graph-#{@book.get_open_verse_name()}-#{TimeStamp.yyjjj_hhmm_sst()}.png"
+      system "terraform graph | dot -Tpng > #{graph_filename}"
+      puts "Resource graph #{graph_filename} created."
       puts ""
 
     end

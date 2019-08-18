@@ -3,8 +3,29 @@
 
 ### safe terraform | introduction
 
-This terraform use case exports the AWS IAM user access key, secret key and region key into (very safe) environment variables and then runs the specified terraform be it **init**, **plan**, **apply** or **destroy**.
+This terraform use case exports the AWS IAM user access key, secret key and region key into (very safe) environment variables and then runs the specified terraform be it **plan**, **apply** or **destroy**.
 
+The plan is to extend this command to directly cache terraform output variables.
+
+### Passing Input Variables
+
+The most powerful feature of **`safe terraform`** is the ability to pass safely stored input variables to terraform via environment variables. The safe exports data when the key
+
+- **either** begins with **`tfvar.`**
+- **or** begins with **`@tfvar.`** (for sensitive values)
+
+### safe input variables examples
+
+| **safe key**                  | **safe value**         | type      | exported env variable | usage                    |
+|:----------------------------- |:---------------------- |:--------- |:--------------------- |: ----------------------- |
+**tfvar.in_vpc_id**             | vpc-1234567890         | string    | TF_VAR_in_vpc_id      | var.in_vpc_id
+**tfvar.in_role_arn**           | arn:aws:iam::98764 ... | string    | TF_VAR_in_role_arn    | var.in_role_arn
+**@tfvar.in_db_password**       | secret-543+210=753     | string    | TF_VAR_in_db_password | var.in_db_password
+**tfvar.in_ingress**            | '[ "ssh", "http" ]'    | list      | TF_VAR_in_ingress     | var.in_ingress
+
+Mostly you pass string, number or boolean input variables to terraform. These examples also show how you can pass list and map variables to terraform.
+
+---
 
 ## safe terraform | credential creation
 
