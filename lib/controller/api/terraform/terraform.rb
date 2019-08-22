@@ -14,11 +14,9 @@ module SafeDb
   # ubiquitous safe open command.
   #
   #     safe open <<chapter>> <<verse>>
-  class Terraform < QueryVerse
-
+  class Terraform < EditVerse
 
     attr_writer :command
-
 
     # This prefix is tagged onto environment variables which Terraform will read
     # and convert for consumption into module input variables.
@@ -36,8 +34,11 @@ module SafeDb
     # to create an environment variable with the substringed name and key value.
     ENV_VAR_PREFIX_B = "@#{ENV_VAR_PREFIX_A}"
 
+    TIMESTAMP_LINE_KEY = "tfvar.in_timestamp"
+    DESCRIBES_LINE_KEY = "tfvar.in_description"
 
-    def query_verse()
+
+    def edit_verse()
 
       # ############## | ############################################################
       # @todo refactor | ############################################################
@@ -70,6 +71,19 @@ module SafeDb
       puts "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
       puts ""
 
+      command_name = @command ? @command : "apply"
+      is_apply = command_name.eql?( "apply" ) 
+      is_blast = command_name.eql?( "destroy" ) 
+
+      has_timestamp = @verse.has_key?( TIMESTAMP_LINE_KEY )
+      is_create_stamps = is_apply && !has_timestamp
+      is_remove_stamps = is_blast && has_timestamp
+
+      the_description = "was created on #{TimeStamp.readable()}."
+
+      @verse.store( TIMESTAMP_LINE_KEY, TimeStamp.yyjjjhhmmsst() ) if is_create_stamps
+      @verse.store( DESCRIBES_LINE_KEY, the_description )       if is_create_stamps
+
       ENV[ "AWS_ACCESS_KEY_ID"     ] = @verse[ "@access.key" ]
       ENV[ "AWS_SECRET_ACCESS_KEY" ] = @verse[ "@secret.key" ]
       ENV[ "AWS_DEFAULT_REGION"    ] = @verse[ "region.key"  ]
@@ -93,7 +107,6 @@ module SafeDb
       puts ""
 
       auto_approve = @command && @command.eql?( "plan" ) ? "" : "-auto-approve"
-      command_name = @command ? @command : "apply"
       exit_success = system "terraform #{command_name} #{auto_approve}"
 
       puts ""
@@ -101,10 +114,14 @@ module SafeDb
       puts ""
 
       return if ( exit_success.nil?() || !exit_success )
-      return unless command_name.eql?( "apply" ) 
+
+      @verse.delete( TIMESTAMP_LINE_KEY ) if is_remove_stamps
+      @verse.delete( DESCRIBES_LINE_KEY ) if is_remove_stamps
+
+      return unless is_apply
 
       puts "Successful terraform apply."
-      graph_filename = "resource-graph-#{@book.get_open_verse_name()}-#{TimeStamp.yyjjj_hhmm_sst()}.png"
+      graph_filename = "network-#{@book.get_open_verse_name()}-#{TimeStamp.yyjjj_hhmm_sst()}.png"
       system "terraform graph | dot -Tpng > #{graph_filename}"
       puts "Resource graph #{graph_filename} created."
       puts ""
