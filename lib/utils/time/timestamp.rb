@@ -108,6 +108,15 @@ module SafeDb
 
 
     #
+    # Return the [one] digit year (eg 9 for 2019).
+    # that we are currently in.
+    #
+    def self.y
+      return TimeStamp.instance.time_now.strftime("%Y")[3..-1]
+    end
+
+
+    #
     # Return the [four] digit year (eg 2019)
     # that we are currently in.
     #
@@ -214,6 +223,13 @@ module SafeDb
     end
 
 
+    # Return 4 digit amalgam of year and julian day.
+    #  eg [9003] for [January 3rd 2019]
+    def self.yjjj
+      return "#{y}#{jjj}"
+    end
+
+
     # Return the 4 digit amalgam of the hour and minute
     # using the 24 hour clock.
     #
@@ -309,6 +325,36 @@ module SafeDb
     #
     def self.yyjjjhhmmsst
       return "#{yyjjj}#{hhmm}#{sst}"
+    end
+
+
+    # Return the time of day to a TENTH of a second accuracy
+    # via a string timestamp with zero separation.
+    #
+    # The timestampt returned is an amalgam of
+    #
+    # - a 1 digit year
+    # - a 3 digit julian day
+    # - a 2 digit hourn
+    # - a 2 digit minute
+    # - a 2 digit second and finally
+    # - a 1 digit (rounded down) tenth of a second
+    #
+    # The 3 digits of the second segment comprise of
+    #
+    # - second of minute => 2 digits | [00] to [59]
+    # - tenth of second  => 1 digit from [0] to [9]
+    #
+    # @example
+    #   => The time at the 562nd millisecond  of the 49th
+    #      second of the 23rd minute of the 17th hour of
+    #      the day ( 72349562 )
+    #
+    #   => 8 chars
+    #   => 1723.495
+    #
+    def self.yjjjhhmmsst
+      return "#{yjjj}#{hhmm}#{sst}"
     end
 
 

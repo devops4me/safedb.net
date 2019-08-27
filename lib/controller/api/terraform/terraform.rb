@@ -81,7 +81,7 @@ module SafeDb
 
       the_description = "was created on #{TimeStamp.readable()}."
 
-      @verse.store( TIMESTAMP_LINE_KEY, TimeStamp.yyjjjhhmmsst() ) if is_create_stamps
+      @verse.store( TIMESTAMP_LINE_KEY, TimeStamp.yjjjhhmmsst() ) if is_create_stamps
       @verse.store( DESCRIBES_LINE_KEY, the_description )       if is_create_stamps
 
       ENV[ "AWS_ACCESS_KEY_ID"     ] = @verse[ "@access.key" ]
