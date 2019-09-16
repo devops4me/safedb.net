@@ -156,7 +156,7 @@ class CLI < Thor
 
 
   # Description of the copy use case command line call.
-  desc "copy <line>", "copy into the clipboard the value of the named line at the current chapter and verse."
+  desc "copy <line>", "copy a line value (at the current chapter/verse) into the clipboard."
 
   # Copy into the clipboard the value held by the named line at the
   # current book's open chapter and verse.
@@ -174,6 +174,29 @@ class CLI < Thor
     copy_uc = SafeDb::Copy.new
     copy_uc.line = line
     copy_uc.flow()
+  end
+
+
+
+  # Description of the paste use case command line call.
+  desc "paste <line>", "paste a value into the line key which defaults to @password if not provided."
+
+  # Paste the current clipboard or selection text into the specified line
+  # at the current book's open chapter and verse.
+  #
+  # Sensitive values now neither need to be put on the commnad line (safe put)
+  # or inputted perhaps with a typo when using (safe input).
+  # 
+  # Use <b>safe wipe</b> to wipe (overwrite) any sensitive values that has
+  # been placed on the clipboard.
+  #
+  # @param line [String] the name of the line that the copied data will be
+  #        placed alongside. The line either may or may not exist.
+  def paste( line = nil )
+    log.info(x) { "paste the line value within the clipboard into the current chpater/verse." }
+    paste_uc = SafeDb::Paste.new
+    paste_uc.line = line
+    paste_uc.flow()
   end
 
 
