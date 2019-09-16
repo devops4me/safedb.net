@@ -28,8 +28,22 @@ module SafeDb
         return
       end
 
-      system "#{@verse[ @line ]} | xclip"
-      system "#{@verse[ @line ]} | xclip -selection clipbaord"
+      system "echo \"#{@verse[ @line ]}\" | xclip"
+      system "echo \"#{@verse[ @line ]}\" | xclip -selection clipbaord"
+
+      line_copied()
+
+    end
+
+
+    def line_copied()
+
+      puts ""
+      puts "The value for line \"#{@line}\" has been copied to the clipboard."
+      puts "You can use either Ctrl-v or a mouse middle click to paste it."
+      puts ""
+      puts "Wipe it from the clipboard with $ safe wipe"
+      puts ""
 
     end
 

@@ -190,6 +190,17 @@ class CLI < Thor
 
 
 
+  # Description of the safe wipe use case.
+  desc "wipe", "Wipe both clipboards of any sensitive data that may exist there."
+
+  # The<b>wipe</b> use case clears out any sensitive information from the clipboard.
+  def wipe
+    log.info(x) { "wipe out any sensitive information from the clipboard." }
+    SafeDb::Wipe.new.flow()
+  end
+
+
+
   # Description of the open use case command.
   desc "open <chapter> <verse>", "open a chapter and verse to read from or write to"
 
