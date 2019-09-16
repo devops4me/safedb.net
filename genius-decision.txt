@@ -1,0 +1,25 @@
+
+###########################################################################
+Put the JSOn files together with the crypts in the same git repository
+###########################################################################
+
+
+The bottom line to simplify is that everything goes up - the file
+
+safe pull does not need any authentication
+safe push requires you to be authenticated
+
+
+Maybe safe pull will create a subdirectory in .safedb.net and then writes into a config (say json) file in ~/.safedb.net the directory name.
+Maybe safe switch changes the safe database folder by writing that config file
+
+
+
+
+Simplify the Safe
+
+ - safe pull https://github.com..../repo-name?branch-or-commit-name
+ - pull backs up the current directory into ~/.safe-backups
+
+ - safe push (will send wherever the pull came from)
+ - or safe push (from a verse uses the config in the verse to do the push

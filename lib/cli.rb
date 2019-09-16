@@ -167,8 +167,9 @@ class CLI < Thor
   # Use <b>safe clear</b> to wipe (overwrite) the sensitive value in
   # the clipboard.
   #
-  # @param line [String] the name of the line whose data will be copied
-  def copy line
+  # @param line [String] the name of the line whose data will be copied.
+  #        If no line is given the default @password is assumed.
+  def copy( line = nil )
     log.info(x) { "copy the line value at the current chpater/verse into the clipboard." }
     copy_uc = SafeDb::Copy.new
     copy_uc.line = line

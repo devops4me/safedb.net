@@ -31,7 +31,7 @@ module SafeDb
     # that can be produced by this class. The lower bound is the median
     # length less give or take, the upper bound is the median length
     # plus the give or take size.
-    LENGTH_RANGE = (MEDIAN_LENGTH - GIVE_OR_TAKE_SIZE) .. ( MEDIAN_LENGTH + GIVE_OR_TAKE_SIZE)
+    LENGTH_RANGE = (MEDIAN_LENGTH - GIVE_OR_TAKE_SIZE) .. ( MEDIAN_LENGTH + GIVE_OR_TAKE_SIZE )
 
     # The super strong non alpha-numeric character set has a large
     # set of characters configured for the most secure credentials
