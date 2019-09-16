@@ -9,8 +9,8 @@ module SafeDb
 
     def execute()
 
-      system "echo \"safe has wiped the clipboard.\" | xclip"
-      system "echo \"safe has wiped the clipboard.\" | xclip -selection clipbaord"
+      system "printf \"safe wiped the clipboard on #{TimeStamp.readable()}.\" | xclip"
+      system "printf \"safe wiped the clipboard on #{TimeStamp.readable()}.\" | xclip -selection clipbaord"
 
       puts ""
       puts "safe has wiped the clipboards."

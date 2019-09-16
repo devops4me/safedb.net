@@ -28,8 +28,8 @@ module SafeDb
         return
       end
 
-      system "echo \"#{@verse[ @line ]}\" | xclip"
-      system "echo \"#{@verse[ @line ]}\" | xclip -selection clipbaord"
+      system "printf \"#{@verse[ @line ]}\" | xclip"
+      system "printf \"#{@verse[ @line ]}\" | xclip -selection clipbaord"
 
       line_copied()
 
