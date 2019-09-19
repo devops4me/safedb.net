@@ -16,7 +16,7 @@ module SafeDb
   #     safe open <<chapter>> <<verse>>
   class Terraform < EditVerse
 
-    attr_writer :command
+    attr_writer :command, :debug
 
     # This prefix is tagged onto environment variables which Terraform will read
     # and convert for consumption into module input variables.
@@ -87,6 +87,8 @@ module SafeDb
       ENV[ "AWS_ACCESS_KEY_ID"     ] = @verse[ "@access.key" ]
       ENV[ "AWS_SECRET_ACCESS_KEY" ] = @verse[ "@secret.key" ]
       ENV[ "AWS_DEFAULT_REGION"    ] = @verse[ "region.key"  ]
+
+      ENV[ "TF_LOG" ] = "DEBUG" if @debug == true
 
       @verse.each do | key_str, value_object |
 

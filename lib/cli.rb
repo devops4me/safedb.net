@@ -609,6 +609,8 @@ class CLI < Thor
     log.info(x) { "will export IAM credentials then invoke $ terraform #{command}" }
     terraform_uc = SafeDb::Terraform.new
     terraform_uc.command = command if command
+    terraform_uc.debug = true if options[ :debug ]
+    terraform_uc.debug = false unless options[ :debug ]
     terraform_uc.flow()
   end
 
