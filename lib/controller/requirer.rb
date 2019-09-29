@@ -94,7 +94,6 @@ module SafeDb
       gem_basepath = File.expand_path "..", gem_filepath
       Dir["#{gem_basepath}/**/*.rb"].each do |gem_path|
 
-        log.debug(x) { "@@@@ => #{gem_path}" }
         require gem_path
 
       end

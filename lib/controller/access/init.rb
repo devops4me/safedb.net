@@ -85,7 +85,7 @@ module SafeDb
 
       puts ""
       puts "You can go ahead and login."
-      puts "Your domain [#{@book_name}] is already setup."
+      puts "Your book [#{@book_name}] already exists."
       puts "You should already know the password."
       puts ""
       puts "    #{COMMANDMENT} login #{@book_name}"

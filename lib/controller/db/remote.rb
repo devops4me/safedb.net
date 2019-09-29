@@ -14,6 +14,15 @@ module SafeDb
   # - the private and public keys are placed within the chapter/verse
   # - the public (deploy) key is registered with the github repository
   #
+  # After the backend repository is created we setup the master crypts folder to become
+  # a git (frontend) repository. We do this by
+  #
+  # - 
+  #
+  #
+  #
+  #
+  #
   class Remote < EditVerse
 
     attr_writer :provision

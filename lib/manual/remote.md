@@ -12,7 +12,6 @@ Before you use safe remote to provision a github git repository backend for your
 - you have a github account (with username)
 - you have created a (40 character hexadecimal) github access token
 - you have inserted this data at a suitable chapter and verse
-- you run **`safe remote --provision`** from this opened book/chapter/verse
 
 Below is the sequence of commands leading up to **`safe remote --provision`**
 

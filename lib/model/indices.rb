@@ -7,23 +7,32 @@ module SafeDb
   # well as for naming of files folders and other artifacts.
   class Indices
 
+
+
     # The command used to invoke the safe database
     COMMANDER = "safe"
 
     # The short url name of the safe personal database.
     SAFE_URL_NAME = "safedb.net"
 
+    # The name of the safe application and the safe gem as known by the operating system.
+    SAFE_APP_NAME = "safedb"
+
     # The desired length of a safe book ergonomic identifier.
     SAFE_BOOK_ID_LENGTH = 12
 
     # The file-system location of the safe database tree
-    SAFE_DATABASE_FOLDER = File.join( Dir.home, ".#{SAFE_URL_NAME}" )
+################    SAFE_DATABASE_FOLDER = File.join( Dir.home, ".#{SAFE_URL_NAME}" )
+    SAFE_DATABASE_FOLDER = File.join( File.join( Dir.home, ".config" ), SAFE_APP_NAME )
 
     # The fully qualified domain name of the safedb home website
     SAFE_GEM_WEBSITE = "https://www.#{SAFE_URL_NAME}"
 
     # The safe database github clonable url for the ruby software
     SAFE_GITHUB_URL = "https://github.com/devops4me/#{SAFE_URL_NAME}"
+
+
+
 
     # The name of the master crypts folder.
     MASTER_CRYPTS_FOLDER_NAME = "safedb-master-crypts"
@@ -33,6 +42,15 @@ module SafeDb
 
     # The path to the master crypts .git directory.
     MASTER_CRYPTS_GIT_PATH = File.join( MASTER_CRYPTS_FOLDER_PATH, ".git" )
+
+    # The master indices file name
+    MASTER_INDICES_FILE_NAME = "safedb-master-keys.ini"
+
+    # The path to the master indices file
+    MASTER_INDICES_FILEPATH = File.join( MASTER_CRYPTS_FOLDER_PATH, MASTER_INDICES_FILE_NAME )
+
+
+
 
     # The name of the branch indices folder.
     BRANCH_INDICES_FOLDER_NAME = "safedb-branch-keys"
@@ -46,17 +64,12 @@ module SafeDb
     # The path to the branch crypts folder.
     BRANCH_CRYPTS_FOLDER_PATH = File.join( SAFE_DATABASE_FOLDER, BRANCH_CRYPTS_FOLDER_NAME )
 
-    # The master indices file name
-    MASTER_INDICES_FILE_NAME = "safedb-master-keys.ini"
-
-    # The path to the master indices file
-    MASTER_INDICES_FILEPATH = File.join( SAFE_DATABASE_FOLDER, MASTER_INDICES_FILE_NAME )
-
     # The path to the remote storage configuration INI file
     MACHINE_CONFIG_FILEPATH = File.join( SAFE_DATABASE_FOLDER, "safedb-remote-storage.ini" )
 
     # The name of the machine removable drive path location directive
     MACHINE_REMOVABLE_DRIVE_PATH = "removable.drive"
+
 
 
 
