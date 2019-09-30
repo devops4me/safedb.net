@@ -32,7 +32,9 @@ module SafeDb
     SAFE_GITHUB_URL = "https://github.com/devops4me/#{SAFE_URL_NAME}"
 
 
-
+    ### #################################### ###
+    ### paths to the master crypts resources ###
+    ### #################################### ###
 
     # The name of the master crypts folder.
     MASTER_CRYPTS_FOLDER_NAME = "safedb-master-crypts"
@@ -220,7 +222,7 @@ module SafeDb
     OPENED_VERSE_NAME = "book.open.verse"
 
     # The application version that oversaw this book's initialization.
-    SAFE_VERSION_STRING = "safedb-v#{SafeDb::VERSION}"
+    SAFE_PRE_VERSION_STRING = "safedb-v"
 
     # Handle to the key name of the ingested file in the submap verse
     INGESTED_FILE_LINE_NAME_KEY = "safedb.file::"

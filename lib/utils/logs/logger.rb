@@ -24,10 +24,9 @@ require "logger"
 #
 module LogImpl
 
-  @@gem_name = "safedb.net"
-  @@gem_base = File.join( Dir.home(), ".#{@@gem_name}" )
+  @@gem_base = File.join( File.join( Dir.home, ".config" ), "safedb" )
   FileUtils.mkdir_p( @@gem_base ) unless File.exists?( @@gem_base )
-  @@log_path = File.join( @@gem_base, "safedb-summary.log" )
+  @@log_path = File.join( @@gem_base, "safedb-cli-usage.log" )
 
 
   # Classes that include (MIXIN) this logging module will
@@ -88,7 +87,7 @@ module LogImpl
   def get_logger
 
     file_logger = Logger.new @@log_path
-    file_logger.level = Logger::DEBUG
+    file_logger.level = Logger::INFO
     original_formatter = Logger::Formatter.new
 
     file_logger.formatter = proc { |severity, datetime, progname, msg|
