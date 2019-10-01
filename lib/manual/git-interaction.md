@@ -9,7 +9,7 @@ Now we document the safe use cases that employ the git version control system an
 
 
 
-## safe init
+## **`safe init`**
 
 The safe init use case creates a book and creates the **`safedb-master-keys.ini`** file and a chapter crypt file under a new book directory.
 
@@ -21,7 +21,7 @@ The safe init use case creates a book and creates the **`safedb-master-keys.ini`
 
 
 
-## safe commit
+## **`safe commit`**
 
 The **`safe commit`** use case uses git to **protect the master database from the ills of concurrent access**. The git interactions are not **_spray and pray_**. They are specific to each given file that is added, removed and/or updated.
 
@@ -33,7 +33,7 @@ The **`safe commit`** use case uses git to **protect the master database from th
 
 
 
-## safe pull
+## **`safe pull`**
 
 If the local safe is already under version control the **`safe pull`** command will check for equivalence between the git repository url and the upstream url registered  by **`git remote`**. If it isn't - a **`git clone`** will suffice to pull down the safe repository assets.
 
@@ -41,7 +41,7 @@ If the local safe is already under version control the **`safe pull`** command w
 
 **Important** - **`safe pull`** invalidates both the master branch and all active branches. Before you issue a safe pull you must **`safe commit`** on every shell branch that contains changes.
 
-The commit provides a route back to a previous revision if the pull goes belly up and turns out to be something other than what you expected. Use **`safe diff`** to provide detail on all the active branches that will be invalidated including the their login time and most recent access and change times.
+The commit provides a route back to a previous revision if the pull goes belly up and turns out to be something other than what you expected. Use **`safe compare`** to detail all the active branches that will be invalidated including the their login time and most recent access and change times.
 
 | **git action**   | **when is it done?** | **what is done and/or the circumstances in which git is used**      |
 |:---------------- |:-------------------- |:------------------------------------------------------------------- |
@@ -57,7 +57,7 @@ A **`safe pull`** is recommended at the start of your session. Do a **`safe diff
 
 
 
-## safe push
+## **`safe push`**
 
 After one or more commits a **`safe push`** is called upon to sync the local crypt state with the registered remote repository.
 
@@ -67,11 +67,6 @@ However a git push may not be possible if the remote has moved further ahead tha
 |:---------------- |:-------------------- |:------------------------------------------------------------------- |
 | **_git push_**   | towards the end      | if this is a git fetch and git merge to integrate remote repo changes  |
 
-
-
-## safe diff | safe merge
-
-When a diff is requested for a branch the remote is checked to discover whether it has moved ahead. If it has the user is advised to first carry out a safe merge operation to bring the changes from the remote to the master and from the master to the branch.
 
 
 
@@ -95,7 +90,7 @@ The remote's last responsibility is to urge the user to issue a **`safe commit`*
 
 
 
-## safe compare
+## **`safe compare`**
 
 The **`safe diff`** command reports on the difference between the local master book and the present local branch book.
 
@@ -114,7 +109,12 @@ So safe compare reports on the local commits informing you which branch made the
 
 ### the worst of both worlds
 
-When commits have moved on both the local and remote master branches you are in the worst ofboth worlds. Thankfully this scenario is extremely rare.
+When commits have moved on both the local and remote master branches you are in the worst ofboth worlds. Thankfully this scenario is extremely rare. The rough steps to resolve this are to
+
+- export the local books as json
+- pull the remote books down then export them as json
+- externally compare the json and merge them into one
+- import the merged json to create new books
 
 
 
