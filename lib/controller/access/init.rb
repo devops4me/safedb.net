@@ -55,6 +55,7 @@ module SafeDb
         virginal_book()
       )
 
+      GitFlow.init( Indices::MASTER_CRYPTS_FOLDER_PATH )
       print_success_initializing
 
     end
