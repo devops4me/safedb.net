@@ -1,18 +1,32 @@
 #!/usr/bin/ruby
 
-  module SafeDb
-
-  module Store
+module SafeDb
 
 
-# -- ------------------------------------------------------------------- -- #
-# -- Provision the git branch involved in our present working directory. -- #
-# -- The [present directory] may not relate to version control at all or -- #
-# -- it may relate to the master or other branch in the source mgt tool. -- #
-# -- ------------------------------------------------------------------- -- #
-class GitFlow
+    # Provision the git branch involved in our present working directory.
+    # The [present directory] may not relate to version control at all or
+    # it may relate to the master or other branch in the source mgt tool.
+    class GitFlow
 
-  @@url_postfix = ".git/"
+        @@url_postfix = ".git/"
+
+
+        # Make the folder at the given path a git repository if it is not
+        # one already. If the folder is already under git management then
+        # this call has no effect.
+        #
+        # @param repo_path [String] folder path to the desired git repository
+        def self.init repo_path
+
+            cmd = "git init #{repo_path}"
+            cmd_output = %x[#{cmd}];
+
+            log.info(x) { "[git] initializing git repository at path #{repo_path}" }
+            log.info(x) { "[git] init command output : #{cmd_output}" }
+
+        end
+
+
 
   # --
   # -- Check in whatever has changed in the local repository
@@ -104,9 +118,9 @@ class GitFlow
   # -- -------------------------------------------------- -- #
   def self.wc_revision_uncut path_to_dot_git
 
-    log.info(ere) { "##### GitFlow path to dot git is => #{path_to_dot_git}" }
+    log.info(x) { "##### GitFlow path to dot git is => #{path_to_dot_git}" }
     repo_url = wc_origin_url path_to_dot_git
-    log.info(ere) { "##### The GitFlow repo url is => #{repo_url}" }
+    log.info(x) { "##### The GitFlow repo url is => #{repo_url}" }
 
     ## Bug HERE - On Ubuntu the branch name is like => (HEAD detached at 067f9a3)
     ## Bug HERE - This creates a failure of => sh: 1: Syntax error: "(" unexpected
@@ -115,11 +129,11 @@ class GitFlow
     # branch_name = wc_branch_name path_to_dot_git
     branch_name = "master"
 
-    log.info(ere) { "##### The GitFlow branch name is => #{branch_name}" }
+    log.info(x) { "##### The GitFlow branch name is => #{branch_name}" }
     cmd = "git ls-remote #{repo_url} ls-remote -b #{branch_name}"
-    log.info(ere) { "##### The GitFlow get dirty rev command is => #{cmd}" }
+    log.info(x) { "##### The GitFlow get dirty rev command is => #{cmd}" }
     dirty_revision = %x[#{cmd}];
-    log.info(ere) { "##### The dirty revision is => #{dirty_revision}" }
+    log.info(x) { "##### The dirty revision is => #{dirty_revision}" }
     return dirty_revision.partition("refs/heads").first.strip;
 
   end
@@ -138,11 +152,11 @@ class GitFlow
   # -- -------------------------------------------------- -- #
   def self.wc_revision path_to_dot_git
 
-    log.info(ere) { "GitFlow path to dot git is => #{path_to_dot_git}" }
+    log.info(x) { "GitFlow path to dot git is => #{path_to_dot_git}" }
     Throw.if_not_exists path_to_dot_git
 
     uncut_revision = wc_revision_uncut path_to_dot_git
-    log.info(ere) { "GitFlow uncut full revision is => #{uncut_revision}" }
+    log.info(x) { "GitFlow uncut full revision is => #{uncut_revision}" }
 
     # -- --------------------------------------------------------------------- -- #
     # -- Gits [short revision] hash has 7 chars. Note 4 is the usable minimum. -- #
@@ -192,12 +206,12 @@ class GitFlow
     cmd = "git clone #{path_to_dot_git} #{path_to_new_dir}"
     clone_output = %x[#{cmd}];
 
-    log.info(ere) { "[gitflow] cloning working copy" }
-    log.info(ere) { "[gitflow] repo branch name  : #{branch_name}" }
-    log.info(ere) { "[gitflow] src dot git path  : #{path_to_dot_git}" }
-    log.info(ere) { "[gitflow] new wc dir path   : #{path_to_new_dir}" }
-    log.info(ere) { "[gitflow] git clone command : #{cmd}" }
-    log.info(ere) { "[gitflow] git clone output  : #{clone_output}" }
+    log.info(x) { "[gitflow] cloning working copy" }
+    log.info(x) { "[gitflow] repo branch name  : #{branch_name}" }
+    log.info(x) { "[gitflow] src dot git path  : #{path_to_dot_git}" }
+    log.info(x) { "[gitflow] new wc dir path   : #{path_to_new_dir}" }
+    log.info(x) { "[gitflow] git clone command : #{cmd}" }
+    log.info(x) { "[gitflow] git clone output  : #{clone_output}" }
 
   end
 
@@ -237,11 +251,11 @@ class GitFlow
     cmd = "git clone #{repo_url} #{non_existent_path}"
     clone_output = %x[#{cmd}];
 
-    log.info(ere) { "[gitflow] cloning remote repository" }
-    log.info(ere) { "[gitflow] git repository url : #{repo_url}" }
-    log.info(ere) { "[gitflow] git clone dir path : #{nickname non_existent_path}" }
-    log.info(ere) { "[gitflow] git clone command  : #{cmd}" }
-    log.info(ere) { "[gitflow] git clone output   : #{clone_output}" }
+    log.info(x) { "[gitflow] cloning remote repository" }
+    log.info(x) { "[gitflow] git repository url : #{repo_url}" }
+    log.info(x) { "[gitflow] git clone dir path : #{nickname non_existent_path}" }
+    log.info(x) { "[gitflow] git clone command  : #{cmd}" }
+    log.info(x) { "[gitflow] git clone output   : #{clone_output}" }
 
   end
 
@@ -274,11 +288,11 @@ class GitFlow
 
       proj_folder = File.join parent_dir, base_names[repo_index]
 
-      log.info(ere) { "[clone repos] proj [index] => #{repo_index}" }
-      log.info(ere) { "[clone repos] repo url 1st => #{repo_url}" }
-      log.info(ere) { "[clone repos] repo url 2nd => #{git_url}" }
-      log.info(ere) { "[clone repos] project name => #{base_names[repo_index]}" }
-      log.info(ere) { "[clone repos] project path => #{proj_folder}" }
+      log.info(x) { "[clone repos] proj [index] => #{repo_index}" }
+      log.info(x) { "[clone repos] repo url 1st => #{repo_url}" }
+      log.info(x) { "[clone repos] repo url 2nd => #{git_url}" }
+      log.info(x) { "[clone repos] project name => #{base_names[repo_index]}" }
+      log.info(x) { "[clone repos] project path => #{proj_folder}" }
 
       GitFlow.do_clone_repo git_url, proj_folder
 
@@ -314,13 +328,13 @@ class GitFlow
   # -- ------------------------------------------------ -- #
   def self.git2zip repo_url, path_offset, target_dir, zip_basename
 
-    log.info(ere) { "[git2zip] ------------------------------------------- -- #" }
-    log.info(ere) { "[git2zip] archiving repo assets at path offset        -- #" }
-    log.info(ere) { "[git2zip] ------------------------------------------- -- #" }
-    log.info(ere) { "[git2zip] git repository url    : #{repo_url}" }
-    log.info(ere) { "[git2zip] slash tail dir offset : #{path_offset}" }
-    log.info(ere) { "[git2zip] target zip directory  : #{target_dir}" }
-    log.info(ere) { "[git2zip] zip file [base] name  : #{zip_basename}" }
+    log.info(x) { "[git2zip] ------------------------------------------- -- #" }
+    log.info(x) { "[git2zip] archiving repo assets at path offset        -- #" }
+    log.info(x) { "[git2zip] ------------------------------------------- -- #" }
+    log.info(x) { "[git2zip] git repository url    : #{repo_url}" }
+    log.info(x) { "[git2zip] slash tail dir offset : #{path_offset}" }
+    log.info(x) { "[git2zip] target zip directory  : #{target_dir}" }
+    log.info(x) { "[git2zip] zip file [base] name  : #{zip_basename}" }
 
     clone_dir = File.join Dir.tmpdir(), zip_basename
     do_clone_repo repo_url, clone_dir
@@ -332,13 +346,13 @@ class GitFlow
     cmd = "git --git-dir=#{dot_git_path} archive -o #{dst_zip_path} HEAD:#{the_offset}"
     clone_output = %x[#{cmd}];
 
-    log.info(ere) { "[git2zip] tmp clone src folder  : #{clone_dir}" }
-    log.info(ere) { "[git2zip] cloned dot git path   : #{dot_git_path}" }
-    log.info(ere) { "[git2zip] target zip full path  : #{dst_zip_path}" }
-    log.info(ere) { "[git2zip] git archive command   : #{cmd}" }
-    log.info(ere) { "[git2zip] ------------------------------------------- -- #" }
-    log.info(ere) { "#{clone_output}" }
-    log.info(ere) { "[git2zip] ------------------------------------------- -- #" }
+    log.info(x) { "[git2zip] tmp clone src folder  : #{clone_dir}" }
+    log.info(x) { "[git2zip] cloned dot git path   : #{dot_git_path}" }
+    log.info(x) { "[git2zip] target zip full path  : #{dst_zip_path}" }
+    log.info(x) { "[git2zip] git archive command   : #{cmd}" }
+    log.info(x) { "[git2zip] ------------------------------------------- -- #" }
+    log.info(x) { "#{clone_output}" }
+    log.info(x) { "[git2zip] ------------------------------------------- -- #" }
 
     return dst_zip_path
 
@@ -372,23 +386,19 @@ class GitFlow
       names_list.push line.strip
     end
 
-    log.info(ere) { "[git2files] ----------------------------------------------" }
-    log.info(ere) { "[git2files] [#{names_list.length}] files in [#{repo_url}]" }
-    log.info(ere) { "[git2files] ----------------------------------------------" }
-    log.info(ere) { "[git2files] Random Text : #{random_text}" }
-    log.info(ere) { "[git2files] Cloned Name : #{cloned_name}" }
-    log.info(ere) { "[git2files] Cloned Path : #{cloned_path}" }
-    log.info(ere) { "[git2files] Repo Folder : #{dot_git_path}" }
-    log.info(ere) { "[git2files] Reading Cmd : #{cmd}" }
-    log.info(ere) { "[git2files] ----------------------------------------------" }
+    log.info(x) { "[git2files] ----------------------------------------------" }
+    log.info(x) { "[git2files] [#{names_list.length}] files in [#{repo_url}]" }
+    log.info(x) { "[git2files] ----------------------------------------------" }
+    log.info(x) { "[git2files] Random Text : #{random_text}" }
+    log.info(x) { "[git2files] Cloned Name : #{cloned_name}" }
+    log.info(x) { "[git2files] Cloned Path : #{cloned_path}" }
+    log.info(x) { "[git2files] Repo Folder : #{dot_git_path}" }
+    log.info(x) { "[git2files] Reading Cmd : #{cmd}" }
+    log.info(x) { "[git2files] ----------------------------------------------" }
     pp names_list
-    log.info(ere) { "[git2files] ----------------------------------------------" }
+    log.info(x) { "[git2files] ----------------------------------------------" }
 
     return names_list
-
-  end
-
-
 
   end
 
