@@ -11,6 +11,24 @@ module SafeDb
   class Content
 
 
+    # Use the content's external id to find the ciphertext file that is to be unlocked.
+    # Then use the unlock key from the parameter along with the random IV that is inside
+    # the {DataMap} or {DataStore} to decrypt and return the ciphertext.
+    #
+    # @param unlock_key [Key] symmetric key that was used to encrypt the ciphertext
+    # @param data_store [DataMap] either {DataMap} or {DataStore} containing content id and random iv
+    # @return [String] the resulting decrypted text that was encrypted with the parameter key
+    def self.unlock_master( unlock_key, data_store )
+
+      book_id = data_store.section()
+      crypt_path = FileTree.master_crypts_filepath( book_id, data_store.get( Indices::CONTENT_IDENTIFIER ) )
+      random_iv = KeyIV.in_binary( data_store.get( Indices::CONTENT_RANDOM_IV ) )
+      return unlock_it( crypt_path, unlock_key, random_iv )
+
+    end
+
+
+
     # Lock the content body provided - place the resulting ciphertext
     # inside a file named by a random identifier, then write this identifier
     # along wih the initialization and encryption key into the provided
@@ -18,6 +36,8 @@ module SafeDb
     #
     # The content ciphertext derived from encrypting the body is stored
     # in a file underneath the provided content header.
+    #
+    # Finally 
     #
     # @param book_id [String] used to determine the book's master crypt folder
     # @param crypt_key [Key] the key used to (symmetrically) encrypt the content provided
@@ -79,16 +99,12 @@ module SafeDb
 
 
 
-    # Lock the content body provided - place the resulting ciphertext
-    # inside a file named by a random identifier, then write this identifier
-    # along wih the initialization and encryption key into the provided
-    # key-value map (hash).
+    # Use the crypt key and random init vector to transform the plain text
+    # message into an encrypted ciphertext message.
     #
-    # The content ciphertext derived from encrypting the body is stored
-    # in a file underneath the provided content header.
-    #
-    # This method returns the highly random key instantiated for the purposes
-    # of encrypting the content.
+    # Use the chunk of plain text (header) information along with the ciphertext
+    # and the expected file location at the crypt path to write out the crypt
+    # and header content into a file.
     #
     # @param crypt_path [File] path to the crypt file holding the encrypted ciphertext
     # @param crypt_key [Key] the key used to (symmetrically) encrypt the content provided
@@ -99,24 +115,6 @@ module SafeDb
 
       binary_ctext = crypt_key.do_encrypt_text( random_iv, content_body )
       binary_to_write( crypt_path, crypt_header, binary_ctext )
-
-    end
-
-
-
-    # Use the content's external id to find the ciphertext file that is to be unlocked.
-    # Then use the unlock key from the parameter along with the random IV that is inside
-    # the {DataMap} or {DataStore} to decrypt and return the ciphertext.
-    #
-    # @param unlock_key [Key] symmetric key that was used to encrypt the ciphertext
-    # @param data_store [DataMap] either {DataMap} or {DataStore} containing content id and random iv
-    # @return [String] the resulting decrypted text that was encrypted with the parameter key
-    def self.unlock_master( unlock_key, data_store )
-
-      book_id = data_store.section()
-      crypt_path = FileTree.master_crypts_filepath( book_id, data_store.get( Indices::CONTENT_IDENTIFIER ) )
-      random_iv = KeyIV.in_binary( data_store.get( Indices::CONTENT_RANDOM_IV ) )
-      return unlock_it( crypt_path, unlock_key, random_iv )
 
     end
 

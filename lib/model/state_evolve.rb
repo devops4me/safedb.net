@@ -68,10 +68,23 @@ module SafeDb
       the_crypt_key = old_human_key.do_decrypt_key( book_keys.get( Indices::CRYPT_CIPHER_TEXT ) )
       plain_content = Content.unlock_master( the_crypt_key, book_keys )
 
+      remove_crypt_path = FileTree.master_crypts_filepath( the_book_id, book_keys.get( Indices::CONTENT_IDENTIFIER ) )
+
       first_login_since_boot = StateInspect.is_first_login?( book_keys )
       the_crypt_key = Key.from_random if first_login_since_boot
       recycle_keys( the_crypt_key, the_book_id, human_secret, book_keys, plain_content )
       set_bootup_id( book_keys ) if first_login_since_boot
+
+      create_crypt_path = FileTree.master_crypts_filepath( the_book_id, book_keys.get( Indices::CONTENT_IDENTIFIER ) )
+
+      # Remove the master chapter crypt file from the local git repository and add
+      # the new master chapter crypt to the local git repository.
+      GitFlow.del_file( Indices::MASTER_CRYPTS_FOLDER_PATH, remove_crypt_path )
+      GitFlow.add_file( Indices::MASTER_CRYPTS_FOLDER_PATH, create_crypt_path )
+      GitFlow.add_file( Indices::MASTER_CRYPTS_FOLDER_PATH, Indices::MASTER_INDICES_FILEPATH )
+      GitFlow.list( Indices::MASTER_CRYPTS_FOLDER_PATH )
+      GitFlow.list( Indices::MASTER_CRYPTS_FOLDER_PATH, true )
+      GitFlow.commit( Indices::MASTER_CRYPTS_FOLDER_PATH, "safe login is hot-swapping master crypt and indices." )
 
       branch_id = Identifier.derive_branch_id( Branch.to_token() )
       clone_book_into_branch( the_book_id, branch_id, book_keys, the_crypt_key )

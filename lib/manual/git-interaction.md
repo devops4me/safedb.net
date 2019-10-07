@@ -21,6 +21,19 @@ The safe init use case creates a book and creates the **`safedb-master-keys.ini`
 
 
 
+## **`safe login`**
+
+The safe init use case creates a book and creates the **`safedb-master-keys.ini`** file and a chapter crypt file under a new book directory.
+
+| **git action**     | **what is done andr the circumstances under which git is used**     |
+|:------------------ |:------------------------------------------------------------------- |
+| _git rm FILENAME_  | remove the outgoing master crypt content file from the repository and working copy |
+| _git add FILENAME_  | add the incoming master crypt content file into git version management |
+| _git add FILENAME_  | add the master indices INI which may have new keys, a new content ID and maybe bootup ID |
+| _git commit_  | commit the hot-swapped crypt files and the master indices file as an atomic (ACID) transaction |
+
+
+
 ## **`safe commit`**
 
 The **`safe commit`** use case uses git to **protect the master database from the ills of concurrent access**. The git interactions are not **_spray and pray_**. They are specific to each given file that is added, removed and/or updated.

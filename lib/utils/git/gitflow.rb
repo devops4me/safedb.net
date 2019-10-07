@@ -8,8 +8,6 @@ module SafeDb
     # it may relate to the master or other branch in the source mgt tool.
     class GitFlow
 
-        @@url_postfix = ".git/"
-
 
         # Make the folder at the given path a git repository if it is not
         # one already. If the folder is already under git management then
@@ -18,8 +16,9 @@ module SafeDb
         # @param repo_path [String] folder path to the desired git repository
         def self.init repo_path
 
-            cmd = "git init #{repo_path}"
-            cmd_output = %x[#{cmd}];
+            git_init_cmd = "git init #{repo_path}"
+            log.info(x) { "[git] add command => #{git_init_cmd}" }
+            cmd_output = %x[#{git_init_cmd}];
 
             log.info(x) { "[git] initializing git repository at path #{repo_path}" }
             log.info(x) { "[git] init command output : #{cmd_output}" }
@@ -28,23 +27,24 @@ module SafeDb
 
 
 
-        # Log the list of files that either do not come under the wing of git
-        # or are different either by way of content or have different filepath
-        # and/or filename identifiers.
+        # Log the files (names and/or content) that either do not come under the
+        # wing of git or have been added to git repository management but are yet
+        # to be committed into the repository. Also an files are logged that have
+        # either been updated, deleted or moved.
         #
         # @param repo_path [String] folder path to the desired git repository
-        def self.diff repo_path
+        # @param by_line [Boolean]
+        #     if set to true the log will list the changed lines fronted either
+        #     with a plus or a minus sign. False will just list the file names
+        def self.list( repo_path, by_line=false )
 
-            Dir.chdir repo_path
+            path_to_dot_git = File.join( repo_path, ".git" )
+            line_by_line = by_line ? "-v" : ""
 
-            git_diff_cmd = "git status; echo;"
-            git_diff_output = %x[#{git_diff_cmd}]
-            git_diff_output.log_lines
-
-            puts git_diff_output
-
-            log.info(x) { "[git] Local git repository difference report." }
-            log.info(x) { "[git] init command output : #{cmd_output}" }
+            git_log_cmd = "git --git-dir=#{path_to_dot_git} --work-tree=#{repo_path} status #{line_by_line}"
+            log.info(x) { "[git] status command => #{git_log_cmd}" }
+            git_log_output = %x[#{git_log_cmd}]
+            git_log_output.log_lines
 
         end
 
@@ -59,39 +59,64 @@ module SafeDb
         # @param repo_path [String] folder path to the desired git repository
         def self.add repo_path
 
-            cmd = "git add -A #{repo_path}"
-            cmd_output = %x[#{cmd}];
-
-            log.info(x) { "[git] recursively registering resources for git management at path #{repo_path}" }
-            log.info(x) { "[git] add command output : #{cmd_output}" }
+            path_to_dot_git = File.join( repo_path, ".git" )
+            git_add_cmd = "git --git-dir=#{path_to_dot_git} --work-tree=#{repo_path} add -A"
+            log.info(x) { "[git] add command => #{git_add_cmd}" }
+            %x[#{git_add_cmd}];
+            log.info(x) { "[git] has recursively added resources to version management." }
 
         end
 
 
 
-
-        # Commit all added files into the local git version management
-        # system along with the provided message.
+        # Commit all changes to the local git repository.
         #
         # @param repo_path [String] folder path to the desired git repository
-        # @param message [String] message to attach alongside the committed batch
-        def self.commit repo_path
+        def self.commit( repo_path, commit_msg )
 
-            git_diff_cmd = "git status -vv; echo;"
-            git_diff_output = %x[#{git_diff_cmd}]
-            git_diff_output.log_lines
-
-    git_commit_cmd = "git commit -m \"Writing #{what_changed_string} at #{time_stamp}.\";"
-    git_commit_output = %x[#{git_commit_cmd}]
-    git_commit_output.log_lines
-
-            cmd = "git add -A #{repo_path}"
-            cmd_output = %x[#{cmd}];
-
-            log.info(x) { "[git] recursively registering resources for git management at path #{repo_path}" }
-            log.info(x) { "[git] add command output : #{cmd_output}" }
+            path_to_dot_git = File.join( repo_path, ".git" )
+            git_commit_cmd = "git --git-dir=#{path_to_dot_git} --work-tree=#{repo_path} commit -m \"#{commit_msg}\";"
+            log.info(x) { "[git] commit command => #{git_commit_cmd}" }
+            %x[#{git_commit_cmd}];
+            log.info(x) { "[git] has committed resources into the local repository." }
 
         end
+
+
+
+        # Remove a specific file from git management and also delete the
+        # working copy version of the file.
+        #
+        # @param repo_path [String] folder path to the desired git repository
+        # @param file_path [String] file to remove from the repo and working copy
+        def self.del_file( repo_path, file_path )
+
+            path_to_dot_git = File.join( repo_path, ".git" )
+            git_rm_cmd = "git --git-dir=#{path_to_dot_git} --work-tree=#{repo_path} rm #{file_path}"
+            log.info(x) { "[git] file remove command => #{git_rm_cmd}" }
+            %x[#{git_rm_cmd}];
+            log.info(x) { "[git] has removed #{file_path} from repo and working copy." }
+
+        end
+
+
+
+        # Add a specific file that exists in the working copy to the git
+        # version controller.
+        #
+        # @param repo_path [String] folder path to the desired git repository
+        # @param file_path [String] file to add to the git version controller
+        def self.add_file( repo_path, file_path )
+
+            path_to_dot_git = File.join( repo_path, ".git" )
+            git_add_cmd = "git --git-dir=#{path_to_dot_git} --work-tree=#{repo_path} add #{file_path}"
+            log.info(x) { "[git] single file add command => #{git_add_cmd}" }
+            %x[#{git_add_cmd}];
+            log.info(x) { "[git] has added #{file_path} into the git repository." }
+
+        end
+
+
 
 
 
