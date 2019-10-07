@@ -28,6 +28,73 @@ module SafeDb
 
 
 
+        # Log the list of files that either do not come under the wing of git
+        # or are different either by way of content or have different filepath
+        # and/or filename identifiers.
+        #
+        # @param repo_path [String] folder path to the desired git repository
+        def self.diff repo_path
+
+            Dir.chdir repo_path
+
+            git_diff_cmd = "git status; echo;"
+            git_diff_output = %x[#{git_diff_cmd}]
+            git_diff_output.log_lines
+
+            puts git_diff_output
+
+            log.info(x) { "[git] Local git repository difference report." }
+            log.info(x) { "[git] init command output : #{cmd_output}" }
+
+        end
+
+
+
+        # Automatically add every non-versioned file in the filetree
+        # that has either not already been registered or matches one of
+        # the regular expressions in the git ignore file.
+        #
+        # This action is recursive from the repository path downwards.
+        #
+        # @param repo_path [String] folder path to the desired git repository
+        def self.add repo_path
+
+            cmd = "git add -A #{repo_path}"
+            cmd_output = %x[#{cmd}];
+
+            log.info(x) { "[git] recursively registering resources for git management at path #{repo_path}" }
+            log.info(x) { "[git] add command output : #{cmd_output}" }
+
+        end
+
+
+
+
+        # Commit all added files into the local git version management
+        # system along with the provided message.
+        #
+        # @param repo_path [String] folder path to the desired git repository
+        # @param message [String] message to attach alongside the committed batch
+        def self.commit repo_path
+
+            git_diff_cmd = "git status -vv; echo;"
+            git_diff_output = %x[#{git_diff_cmd}]
+            git_diff_output.log_lines
+
+    git_commit_cmd = "git commit -m \"Writing #{what_changed_string} at #{time_stamp}.\";"
+    git_commit_output = %x[#{git_commit_cmd}]
+    git_commit_output.log_lines
+
+            cmd = "git add -A #{repo_path}"
+            cmd_output = %x[#{cmd}];
+
+            log.info(x) { "[git] recursively registering resources for git management at path #{repo_path}" }
+            log.info(x) { "[git] add command output : #{cmd_output}" }
+
+        end
+
+
+
   # --
   # -- Check in whatever has changed in the local repository
   # -- at the path stated in the first parameter.
