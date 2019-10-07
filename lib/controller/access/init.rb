@@ -56,7 +56,7 @@ module SafeDb
       )
 
       GitFlow.init( Indices::MASTER_CRYPTS_FOLDER_PATH )
-      GitFlow.add( Indices::MASTER_CRYPTS_FOLDER_PATH )
+      GitFlow.stage( Indices::MASTER_CRYPTS_FOLDER_PATH )
       GitFlow.list( Indices::MASTER_CRYPTS_FOLDER_PATH )
       GitFlow.list( Indices::MASTER_CRYPTS_FOLDER_PATH, true )
       GitFlow.commit( Indices::MASTER_CRYPTS_FOLDER_PATH, "safe book init is placing crypt assets under git control." )

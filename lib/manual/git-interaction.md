@@ -82,6 +82,15 @@ However a git push may not be possible if the remote has moved further ahead tha
 
 
 
+## **`safe remote`** or **`safe stage`**
+
+**`safe remote`** prints a report on the difference between the local and remote databi.
+
+    git ls-files --stage --abbrev=8
+
+The `ls-files` command is used to list the files that are staged and ready to be pushed up to the remote repository.
+
+
 
 ## **`safe remote --provision`**
 

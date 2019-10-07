@@ -50,17 +50,23 @@ module SafeDb
 
 
 
-        # Automatically add every non-versioned file in the filetree
-        # that has either not already been registered or matches one of
-        # the regular expressions in the git ignore file.
+        # Stage all files that evoke some kind of difference between the
+        # working copy and the local git repository so that they can all
+        # be committed.
         #
-        # This action is recursive from the repository path downwards.
+        # Files that will be staged by this method can be
+        #
+        # - newly created files (that do not match gitignore patterns)
+        # - modified files that are already under git version management
+        # - files deleted in the working copy but not removed from the repository
+        # - files renamed in the same folder or with their path changed too
+        # - all the above but found recursively under the root repository path
         #
         # @param repo_path [String] folder path to the desired git repository
-        def self.add repo_path
+        def self.stage repo_path
 
             path_to_dot_git = File.join( repo_path, ".git" )
-            git_add_cmd = "git --git-dir=#{path_to_dot_git} --work-tree=#{repo_path} add -A"
+            git_add_cmd = "git --git-dir=#{path_to_dot_git} --work-tree=#{repo_path} add -Au"
             log.info(x) { "[git] add command => #{git_add_cmd}" }
             %x[#{git_add_cmd}];
             log.info(x) { "[git] has recursively added resources to version management." }

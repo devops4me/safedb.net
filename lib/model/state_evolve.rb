@@ -190,6 +190,11 @@ module SafeDb
       master_keys.set( Indices::CONTENT_IDENTIFIER, branch_keys.get( Indices::CONTENT_IDENTIFIER ) )
       master_keys.set( Indices::CONTENT_RANDOM_IV,  branch_keys.get( Indices::CONTENT_RANDOM_IV  ) )
 
+      GitFlow.stage( Indices::MASTER_CRYPTS_FOLDER_PATH )
+      GitFlow.list( Indices::MASTER_CRYPTS_FOLDER_PATH )
+      GitFlow.list( Indices::MASTER_CRYPTS_FOLDER_PATH, true )
+      GitFlow.commit( Indices::MASTER_CRYPTS_FOLDER_PATH, "safe commit is staging crypts and master indices." )
+
     end
 
 
