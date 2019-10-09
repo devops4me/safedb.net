@@ -2,6 +2,22 @@ safe [![Build Status](https://secure.travis-ci.org/TwP/inifile.png)](http://trav
 ==========
 
 
+## safe drag `<<xxxx>>`
+
+if xxxx
+ - ends with a colon @--> book name
+ - begins with a colon and no slashes @--> chapter name
+ - has just one fwd slash @===> verse (could also have colon to specify different book or different chapter)
+ - has 2 fwd slashes ==> it is a line => may also have colon to specify different book or different chapter
+ - has no colon or fwd slashes its a line name
+
+With this notation the open chapter/verse does not change.
+Used in commands like safe delete | safe drag | safe drop | safe rename <<from>> <<to>>
+
+
+
+
+
 ## safe push | safe pull
 
 Working with <tt>remote (off-site) storage</tt> and <tt>sync-ing safe books</tt> between **different computers** is done using <tt>safe push</tt> and <tt>safe pull</tt>. Even with a single laptop you need a backup and restore process and this push pull is in-built and ready to go.

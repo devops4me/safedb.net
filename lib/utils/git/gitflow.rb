@@ -66,7 +66,7 @@ module SafeDb
         def self.stage repo_path
 
             path_to_dot_git = File.join( repo_path, ".git" )
-            git_add_cmd = "git --git-dir=#{path_to_dot_git} --work-tree=#{repo_path} add -Au"
+            git_add_cmd = "git --git-dir=#{path_to_dot_git} --work-tree=#{repo_path} add -A"
             log.info(x) { "[git] add command => #{git_add_cmd}" }
             %x[#{git_add_cmd}];
             log.info(x) { "[git] has recursively added resources to version management." }
