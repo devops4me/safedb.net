@@ -20,11 +20,7 @@ module SafeDb
   # - the fetch/pull/clone url is put into configuration visible before login
   # - the push origin url is added using the `git remote add origin` command
   #
-  # The user is now prompted to wrap things up by issuing the following commands.
-  #
-  #     safe commit
-  #     safe push
-  #
+  # Finally prompt the user to issue a commit followed by a push.
   class RemoteGithubToken < EditVerse
 
     attr_writer :provision
@@ -47,62 +43,24 @@ module SafeDb
       remote_mirror_page = "#{@book.book_id()}/#{@book.get_open_chapter_name()}/#{@book.get_open_verse_name()}"
       Master.new().set_backend_coordinates( remote_mirror_page )
 
-# @todo - refactor into GitHub integration class
-# @todo - refactor into GitHub integration class
-# @todo - refactor into GitHub integration class
+      repository_user = Github.create_repo( github_access_token, repository_name )
+      @verse.store( Indices::GIT_REPOSITORY_USER_KEYNAME, repository_user )
 
-      require "etc"
-      require "socket"
-      require "octokit"
-
-      github_client = Octokit::Client.new( :access_token => github_access_token )
-      github_user = github_client.user
-      repo_creator = "#{Etc.getlogin()}@#{Socket.gethostname()}"
-      repo_description = "This github repository was auto-created by safedb.net to be a remote database backend on behalf of #{repo_creator} on #{TimeStamp.readable()}."
-      repo_homepage = "https://github.com/devops4me/safedb.net/"
-      repository_id = "#{github_user[:login]}/#{repository_name}"
-      @verse.store( Indices::GIT_REPOSITORY_USER_KEYNAME, github_user[:login] )
-
-      puts ""
-      puts "Repository Name  =>  #{repository_id}"
-      puts "Github Company   =>  #{github_user[:company]}"
-      puts "Account Owner    =>  #{github_user[:name]}"
-      puts "Github User ID   =>  #{github_user[:id]}"
-      puts "Github Username  =>  #{github_user[:login]}"
-
-##############      puts "SSH Public Key   =>  #{repo_public_key[0..40]}..."
-
-      puts "Creation Entity  =>  #{repo_creator}"
-      puts "Repo Descriptor  =>  #{repo_description}"
-      puts "Repo Homepage    =>  #{repo_homepage}"
-      puts ""
-
-      options_hash = {
-        :description => repo_description,
-        :repo_homepage => repo_homepage,
-        :private => false,
-        :has_issues => false,
-        :has_wiki => false,
-        :has_downloads => false,
-        :auto_init => false
-      }
-
-      github_client.create_repository( repository_name, options_hash  )
-
-####################      github_client.add_deploy_key( repository_id, "your safe crypt deployment key with ID #{TimeStamp.yyjjj_hhmm_sst()}", repo_public_key )
+      fetch_url = "https://github.com/#{repository_user}/#{repository_name}.git"
+      push_url = "https://#{repository_user}:#{github_access_token}@github.com/#{repository_user}/#{repository_name}.git"
+      GitFlow.add_origin_url( Indices::MASTER_CRYPTS_FOLDER_PATH, fetch_url )
+      GitFlow.set_push_origin_url( Indices::MASTER_CRYPTS_FOLDER_PATH, push_url )
 
     end
 
 
     def is_github_access_token_valid( github_access_token )
 
-      is_invalid = github_access_token.nil?() || github_access_token.strip().length() < GITHUB_TOKEN_MIN_LENGTH
+      is_invalid = github_access_token.nil?() || github_access_token.strip().length() < 7
       puts "No valid github access token found." if is_invalid
       return !is_invalid
 
     end
-
-    GITHUB_TOKEN_MIN_LENGTH = 7
 
 
   end

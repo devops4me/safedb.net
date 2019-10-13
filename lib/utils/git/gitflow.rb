@@ -109,6 +109,7 @@ module SafeDb
 
 
 
+
         # Add a specific file that exists in the working copy to the git
         # version controller.
         #
@@ -123,6 +124,52 @@ module SafeDb
             log.info(x) { "[git] has added #{file_path} into the git repository." }
 
         end
+
+
+
+
+        # Add the parameter remote origin URL to the git repository at the
+        # stated path. This method assumes the origin url is non-sensitive
+        # and logs it. No passwords or access tokens expected in the url.
+        #
+        # Use in conjunction with set_push_origin_url to create a push url
+        # that is different from the fetch url.
+        #
+        # @param repo_path [String] folder path to the desired git repository
+        # @param origin_url [String] the URL to the remote origin to add
+        def self.add_origin_url repo_path, origin_url
+
+            path_to_dot_git = File.join( repo_path, ".git" )
+            git_add_origin_loggable_cmd = "git --git-dir=#{path_to_dot_git} --work-tree=#{repo_path} remote add origin"
+            git_add_origin_cmd = "#{git_add_origin_loggable_cmd} #{origin_url}"
+            log.info(x) { "[git] add origin command without url => #{git_add_origin_loggable_cmd}" }
+            %x[#{git_add_origin_cmd}];
+            log.info(x) { "[git] has added a remote origin url." }
+
+        end
+
+
+
+        # Set only the origin url to push to. This command leaves the fetch
+        # url as is. The push_origin_url is assumed sensitive as it may
+        # contain either passwords or access tokens. As such it is not logged.
+        #
+        # The remote origin must be set before calling this method. If no origin
+        # is set this will throw a "no origin" error.
+        #
+        # @param repo_path [String] folder path to the desired git repository
+        # @param push_origin_url [String] the push URL of the remote origin
+        def self.set_push_origin_url repo_path, push_origin_url
+
+            path_to_dot_git = File.join( repo_path, ".git" )
+            git_loggable_cmd = "git --git-dir=#{path_to_dot_git} --work-tree=#{repo_path} remote set-url --push origin"
+            git_set_push_origin_url_cmd = "#{git_loggable_cmd} #{push_origin_url}"
+            log.info(x) { "[git] set push origin url command without url => #{git_loggable_cmd}" }
+            %x[#{git_set_push_origin_url_cmd}];
+            log.info(x) { "[git] has set the remote origin url for pushing." }
+
+        end
+
 
 
 
