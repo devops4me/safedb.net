@@ -360,7 +360,7 @@ class CLI < Thor
   # Creates remote storage for the safe database crypt files.
   def remote
     log.info(x) { "performing a remote storage use case. The provision flag is set to #{options[ :provision ]}." }
-    remote_uc = SafeDb::Remote.new()
+    remote_uc = SafeDb::RemoteGithubToken.new()
     remote_uc.provision = true if options[ :provision ]
     remote_uc.provision = false unless options[ :provision ]
     remote_uc.flow()

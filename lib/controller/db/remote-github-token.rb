@@ -2,28 +2,30 @@
 	
 module SafeDb
 
-  # We want to provision (create) the safe's remote (github) backend.
+  # This class uses Github (https) along with an access token (as opposed to ssh keypairs)
+  # to provision a remote backend for a safe database.
   #
-  # A number of setup tasks are executed when you ask that the backend repository be created.
+  # == Github Access Token
+  #
+  # The safe book must be opened at a chapter/verse that contains a line named
+  # `@github.access.token` with a viable token value. This is the only pre-condition to
+  # the `safe remote --provision` command.
+  #
+  # == Flow of Events
+  #
+  # To provision a Github token-based remote backend for the safe database means
   #
   # - a repository is created in github
-  # - the git fetch (https) and git push (ssh) urls are fabricated
-  # - the fetch url is written into the master keys file
-  # - the push url is written to the configured chapter/verse location
-  # - a ssh public/private keypair (using EC25519) is created
-  # - the private and public keys are placed within the chapter/verse
-  # - the public (deploy) key is registered with the github repository
+  # - the repository name and user are stored in the verse
+  # - the fetch/pull/clone url is put into configuration visible before login
+  # - the push origin url is added using the `git remote add origin` command
   #
-  # After the backend repository is created we setup the master crypts folder to become
-  # a git (frontend) repository. We do this by
+  # The user is now prompted to wrap things up by issuing the following commands.
   #
-  # - 
+  #     safe commit
+  #     safe push
   #
-  #
-  #
-  #
-  #
-  class Remote < EditVerse
+  class RemoteGithubToken < EditVerse
 
     attr_writer :provision
 
@@ -38,23 +40,13 @@ module SafeDb
 
       repository_name = "safe-#{TimeStamp.yyjjj_hhmm_sst()}"
       @verse.store( Indices::GIT_REPOSITORY_NAME_KEYNAME, repository_name )
-      private_key_simple_filename = "safe.#{@book.get_open_chapter_name()}.#{@book.get_open_verse_name()}.#{TimeStamp.yyjjj_hhmm_sst()}"
-      @verse.store( Indices::REMOTE_PRIVATE_KEY_KEYNAME, "#{private_key_simple_filename}.pem" )
-      @verse.store( Indices::REMOTE_MIRROR_SSH_HOST_KEYNAME, "safe-#{TimeStamp.yyjjjhhmmsst()}" )
 
+      # We could hardcode this to genesis:remote/github which will be
+      # referenced only on the first ever safe pull --from=https://github.com/devops4me/safe-xxxx
+      # This is required for setting the push origin url.
       remote_mirror_page = "#{@book.book_id()}/#{@book.get_open_chapter_name()}/#{@book.get_open_verse_name()}"
       Master.new().set_backend_coordinates( remote_mirror_page )
 
-      key_creator = Keys.new()
-      key_creator.set_verse( @verse )
-      key_creator.keyfile_name = private_key_simple_filename
-      key_creator.edit_verse()
-      repo_public_key = @verse[ Indices::PUBLIC_KEY_DEFAULT_KEY_NAME ]
-
-# @todo - refactor into GitHub integration class
-# @todo - refactor into GitHub integration class
-# @todo - refactor into GitHub integration class
-# @todo - refactor into GitHub integration class
 # @todo - refactor into GitHub integration class
 # @todo - refactor into GitHub integration class
 # @todo - refactor into GitHub integration class
@@ -77,7 +69,8 @@ module SafeDb
       puts "Account Owner    =>  #{github_user[:name]}"
       puts "Github User ID   =>  #{github_user[:id]}"
       puts "Github Username  =>  #{github_user[:login]}"
-      puts "SSH Public Key   =>  #{repo_public_key[0..40]}..."
+
+##############      puts "SSH Public Key   =>  #{repo_public_key[0..40]}..."
 
       puts "Creation Entity  =>  #{repo_creator}"
       puts "Repo Descriptor  =>  #{repo_description}"
@@ -95,7 +88,8 @@ module SafeDb
       }
 
       github_client.create_repository( repository_name, options_hash  )
-      github_client.add_deploy_key( repository_id, "your safe crypt deployment key with ID #{TimeStamp.yyjjj_hhmm_sst()}", repo_public_key )
+
+####################      github_client.add_deploy_key( repository_id, "your safe crypt deployment key with ID #{TimeStamp.yyjjj_hhmm_sst()}", repo_public_key )
 
     end
 
