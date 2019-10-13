@@ -172,43 +172,25 @@ module SafeDb
 
 
 
+        # Push the commit bundles to the remote git repository.
+        #
+        # @param repo_path [String] folder path to the desired git repository
+        def self.push repo_path
+
+            path_to_dot_git = File.join( repo_path, ".git" )
+            git_push_cmd = "git --git-dir=#{path_to_dot_git} --work-tree=#{repo_path} push origin master"
+            log.info(x) { "[git] push command => #{git_push_cmd}" }
+            system git_push_cmd
+            log.info(x) { "[git] has pushed outstanding commit bundles to the remote backend repository." }
+
+        end
 
 
 
-  # --
-  # -- Check in whatever has changed in the local repository
-  # -- at the path stated in the first parameter.
-  # --
-  # -- The text in the second parameter helps to distinguish
-  # -- what was to be pushed up and forms part of the git
-  # -- commit message.
-  # --
-  def self.push repo_root_dir, what_changed_string, time_stamp
 
-    dot_git_path = File.join repo_root_dir, ".git"
-    Throw.if_not_exists dot_git_path
 
-    Dir.chdir repo_root_dir
 
-    git_diff_cmd = "git status -vv; echo;"
-    git_diff_output = %x[#{git_diff_cmd}]
-    git_diff_output.log_lines
 
-    git_add_cmd = "git add -A; echo;"
-    git_add_output = %x[#{git_add_cmd}]
-    git_add_output.log_lines
-
-    git_commit_cmd = "git commit -m \"Writing #{what_changed_string} at #{time_stamp}.\";"
-    git_commit_output = %x[#{git_commit_cmd}]
-    git_commit_output.log_lines
-
-    # --
-    # -- This command may require input (username/password) from the
-    # -- user hence we don't wrap inside output trapping executors.
-    # --
-    system "git push origin master"
-
-  end
 
 
   # -- ------------------------------------------------- -- #

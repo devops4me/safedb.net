@@ -410,14 +410,13 @@ class CLI < Thor
 
 
   # Description of the safe database push command.
-  desc "push", "push crypts to github and put index keys on removable drive"
+  desc "push", "push commited safe crypts to the remote backend repository."
 
-  # After backing up local assets the <b>push use case</b> creates a remoe github
-  # repository if necessary and initializes the master crypts as a git repository
-  # if necessary and then adds, commits and pushes the crypts up to the github
-  # remote for safe keeping.
+  # This simple command does not require the user to be logged into a specific
+  # book. The only pre-condition is that safe remote --provision has been successfully
+  # run thus placing the required remote origin urls.
   def push
-    log.info(x) { "push crypt assets to github and refresh the index keys on removable drive." }
+    log.info(x) { "request to push safe crypts to the remote backend." }
     SafeDb::Push.new().flow()
   end
 

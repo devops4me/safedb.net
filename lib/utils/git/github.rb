@@ -34,7 +34,6 @@ module SafeDb
             repo_creator = "#{Etc.getlogin()}@#{Socket.gethostname()}"
             repo_description = "This github repository was auto-created by safedb.net to be a remote database backend on behalf of #{repo_creator} on #{TimeStamp.readable()}."
             repo_homepage = "https://github.com/devops4me/safedb.net/"
-            @verse.store( Indices::GIT_REPOSITORY_USER_KEYNAME, github_user[:login] )
 
             puts ""
             puts "Repository Name  =>  #{repository_name}"
