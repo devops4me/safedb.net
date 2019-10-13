@@ -561,6 +561,17 @@ class String
   # The INFO log level is used to log the lines - if this is not
   #   appropriate create a (level) parameterized log lines method.
   def log_lines
+    log_info()
+  end
+
+
+  # Log at the INFO level the string which is expected to be
+  # delineated. If the string originated from a file it will
+  # be logged line by line.
+  #
+  # If no line delineation the string will be dumped just as
+  # a blob.
+  def log_info
 
     self.each_line do |line|
       clean_line = line.chomp.gsub("\\n","")
@@ -568,5 +579,22 @@ class String
     end
 
   end
+
+
+  # Log at the INFO level the string which is expected to be
+  # delineated. If the string originated from a file it will
+  # be logged line by line.
+  #
+  # If no line delineation the string will be dumped just as
+  # a blob.
+  def log_debug
+
+    self.each_line do |line|
+      clean_line = line.chomp.gsub("\\n","")
+      log.debug(x) { line } if clean_line.length > 0
+    end
+
+  end
+
 
 end

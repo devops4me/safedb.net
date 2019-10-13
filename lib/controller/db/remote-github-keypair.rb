@@ -2,7 +2,12 @@
 	
 module SafeDb
 
-  # We want to provision (create) the safe's remote (github) backend.
+  # This class gives a flavour of setting up a git repository to be accessed
+  # with PUBLIC / PRIVATE keys (using SSH) rather than via a GitHub access token
+  # that uses HTTPS (see remote.rb).
+  #
+  # THIS IMPLEMENTATION IS AS YET UNFINISHED BECAUSE IT DOES NOT WRITE INTO THE
+  # SSH CONFIG FILE IN ~/.ssh/config
   #
   # A number of setup tasks are executed when you ask that the backend repository be created.
   #
@@ -14,16 +19,7 @@ module SafeDb
   # - the private and public keys are placed within the chapter/verse
   # - the public (deploy) key is registered with the github repository
   #
-  # After the backend repository is created we setup the master crypts folder to become
-  # a git (frontend) repository. We do this by
-  #
-  # - 
-  #
-  #
-  #
-  #
-  #
-  class Remote < EditVerse
+  class RemoteGithubKeypair < EditVerse
 
     attr_writer :provision
 
@@ -36,7 +32,7 @@ module SafeDb
       github_access_token = @verse[ Indices::GITHUB_ACCESS_TOKEN ]
       return unless is_github_access_token_valid( github_access_token )
 
-      repository_name = "safedb-crypts-#{TimeStamp.yyjjj_hhmm_sst()}"
+      repository_name = "safe-#{TimeStamp.yyjjj_hhmm_sst()}"
       @verse.store( Indices::GIT_REPOSITORY_NAME_KEYNAME, repository_name )
       private_key_simple_filename = "safe.#{@book.get_open_chapter_name()}.#{@book.get_open_verse_name()}.#{TimeStamp.yyjjj_hhmm_sst()}"
       @verse.store( Indices::REMOTE_PRIVATE_KEY_KEYNAME, "#{private_key_simple_filename}.pem" )
@@ -91,11 +87,11 @@ module SafeDb
         :has_issues => false,
         :has_wiki => false,
         :has_downloads => false,
-        :auto_init => true
+        :auto_init => false
       }
 
       github_client.create_repository( repository_name, options_hash  )
-      github_client.add_deploy_key( repository_id, "your safe crypts deployment key with ID #{TimeStamp.yyjjj_hhmm_sst()}", repo_public_key )
+      github_client.add_deploy_key( repository_id, "your safe crypt deployment key with ID #{TimeStamp.yyjjj_hhmm_sst()}", repo_public_key )
 
     end
 

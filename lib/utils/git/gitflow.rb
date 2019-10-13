@@ -44,7 +44,9 @@ module SafeDb
             git_log_cmd = "git --git-dir=#{path_to_dot_git} --work-tree=#{repo_path} status #{line_by_line}"
             log.info(x) { "[git] status command => #{git_log_cmd}" }
             git_log_output = %x[#{git_log_cmd}]
-            git_log_output.log_lines
+
+            git_log_output.log_debug if by_line
+            git_log_output.log_info unless by_line
 
         end
 
