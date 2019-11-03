@@ -384,12 +384,24 @@ module SafeDb
     end
 
 
+
+    # Print a notie stating the book followed by and open chapter and
+    # verse names only if the book is currently opened at a specific
+    # chapter and verse. Right after book creation for example there
+    # is no open chapter or verse and this method simply prints out
+    # a carriage return.
     def print_book_mark()
-      bcv_name = "#{book_name()}/#{get_open_chapter_name()}/#{get_open_verse_name()}"
+
       puts ""
+      return unless is_opened?()
+
+      bcv_name = "#{book_name()}/#{get_open_chapter_name()}/#{get_open_verse_name()}"
       puts "#{bcv_name} (#{get_open_verse_data().length()})\n"
       puts ""
+
     end
+
+
 
     # Is the verse name in the parameter the book's open verse? An exception
     # is thrown if the parameter verse name is nil.
