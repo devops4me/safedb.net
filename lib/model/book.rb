@@ -395,7 +395,7 @@ module SafeDb
       puts ""
       return unless is_opened?()
 
-      bcv_name = "#{book_name()}/#{get_open_chapter_name()}/#{get_open_verse_name()}"
+      bcv_name = "#{book_name()}:#{get_open_chapter_name()}/#{get_open_verse_name()}"
       puts "#{bcv_name} (#{get_open_verse_data().length()})\n"
       puts ""
 

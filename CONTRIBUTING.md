@@ -3,6 +3,8 @@
 
 You can contriubute software, documentation, issues and even good ideas. Most contributions will either be integrations with other tools and technologies, or new use cases (plugins).
 
+**Ignore these instructions if you just want to use the software.** To **use the software** **[visit the readme](README.md)**.
+
 
 ## Contributing Software
 
@@ -13,7 +15,7 @@ sudo apt install --assume-yes ruby-full libicu-dev git
 sudo chown -R $USER:$USER /var/lib/gems
 sudo chown -R $USER:$USER /usr/local/bin
 sudo chown -R $USER:$USER /usr/local/lib
-gem install safedb bundler gem-release cucumber aruba
+gem install bundler gem-release cucumber aruba
 git clone https://github.com/devops4me/safedb.net.git mirror.safedb.ro
 cd mirror.safedb
 rake install

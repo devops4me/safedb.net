@@ -76,6 +76,8 @@ module SafeDb
       set_bootup_id( book_keys ) if first_login_since_boot
 
       create_crypt_path = FileTree.master_crypts_filepath( the_book_id, book_keys.get( Indices::CONTENT_IDENTIFIER ) )
+      branch_id = Identifier.derive_branch_id( Branch.to_token() )
+      commit_msg = "safe login to #{the_book_id} at branch #{branch_id} on #{TimeStamp.readable()}."
 
       # Remove the master chapter crypt file from the local git repository and add
       # the new master chapter crypt to the local git repository.
@@ -84,9 +86,8 @@ module SafeDb
       GitFlow.add_file( Indices::MASTER_CRYPTS_FOLDER_PATH, Indices::MASTER_INDICES_FILEPATH )
       GitFlow.list( Indices::MASTER_CRYPTS_FOLDER_PATH )
       GitFlow.list( Indices::MASTER_CRYPTS_FOLDER_PATH, true )
-      GitFlow.commit( Indices::MASTER_CRYPTS_FOLDER_PATH, "safe login is hot-swapping master crypt and indices." )
+      GitFlow.commit( Indices::MASTER_CRYPTS_FOLDER_PATH, commit_msg )
 
-      branch_id = Identifier.derive_branch_id( Branch.to_token() )
       clone_book_into_branch( the_book_id, branch_id, book_keys, the_crypt_key )
 
       return true
@@ -190,10 +191,12 @@ module SafeDb
       master_keys.set( Indices::CONTENT_IDENTIFIER, branch_keys.get( Indices::CONTENT_IDENTIFIER ) )
       master_keys.set( Indices::CONTENT_RANDOM_IV,  branch_keys.get( Indices::CONTENT_RANDOM_IV  ) )
 
+      commit_msg = "safe commit for #{book.book_name()} in branch #{book.branch_id()} on #{TimeStamp.readable()}."
+
       GitFlow.stage( Indices::MASTER_CRYPTS_FOLDER_PATH )
       GitFlow.list( Indices::MASTER_CRYPTS_FOLDER_PATH )
       GitFlow.list( Indices::MASTER_CRYPTS_FOLDER_PATH, true )
-      GitFlow.commit( Indices::MASTER_CRYPTS_FOLDER_PATH, "safe commit is staging crypts and master indices." )
+      GitFlow.commit( Indices::MASTER_CRYPTS_FOLDER_PATH, commit_msg )
 
     end
 

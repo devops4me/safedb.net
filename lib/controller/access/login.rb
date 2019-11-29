@@ -25,8 +25,6 @@ module SafeDb
   # - the shell's secure password reader
   class Login < Authenticate
 
-# DELETE ME #######################    attr_writer :clip, :login_book_id, :suppress_output
-
     # If the clip switch is present it signifies that the password should
     # be read in from the clipboard. Any text selection puts text into the
     # the clipboard - no need specifically to use Ctrl-c (copy).

@@ -55,11 +55,13 @@ module SafeDb
         virginal_book()
       )
 
+      commit_msg = "safe init artifacts for newly created (#{@book_name}) book on #{TimeStamp.readable()}."
+
       GitFlow.init( Indices::MASTER_CRYPTS_FOLDER_PATH )
       GitFlow.stage( Indices::MASTER_CRYPTS_FOLDER_PATH )
       GitFlow.list( Indices::MASTER_CRYPTS_FOLDER_PATH )
       GitFlow.list( Indices::MASTER_CRYPTS_FOLDER_PATH, true )
-      GitFlow.commit( Indices::MASTER_CRYPTS_FOLDER_PATH, "safe book init is placing crypt assets under git control." )
+      GitFlow.commit( Indices::MASTER_CRYPTS_FOLDER_PATH, commit_msg )
 
       print_success_initializing
 

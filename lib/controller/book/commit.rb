@@ -33,6 +33,7 @@ module SafeDb
         puts "   safe refresh"
         puts "   safe commit"
         puts ""
+
         return
 
       end

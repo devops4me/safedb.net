@@ -77,11 +77,14 @@ module SafeDb
 
 
 
-        # Commit all changes to the local git repository.
+        # Commit all changes to the local git repo at the stated folder path
+        # with the parameter commit message.
         #
         # @param repo_path [String] folder path to the desired git repository
+        # @param commit_msg [String] the commit message to post to the repo
         def self.commit( repo_path, commit_msg )
 
+            log.info(x) { "[git] commit msg => #{commit_msg}" }
             path_to_dot_git = File.join( repo_path, ".git" )
             git_commit_cmd = "git --git-dir=#{path_to_dot_git} --work-tree=#{repo_path} commit -m \"#{commit_msg}\";"
             log.info(x) { "[git] commit command => #{git_commit_cmd}" }
