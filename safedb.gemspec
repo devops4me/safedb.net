@@ -31,9 +31,4 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'octokit', '~> 4.14'
   spec.add_dependency 'net-ssh', '~> 5.2'
 
-###  spec.add_development_dependency "bundler", "~> 0"
-###  spec.add_development_dependency "cucumber", "~> 2.0"
-###  spec.add_development_dependency "aruba", "~> 1.0.0-alpha.1"
-###  spec.add_development_dependency "gem-release", "~> 0"
-
 end

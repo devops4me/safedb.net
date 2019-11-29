@@ -6,7 +6,24 @@ You can contriubute software, documentation, issues and even good ideas. Most co
 **Ignore these instructions if you just want to use the software.** To **use the software** **[visit the readme](README.md)**.
 
 
-## Contributing Software
+---
+
+
+## Use Docker to Build and Run the Tests
+
+Using **`docker`** is the **simplest quickest** way to **build, package** and run the **cucumber/aruba** test suite.
+
+```
+git clone https://github.com/devops4me/safedb.net.git
+cd safedb.net
+docker build --no-cache --tag img.safe.build .
+```
+
+
+---
+
+
+## Building a Development Environment
 
 To contribute software you'll need to setup a development environment.
 

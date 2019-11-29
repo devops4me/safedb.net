@@ -7,8 +7,6 @@ module SafeDb
   # well as for naming of files folders and other artifacts.
   class Indices
 
-
-
     # The command used to invoke the safe database
     COMMANDER = "safe"
 
