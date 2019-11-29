@@ -51,6 +51,14 @@ module SafeDb
 
 
 
+    # The name of the backup master crypts folder.
+    BACKUP_CRYPTS_FOLDER_NAME = "safedb-backup-crypts"
+
+    # The path of the backup master crypts folder.
+    BACKUP_CRYPTS_FOLDER_PATH = File.join( SAFE_DATABASE_FOLDER, BACKUP_CRYPTS_FOLDER_NAME )
+
+
+
 
     # The name of the branch indices folder.
     BRANCH_INDICES_FOLDER_NAME = "safedb-branch-keys"

@@ -2,19 +2,19 @@
 	
 module SafeDb
 
-  # If the removable drive path is configured and exists and contains the master
-  # index file, the pull use case backs up both file and master crypts (if necessary)
-  # and then refreshes them with the state that exists in the remote mirrored git
-  # directory and the indices on the removable drive path.
-  class Pull < Controller
-
     # If the removable drive path is configured and exists and contains the master
     # index file, the pull use case backs up both file and master crypts (if necessary)
     # and then refreshes them with the state that exists in the remote mirrored git
     # directory and the indices on the removable drive path.
-    def execute()
+    class Pull < Controller
 
-      puts ""
+        # If the removable drive path is configured and exists and contains the master
+        # index file, the pull use case backs up both file and master crypts (if necessary)
+        # and then refreshes them with the state that exists in the remote mirrored git
+        # directory and the indices on the removable drive path.
+        def execute()
+
+            puts ""
 
       removable_drive_path = xxx # ~~~~ read this from the --to variable
       removable_drive_file = File.join( removable_drive_path, Indices::MASTER_INDICES_FILE_NAME )
@@ -41,29 +41,13 @@ module SafeDb
 
       is_git = File.exist?( Indices::MASTER_CRYPTS_GIT_PATH ) && File.directory?( Indices::MASTER_CRYPTS_GIT_PATH )
 
+            return
 
 
-=begin
-      require "octokit"
-############client = Octokit::Client.new(:login => 'defunkt', :password => 'c0d3b4ssssss!')
-
-client = Octokit::Client.new(:access_token => '')
-user = client.user
-puts "Company Name => #{user[:company]}"
-puts "User Name => #{user[:name]}"
-puts "User ID => #{user[:id]}"
-puts "Email => #{user[:email]}"
-puts "Login => #{user[:login]}"
-puts "Biography => #{user[:bio]}"
-=end
-
-      return
+        end
 
 
     end
-
-
-  end
 
 
 end

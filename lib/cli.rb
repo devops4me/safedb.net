@@ -422,6 +422,20 @@ class CLI < Thor
 
 
 
+
+  # Description of the safe database obliterate command.
+  desc "obliterate", "creates a backup then removes the entire safe master database"
+
+  # The obliterate command does not need to be secured behind authentication because
+  # all it does is delete a directory. Not withstanding taking a backup - this command
+  # is exactly like the bash rm -fr command.
+  def obliterate
+    log.info(x) { "request to obliterate the safedb master database." }
+    SafeDb::Obliterate.new().flow()
+  end
+
+
+
   # Description of the set configuration directives command.
   desc "set <directive_name> <directive_value>", "set book-scoped configuration directive"
 
