@@ -26,6 +26,23 @@ cucumber
 You change the software as you see fit and **send a pull request** when you are ready.
 
 
+## Cucumber and Aruba | Installi the right version
+
+Aruba and Cucumber are **finickity** about both each others versions and the ruby version. If you see this output in the gem install command you need to act.
+
+```
+Fetching: aruba-0.14.12.gem (100%)
+Use on ruby 1.8.7
+* Make sure you add something like that to your `Gemfile`. Otherwise you will
+  get cucumber > 2 and this will fail on ruby 1.8.7
+
+  gem 'cucumber', '~> 1.3.20'
+
+With aruba >= 1.0 there will be breaking changes. Make sure to read https://github.com/cucumber/aruba/blob/master/History.md for 1.0.0
+Successfully installed aruba-0.14.12
+```
+
+
 ## Running Cucumber/Aruba Tests
 
 Use the simple **`cucumber`** command in the project directory to run the tests.

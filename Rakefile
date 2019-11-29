@@ -18,6 +18,6 @@ require 'yard'
 # This configuration allows us to run "rake yard"
 # to build documentation.
 YARD::Rake::YardocTask.new do |t|
- t.files   = ['lib/**/*.rb']   # optional
- t.stats_options = ['--list-undoc']
+    t.files   = ['lib/**/*.rb']   # optional
+    t.stats_options = ['--list-undoc']
 end
