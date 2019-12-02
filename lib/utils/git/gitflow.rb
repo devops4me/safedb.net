@@ -95,6 +95,30 @@ module SafeDb
 
 
 
+        # Configure the user.email and user.name properties for the git software
+        # to use alongside its other commands. This must always be done before a
+        # git commit command is issued.
+        #
+        # @param repo_path [String] folder path to the desired git repository
+        # @param user_email [String] the email address of the user owning the repository
+        # @param user_name [String] the full name of the user owning the repository
+        def self.config( repo_path, user_email, user_name )
+
+            log.info(x) { "[git] local config for user.email => #{user_email}" }
+            log.info(x) { "[git] local config for user.name => #{user_name}" }
+            path_to_dot_git = File.join( repo_path, ".git" )
+            git_config_email_cmd = "git --git-dir=#{path_to_dot_git} --work-tree=#{repo_path} config --local user.email \"#{user_email}\";"
+            git_config_name_cmd = "git --git-dir=#{path_to_dot_git} --work-tree=#{repo_path} config --local user.name \"#{user_name}\";"
+            log.info(x) { "[git] configure user.email command => #{git_config_email_cmd}" }
+            log.info(x) { "[git] configure user.name command => #{git_config_name_cmd}" }
+            %x[#{git_config_email_cmd}];
+            %x[#{git_config_name_cmd}];
+            log.info(x) { "[git] has locally configured the user.email and user.name properties." }
+
+        end
+
+
+
         # Remove a specific file from git management and also delete the
         # working copy version of the file.
         #

@@ -20,7 +20,6 @@ module SafeDb
     SAFE_BOOK_ID_LENGTH = 12
 
     # The file-system location of the safe database tree
-################    SAFE_DATABASE_FOLDER = File.join( Dir.home, ".#{SAFE_URL_NAME}" )
     SAFE_DATABASE_FOLDER = File.join( File.join( Dir.home, ".config" ), SAFE_APP_NAME )
 
     # The fully qualified domain name of the safedb home website
@@ -250,6 +249,13 @@ module SafeDb
 
     # Elliptic Curve SSL Key Type
     ELLIPTIC_CURVE_KEY_TYPE = "secp384r1"
+
+
+    ### ##################################### ###
+    ### Strings printed to the user interface ###
+    ### ##################################### ###
+
+    NOTHING_TO_OBLITERATE = "There is nothing to obliterate."
 
 
   end

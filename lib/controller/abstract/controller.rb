@@ -35,12 +35,11 @@ module SafeDb
     def initialize
 
       class_name = self.class.name.split(":").last.downcase
-      is_no_token_uc = [ "token", "init", "id" ].include? class_name
+      is_no_token_uc = [ "token", "init", "id", "obliterate" ].include? class_name
       return if is_no_token_uc
       exit(100) unless ops_key_exists?
 
-      is_login_uc = [ "login", "push", "pull" ].include? class_name
-      return if is_login_uc
+      return if [ "login", "push", "pull" ].include? class_name
 
       not_logged_in = StateInspect.not_logged_in?()
       puts TextChunk.not_logged_in_message() if not_logged_in
