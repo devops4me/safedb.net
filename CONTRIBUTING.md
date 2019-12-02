@@ -14,9 +14,20 @@ You can contriubute software, documentation, issues and even good ideas. Most co
 Using **`docker`** is the **simplest quickest** way to **build, package** and run the **cucumber/aruba** test suite.
 
 ```
+# Get the safe software
 git clone https://github.com/devops4me/safedb.net.git
 cd safedb.net
-docker build --no-cache --tag img.safe.build .
+
+# Prepare the safe build docker image
+docker build --tag img.safeci .
+
+# Now run the safe build docker image
+docker run           \
+    --interactive    \
+    --tty            \
+    --rm             \
+    --name vm.safeci \
+    img.safeci
 ```
 
 

@@ -34,9 +34,9 @@ module SafeDb
             FileUtils.mkdir_p( backup_folder_path )
             FileUtils.cp_r( "#{Indices::MASTER_CRYPTS_FOLDER_PATH}/.", backup_folder_path )
 
-            FileUtils.remove_dir( Indices::MASTER_CRYPTS_FOLDER_PATH )
-            FileUtils.remove_dir( Indices::BRANCH_CRYPTS_FOLDER_PATH )
-            FileUtils.remove_dir( Indices::BRANCH_INDICES_FOLDER_PATH )
+            FileUtils.remove_dir( Indices::MASTER_CRYPTS_FOLDER_PATH ) if  ( File.exist?( Indices::MASTER_CRYPTS_FOLDER_PATH ) && File.directory?( Indices::MASTER_CRYPTS_FOLDER_PATH ) )
+            FileUtils.remove_dir( Indices::BRANCH_CRYPTS_FOLDER_PATH ) if  ( File.exist?( Indices::BRANCH_CRYPTS_FOLDER_PATH ) && File.directory?( Indices::BRANCH_CRYPTS_FOLDER_PATH ) )
+            FileUtils.remove_dir( Indices::BRANCH_INDICES_FOLDER_PATH ) if  ( File.exist?( Indices::BRANCH_INDICES_FOLDER_PATH ) && File.directory?( Indices::BRANCH_INDICES_FOLDER_PATH ) )
 
             puts ""
             puts "  The safe has been successfully obliterated."
