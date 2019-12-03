@@ -19,8 +19,8 @@ echo ""
 
 echo "Current directory is $(pwd)"
 echo "Current username is $(whoami)"
-echo ""
-ls -lh
+echo "" ; ls -lh
+echo "" ; safe version
 
 echo "" ; echo "" ;
 echo "### ################################ ###"

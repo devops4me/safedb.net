@@ -9,8 +9,8 @@ RUN gem install gem-release cucumber aruba yard
 
 
 # --->
-# ---> Create a non-root user from which to execute the cucumber
-# ---> and aruba command line behaviour features.
+# ---> Create a non-root user from which cucumber and aruba
+# ---> orchestrate and validate command line behaviour.
 # --->
 
 RUN adduser --home /home/safeci --shell /bin/bash --gecos 'Safe TTY Test User' safeci && \
@@ -18,28 +18,28 @@ RUN adduser --home /home/safeci --shell /bin/bash --gecos 'Safe TTY Test User' s
 
 
 # --->
-# ---> Create a workspace for the ruby project and then
-# ---> recursively COPY the artifacts into the image.
+# ---> Copy the project assets into the docker image.
 # --->
 
-COPY . /home/safeci/software/
+COPY . /home/safeci/code/
 
 
-RUN chown -R safeci:safeci /home/safeci
-RUN chmod u+x /home/safeci/software/cucumber-build-script.sh
+# --->
+# ---> Use rake to Copy the project assets into the docker image.
+# --->
 
-RUN cd /home/safeci/software; rake install
-
-USER safeci
-WORKDIR /home/safeci/software
-
-
+RUN chown -R safeci:safeci /home/safeci && \
+      chmod u+x /home/safeci/code/cucumber-test.sh && \
+        cd /home/safeci/code && \
+	  rake install
 
 
 # --->
 # ---> 
-# ---> Use cucumber and aruba to find and execute all features
-# ---> recursively found under the lib directory.
+# ---> As the safeci user employ cucumber and aruba to recursively
+# ---> find and execute all cucumber (*.feature) files under lib.
 # --->
 
-ENTRYPOINT [ "/home/safeci/software/cucumber-build-script.sh" ]
+USER safeci
+WORKDIR /home/safeci/code
+ENTRYPOINT [ "/home/safeci/code/cucumber-test.sh" ]
