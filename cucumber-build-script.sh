@@ -12,6 +12,17 @@
 
 
 echo "" ; echo "" ;
+echo "### ################################## ###"
+echo "### Ruby Execution Environment Details ###"
+echo "### ################################## ###"
+echo ""
+
+echo "Current directory is $(pwd)"
+echo "Current username is $(whoami)"
+echo ""
+ls -lh
+
+echo "" ; echo "" ;
 echo "### ################################ ###"
 echo "### Exporting safe shell (tty) token ###"
 echo "### ################################ ###"

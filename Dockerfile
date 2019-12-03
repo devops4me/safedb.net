@@ -5,32 +5,36 @@ FROM ruby:latest
 # ---> release this ruby project.
 # --->
 
-RUN gem install bundler gem-release cucumber aruba yard
+RUN gem install gem-release cucumber aruba yard
+
+
+# --->
+# ---> Create a non-root user from which to execute the cucumber
+# ---> and aruba command line behaviour features.
+# --->
+
+RUN adduser --home /home/safeci --shell /bin/bash --gecos 'Safe TTY Test User' safeci && \
+  install -d -m 755 -o safeci -g safeci /home/safeci
+
 
 # --->
 # ---> Create a workspace for the ruby project and then
-# ---> recursively pull it into the image.
+# ---> recursively COPY the artifacts into the image.
 # --->
 
-RUN mkdir -p /project
-WORKDIR /project
-COPY . .
-RUN chmod u+x /project/cucumber-build-script.sh
-
-# --->
-# ---> Run bundler to download and install the gems specified
-# ---> in the gemspec for the project.
-# --->
-
-RUN bundle install
+COPY . /home/safeci/software/
 
 
-# --->
-# ---> Use rake to create a single file rubygem package from
-# ---> the software project at this point in time.
-# --->
+RUN chown -R safeci:safeci /home/safeci
+RUN chmod u+x /home/safeci/software/cucumber-build-script.sh
 
-RUN rake install
+RUN cd /home/safeci/software; rake install
+
+USER safeci
+WORKDIR /home/safeci/software
+
+
+
 
 # --->
 # ---> 
@@ -38,4 +42,4 @@ RUN rake install
 # ---> recursively found under the lib directory.
 # --->
 
-ENTRYPOINT [ "/project/cucumber-build-script.sh" ]
+ENTRYPOINT [ "/home/safeci/software/cucumber-build-script.sh" ]
