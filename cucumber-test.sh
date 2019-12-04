@@ -20,9 +20,9 @@ echo ""
 echo "Current directory is $(pwd)"
 echo "Current username is $(whoami)"
 echo "" ; ls -lh
-echo "" ; safe version
+safe version
 
-echo "" ; echo "" ;
+echo ""
 echo "### ################################ ###"
 echo "### Exporting safe shell (tty) token ###"
 echo "### ################################ ###"
