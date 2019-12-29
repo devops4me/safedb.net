@@ -25,11 +25,3 @@ spec:
     args:
     - /busybox/cat
     tty: true
-  #  Kaniko requires a registry, so we're just bringing one online in the pod
-  #  for the intermediate caching of layers
-  - name: registry
-    image: 'registry'
-    command:
-    - /bin/registry
-    - serve
-    - /etc/docker/registry/config.yml
