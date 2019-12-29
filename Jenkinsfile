@@ -14,28 +14,19 @@ pipeline
         {
             steps
             {
-                /*
-                 * Since we're in a different pod than the rest of the
-                 * stages, we'll need to grab our source tree since we don't
-                 * have a shared workspace with the other pod(s)..
-                 */
-
-                /*
-                checkout scm
-                sh 'sh -c ./scripts/build-kaniko.sh'
-                 */
+               /*
+                * We checkout the git repository again because we
+                * are running in a different pod setup specifically
+                * to build and test the software.
+                */
 
                 checkout scm
-        sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --destination 10.1.61.145:5000/devops4me/safedb:latest --insecure-registry 10.1.61.145:5000 --insecure --skip-tls-verify'
-
-/*
- git 'https://github.com/jenkinsci/docker-jnlp-slave.git'
-        sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --insecure --skip-tls-verify --cache=true --destination=mydockerregistry:5000/myorg/myimage'
-*/
+                sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --destination 10.1.61.145:5000/devops4me/safedb:latest --insecure-registry 10.1.61.145:5000 --insecure --skip-tls-verify'
 
             }
         }
 
+/*
         stage('Run the Cucumber Tests')
         {
             agent {
@@ -45,6 +36,47 @@ pipeline
                 sh 'cucumber-test.sh'
             }
         }
+*/
+
+    }
+
+    agent
+    {
+        kubernetes
+        {
+            defaultContainer 'kaniko'
+            yamlFile 'kaniko.yaml'
+        }
+    }
+    stages
+    {
+        stage('Build Safe Docker Image')
+        {
+            steps
+            {
+               /*
+                * We checkout the git repository again because we
+                * are running in a different pod setup specifically
+                * to build and test the software.
+                */
+
+                checkout scm
+                sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --destination 10.1.61.145:5000/devops4me/safedb-2:latest --insecure-registry 10.1.61.145:5000 --insecure --skip-tls-verify'
+
+            }
+        }
+
+/*
+        stage('Run the Cucumber Tests')
+        {
+            agent {
+                docker { image 'registry/devops4me/safedb:latest' }
+            }
+            steps {
+                sh 'cucumber-test.sh'
+            }
+        }
+*/
 
     }
 }
