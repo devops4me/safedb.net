@@ -1,12 +1,15 @@
-pipeline {
+pipeline
+{
+    agent
+    {
+        kubernetes
+        {
+            defaultContainer 'kaniko'
+            yamlFile 'kaniko.yaml'
+        }
+    }
     stages {
         stage('Buildo Roboto') {
-            agent { 
-                kubernetes {
-                    defaultContainer 'kaniko'
-                    yamlFile 'kaniko.yaml'
-                }
-            }
             steps {
                 /*
                  * Since we're in a different pod than the rest of the
