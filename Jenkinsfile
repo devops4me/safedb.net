@@ -26,7 +26,7 @@ pipeline
                  */
 
                 checkout scm
-        sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --destination registry/safedb:latest --insecure-registry registry --insecure --skip-tls-verify'
+        sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --destination registry/devops4me/safedb:latest --insecure-registry registry --insecure --skip-tls-verify'
 
 /*
  git 'https://github.com/jenkinsci/docker-jnlp-slave.git'
@@ -39,7 +39,7 @@ pipeline
         stage('Run the Cucumber Tests')
         {
             agent {
-                docker { image 'registry/safedb:latest' }
+                docker { image 'registry/devops4me/safedb:latest' }
             }
             steps {
                 sh 'cucumber-test.sh'
