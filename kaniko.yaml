@@ -12,7 +12,7 @@ spec:
     # Overwriting the jnlp container's default "image" parameter, this will be
     # merged automatically with the Kubernetes plugin's built-in jnlp container
     # configuration, ensuring that the pod comes up and is accessible
-    image: 'our-awesome-registry/rtyler/jenkins-agent:latest'
+    image: jenkins/slave
   - name: kaniko
     image: gcr.io/kaniko-project/executor:debug
     imagePullPolicy: Always
