@@ -23,7 +23,7 @@ pipeline
                  */
 
  git 'https://github.com/jenkinsci/docker-jnlp-slave.git'
-        sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --insecure --skip-tls-verify --cache=true --no-push'
+        sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --no-push'
 
 /*
         sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --insecure --skip-tls-verify --cache=true --destination=mydockerregistry:5000/myorg/myimage'
