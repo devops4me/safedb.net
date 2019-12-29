@@ -16,8 +16,19 @@ pipeline
                  * stages, we'll need to grab our source tree since we don't
                  * have a shared workspace with the other pod(s)..
                  */
+
+                /*
                 checkout scm
                 sh 'sh -c ./scripts/build-kaniko.sh'
+                 */
+
+ git 'https://github.com/jenkinsci/docker-jnlp-slave.git'
+        sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --insecure --skip-tls-verify --cache=true'
+
+/*
+        sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --insecure --skip-tls-verify --cache=true --destination=mydockerregistry:5000/myorg/myimage'
+*/
+
             }
         }
     }
