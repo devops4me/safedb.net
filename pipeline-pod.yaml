@@ -1,2 +1,17 @@
-asdf
-asdf
+metadata:
+  labels:
+    pod-type: jenkins-worker
+spec:
+  containers:
+  - name: jnlp
+    env:
+    - name: CONTAINER_ENV_VAR
+      value: jnlp
+  - name: safetests
+    image: 10.1.61.145:5000/devops4me/safedb:latest
+    command:
+    - cat
+    tty: true
+    env:
+    - name: CONTAINER_ENV_VAR
+      value: safetests
