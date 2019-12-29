@@ -8,8 +8,10 @@ pipeline
             yamlFile 'kaniko.yaml'
         }
     }
+/*
     stages
     {
+*/
         stage('Build Safe Docker Image')
         {
             steps
@@ -38,8 +40,9 @@ pipeline
         }
 */
 
+/*
     }
-
+*/
     agent
     {
         kubernetes
@@ -48,8 +51,11 @@ pipeline
             yamlFile 'kaniko.yaml'
         }
     }
+
+/*
     stages
     {
+*/
         stage('Build Safe Docker Image')
         {
             steps
@@ -78,5 +84,8 @@ pipeline
         }
 */
 
+/*
     }
+*/
+
 }
