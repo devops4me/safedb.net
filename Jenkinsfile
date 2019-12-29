@@ -10,6 +10,7 @@ pipeline
             agent { dockerfile true }
             steps
             {
+                sh 'cucumber-test.sh'
             }
         }
     }
