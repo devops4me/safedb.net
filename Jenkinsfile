@@ -26,7 +26,7 @@ pipeline
                  */
 
                 checkout scm
-        sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --destination registry/devops4me/safedb:latest --insecure-registry registry --insecure --skip-tls-verify'
+        sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --destination 10.1.61.145:5000/devops4me/safedb:latest --insecure-registry 10.1.61.145:5000 --insecure --skip-tls-verify'
 
 /*
  git 'https://github.com/jenkinsci/docker-jnlp-slave.git'
