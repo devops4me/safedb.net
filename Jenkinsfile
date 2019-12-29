@@ -35,5 +35,17 @@ pipeline
 
             }
         }
+
+stage('Run the Cucumber Tests') {
+            agent {
+                docker { image 'localhost:5000/safedb:latest' }
+            }
+            steps {
+                sh 'cucumber-test.sh'
+            }
+        }
+
+
+
     }
 }
