@@ -14,7 +14,7 @@ spec:
         imagePullPolicy: Always
         volumeMounts:
         -   name: regcredsvolume
-            mountPath: /kaniko/.docker/config.json
+            mountPath: /kaniko/.docker
         command:
         -   /busybox/sh
         -   "-c"
