@@ -34,8 +34,10 @@ pipeline
 		sh 'echo $PWD'
 		sh 'ls -lah /'
 		sh 'ls -lah /kaniko'
+		sh 'ls -lah /kaniko/.config'
 		sh 'ls -lah /kaniko/.docker'
-		sh 'ls -lah /root'
+		sh 'cat /kaniko/.docker/.dockerconfigjson'
+		sh 'docker --version'
                 sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --destination devops4me/safetty:latest --cleanup'
 
             }
