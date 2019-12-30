@@ -12,9 +12,19 @@ spec:
     -   name: kaniko
         image: gcr.io/kaniko-project/executor:debug
         imagePullPolicy: Always
+        env:
+        -   name: DOCKER_CONFIG
+            value: /root/.docker/
+        volumeMounts:
+        -   name: regcredsvolume
+            mountPath: /root/.docker/config.json
         command:
         -   /busybox/sh
         -   "-c"
         args:
         -   /busybox/cat
         tty: true
+    volumes:
+        -   name: regcredsvolume
+            secret:
+                secretName: registrycreds
