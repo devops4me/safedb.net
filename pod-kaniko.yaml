@@ -7,7 +7,6 @@ metadata:
     name: kaniko
 spec:
     containers:
-
     -   name: jnlp
         image: jenkins/jnlp-slave:latest
 
@@ -17,16 +16,13 @@ spec:
         volumeMounts:
         -   name: regcredsvolume
             mountPath: /kaniko/.docker/config.json
-
     volumes:
         -   name: regcredsvolume
             secret:
                 secretName: registrycreds
-
     command:
     -   /busybox/sh
     -   "-c"
-
     args:
     -   /busybox/cat
         tty: true
