@@ -12,12 +12,9 @@ spec:
     -   name: kaniko
         image: gcr.io/kaniko-project/executor:debug
         imagePullPolicy: Always
-        env:
-        -   name: DOCKER_CONFIG
-            value: /root/.docker/
         volumeMounts:
         -   name: regcredsvolume
-            mountPath: /root/.docker/config.json
+            mountPath: /kaniko/.docker
         command:
         -   /busybox/sh
         -   "-c"
