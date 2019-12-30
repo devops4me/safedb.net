@@ -5,7 +5,7 @@ pipeline
                 kubernetes
                 {
                     defaultContainer 'kaniko'
-                    yamlFile 'kaniko.yaml'
+                    yamlFile 'pod-kaniko.yaml'
                 }
             }
 
