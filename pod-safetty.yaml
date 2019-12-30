@@ -8,7 +8,8 @@ spec:
     - name: CONTAINER_ENV_VAR
       value: jnlp
   - name: safetests
-    image: 10.1.61.145:5000/devops4me/safedb:latest
+    image: devops4me/safetty:latest
+    imagePullPolicy: Always
     command:
     - cat
     tty: true

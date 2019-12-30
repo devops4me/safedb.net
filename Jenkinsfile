@@ -12,7 +12,7 @@ pipeline
                 kubernetes
                 {
                     defaultContainer 'kaniko'
-                    yamlFile 'kaniko.yaml'
+                    yamlFile 'pod-kaniko.yaml'
                 }
             }
 
@@ -25,7 +25,7 @@ pipeline
                 */
 
                 checkout scm
-                sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --destination 10.1.61.145:5000/devops4me/safedb:latest --insecure-registry 10.1.61.145:5000 --insecure --skip-tls-verify --cleanup'
+                sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --destination devops4me/safetty:latest --cleanup'
             }
         }
 
@@ -36,7 +36,7 @@ pipeline
             {
                 kubernetes
                 {
-                    yamlFile 'pipeline-pod.yaml'
+                    yamlFile 'pod-safetty.yaml'
                 }
             }
             steps
