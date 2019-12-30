@@ -25,4 +25,4 @@ spec:
     -   "-c"
     args:
     -   /busybox/cat
-        tty: true
+    tty: true
