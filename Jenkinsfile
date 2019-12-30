@@ -37,14 +37,23 @@ pipeline
             {
                 kubernetes
                 {
+/*
+You do not need to specify the default container if you wrap the commands with a container name
+                    defaultContainer 'safettytests'
+*/
                     yamlFile 'pod-image-safetty.yaml'
                 }
             }
             steps
             {
-                container('safetests')
+                container('safettytests')
                 {
-                    sh 'cucumber-test.sh'
+sh 'echo $PWD'
+sh 'ls -lah /'
+sh 'ls -lah /home'
+sh 'ls -lah /home/safeci'
+sh 'ls -lah /home/safeci/code'
+                    sh '/home/safeci/code/cucumber-test.sh'
                 }
             }
 
