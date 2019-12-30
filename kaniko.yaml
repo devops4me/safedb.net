@@ -1,0 +1,27 @@
+# This pod specification is intended to be used within the Jenkinsfile for
+# building the Docker containers
+#
+# E.g. /kaniko/executor --context `pwd` --destination localhost:5000/roboto:latest --insecure-registry localhost:5000 --cleanup
+---
+kind: Pod
+metadata:
+  name: kaniko
+spec:
+  containers:
+  - name: jnlp
+    # Overwriting the jnlp container's default "image" parameter, this will be
+    # merged automatically with the Kubernetes plugin's built-in jnlp container
+    # configuration, ensuring that the pod comes up and is accessible
+    image: jenkins/jnlp-slave:latest
+  - name: kaniko
+    image: gcr.io/kaniko-project/executor:debug
+    imagePullPolicy: Always
+    # Command and args are important to set in this manner such that the
+    # Jenkins Pipeline can send commands to be executed from the Jenkinsfile via
+    # stdin (that's how it really works!)
+    command:
+    - /busybox/sh
+    - "-c"
+    args:
+    - /busybox/cat
+    tty: true
