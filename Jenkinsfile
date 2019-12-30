@@ -1,19 +1,21 @@
 pipeline
 {
-            agent
-            {
-                kubernetes
-                {
-                    defaultContainer 'kaniko'
-                    yamlFile 'pod-kaniko.yaml'
-                }
-            }
+    agent none
 
     stages
     {
 
         stage('Build Safe Docker Image')
         {
+
+            agent
+            {
+                kubernetes
+                {
+                    defaultContainer 'kaniko'
+                    yamlFile 'pod-image-builder.yaml'
+                }
+            }
 
             steps
             {
@@ -31,6 +33,7 @@ pipeline
                 sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --destination 10.1.91.10:5000/devops4me/safetty:latest --insecure-registry 10.1.91.10:5000 --insecure --skip-tls-verify'
 
             }
+
         }
 
     }

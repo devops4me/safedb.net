@@ -4,17 +4,17 @@
 ---
 kind: Pod
 metadata:
-  name: kaniko
+    name: kaniko
 spec:
-  containers:
-  - name: jnlp
-    image: jenkins/jnlp-slave:latest
-  - name: kaniko
-    image: gcr.io/kaniko-project/executor:debug
-    imagePullPolicy: Always
-    command:
-    - /busybox/sh
-    - "-c"
-    args:
-    - /busybox/cat
-    tty: true
+    containers:
+    -   name: jnlp
+        image: jenkins/jnlp-slave:latest
+    -   name: kaniko
+        image: gcr.io/kaniko-project/executor:debug
+        imagePullPolicy: Always
+        command:
+        -   /busybox/sh
+        -   "-c"
+        args:
+        -   /busybox/cat
+        tty: true
