@@ -36,9 +36,7 @@ pipeline
 		sh 'ls -lah /kaniko'
 		sh 'ls -lah /kaniko/.config'
 		sh 'ls -lah /kaniko/.docker'
-		sh 'cat /kaniko/.docker/.dockerconfigjson'
-		sh 'cp /kaniko/.docker/.dockerconfigjson /kaniko/.docker/config.json'
-		sh 'ls -lah /kaniko/.docker'
+		sh 'cat /kaniko/.docker/config.json'
                 sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --destination devops4me/safetty:latest --cleanup'
 
             }
