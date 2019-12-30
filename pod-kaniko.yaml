@@ -13,9 +13,12 @@ spec:
     -   name: kaniko
         image: gcr.io/kaniko-project/executor:debug
         imagePullPolicy: Always
+        env:
+        -   name: DOCKER_CONFIG
+            value: /root/.docker/
         volumeMounts:
         -   name: regcredsvolume
-            mountPath: /kaniko/.docker/config.json
+            mountPath: /root/.docker/config.json
     volumes:
         -   name: regcredsvolume
             secret:
