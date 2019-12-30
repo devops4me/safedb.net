@@ -24,7 +24,10 @@ pipeline
                 */
 
                 checkout scm
+		/*
                 sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --destination devops4me/safetty:latest --cleanup'
+		*/
+                sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --destination 10.1.91.10:5000/devops4me/safetty:latest --cleanup'
             }
         }
 
