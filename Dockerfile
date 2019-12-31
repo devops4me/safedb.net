@@ -9,6 +9,14 @@ RUN gem install gem-release cucumber aruba yard
 
 
 # --->
+# ---> What gems do we have installed on this docker machine
+# ---> and which versions are they at.
+# --->
+
+RUN gem query --all
+
+
+# --->
 # ---> Create a non-root user from which cucumber and aruba
 # ---> orchestrate and validate command line behaviour.
 # --->
