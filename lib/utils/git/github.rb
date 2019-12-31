@@ -31,7 +31,7 @@ module SafeDb
 
             github_client = Octokit::Client.new( :access_token => github_access_token )
             github_user = github_client.user
-            repo_creator = "#{Etc.getlogin()}@#{Socket.gethostname()}"
+            repo_creator = "#{ENV[ "USER" ]}@#{Socket.gethostname()}"
             repo_description = "This github repository was auto-created by safedb.net to be a remote database backend on behalf of #{repo_creator} on #{TimeStamp.readable()}."
             repo_homepage = "https://github.com/devops4me/safedb.net/"
 

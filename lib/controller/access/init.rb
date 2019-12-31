@@ -58,7 +58,7 @@ module SafeDb
       commit_msg = "safe init artifacts for newly created (#{@book_name}) book on #{TimeStamp.readable()}."
 
       GitFlow.init( Indices::MASTER_CRYPTS_FOLDER_PATH )
-      GitFlow.config( Indices::MASTER_CRYPTS_FOLDER_PATH, "#{Etc.getlogin()}@#{Socket.gethostname()}", "SafeDb User" )
+      GitFlow.config( Indices::MASTER_CRYPTS_FOLDER_PATH, "#{ENV[ "USER" ]}@#{Socket.gethostname()}", "SafeDb User" )
       GitFlow.stage( Indices::MASTER_CRYPTS_FOLDER_PATH )
       GitFlow.list( Indices::MASTER_CRYPTS_FOLDER_PATH )
       GitFlow.list( Indices::MASTER_CRYPTS_FOLDER_PATH, true )
