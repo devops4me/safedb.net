@@ -14,7 +14,9 @@ RUN gem install gem-release cucumber aruba yard
 # --->
 
 RUN gem query --all
-
+RUN echo "@@@@@@@@@@@@@@@@@@@@@@@@" && \
+     ruby --version && \
+    echo "@@@@@@@@@@@@@@@@@@@@@@@@"
 
 # --->
 # ---> Create a non-root user from which cucumber and aruba
