@@ -43,6 +43,7 @@ module SafeDb
     def self.derive_user_machine_id
 
       require 'socket'
+      require 'etc'
 
       identity_text = [
         Etc.getlogin,
