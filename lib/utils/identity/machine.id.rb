@@ -43,10 +43,9 @@ module SafeDb
     def self.derive_user_machine_id
 
       require 'socket'
-      require 'etc'
 
       identity_text = [
-        Etc.getlogin,
+        ENV[ "USER" ],
         get_machine_id(),
         Socket.gethostname()
       ].join.reverse
@@ -120,7 +119,7 @@ module SafeDb
       identity_text =
       [
         get_bootup_id(),
-        Etc.getlogin(),
+        ENV[ "USER" ],
         Socket.gethostname()
       ].join
 
