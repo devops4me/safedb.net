@@ -119,8 +119,7 @@ module SafeDb
       identity_text =
       [
         get_bootup_id(),
-        Etc.getlogin(),
-#        ENV[ "USER" ],
+        ENV[ "USER" ],
         Socket.gethostname()
       ].join
 
