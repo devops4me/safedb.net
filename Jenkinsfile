@@ -41,7 +41,7 @@ pipeline
                 }
             }
         }
-        stage('Cucumber Aruba Cli Tests')
+        stage('Cucumber Aruba Tests')
         {
             agent
             {
@@ -56,7 +56,7 @@ pipeline
                 {
                     sh 'safe version'
                     sh 'export SAFE_TTY_TOKEN=$(safe token)'
-                    sh 'cucumber lib'
+                    sh 'export SAFE_TTY_TOKEN=$(safe token) ; cucumber lib'
 /*
                     sh '/home/safeci/code/cucumber-test.sh'
 */
