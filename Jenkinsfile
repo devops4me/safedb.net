@@ -24,7 +24,7 @@ pipeline
                 sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --destination devops4me/safetty:latest --cleanup'
             }
         }
-        stage('Run the Cucumber Tests')
+        stage('Reek Static Code Analysis')
         {
             agent
             {
@@ -37,7 +37,29 @@ pipeline
             {
                 container('safettytests')
                 {
+                    sh 'reek lib || true'
+                }
+            }
+        }
+        stage('Cucumber Aruba Cli Tests')
+        {
+            agent
+            {
+                kubernetes
+                {
+                    yamlFile 'pod-image-safetty.yaml'
+                }
+            }
+            steps
+            {
+                container('safettytests')
+                {
+                    sh 'safe version'
+                    sh 'export SAFE_TTY_TOKEN=$(safe token)'
+                    sh 'cucumber lib'
+/*
                     sh '/home/safeci/code/cucumber-test.sh'
+*/
                 }
             }
         }
