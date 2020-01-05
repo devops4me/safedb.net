@@ -21,7 +21,7 @@ echo "### Static Code Quality Analyzer Suggestions ###"
 echo "### ######################################## ###"
 echo ""
 
-reek lib
+reek lib || true
 echo ""
 
 echo "" ; echo "" ;
