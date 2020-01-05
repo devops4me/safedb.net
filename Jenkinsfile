@@ -16,9 +16,8 @@ pipeline
             steps
             {
                /*
-                * We checkout the git repository again because we
-                * are running in a different pod setup specifically
-                * to build and test the software.
+                * Checkout the git repository again as we are running
+                * in the kaniko pod which has not got the codebase.
                 */
                 checkout scm
                 sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --destination devops4me/safetty:latest --cleanup'
@@ -54,12 +53,27 @@ pipeline
             {
                 container('safettytests')
                 {
-                    sh 'safe version'
-                    sh 'export SAFE_TTY_TOKEN=$(safe token)'
                     sh 'export SAFE_TTY_TOKEN=$(safe token) ; cucumber lib'
-/*
-                    sh '/home/safeci/code/cucumber-test.sh'
-*/
+                }
+            }
+        }
+        stage('Release to RubyGems.org')
+        {
+            agent
+            {
+                kubernetes
+                {
+                    yamlFile 'pod-image-release.yaml'
+                }
+            }
+            when { branch "master" }
+            steps
+            {
+                container('safedeploy')
+                {
+                    sh 'safe version'
+                    sh 'gem bump minor --tag --push --release --file=$PWD/lib/version.rb'
+                    sh 'safe version'
                 }
             }
         }

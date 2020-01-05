@@ -42,5 +42,3 @@ RUN chown -R safeci:safeci /home/safeci && \
 
 USER safeci
 WORKDIR /home/safeci/code
-
-####### ENTRYPOINT [ "/home/safeci/code/cucumber-test.sh" ]
