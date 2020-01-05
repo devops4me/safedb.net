@@ -91,7 +91,7 @@ reek lib
 
 ## Automated Software Release
 
-safedb is automatically released by Jenkins using a GitOps style pipeline defined in the Jenkinsfile and Dockerfile. The release to rubygems.org depends on
+safedb is automatically released by Jenkins using a GitOps style pipeline defined in the **[Jenkinsfile]** and **[Dockerfile]**. The release to rubygems.org depends on
 
 - a pull request to the [safe github master branch](https://github.com/devops4me/safedb.net.git)
 - an error-free gem build

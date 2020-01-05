@@ -5,7 +5,7 @@ FROM ruby:latest
 # ---> release this ruby project.
 # --->
 
-RUN gem install gem-release cucumber aruba yard
+RUN gem install gem-release cucumber aruba yard reek
 
 
 # --->
