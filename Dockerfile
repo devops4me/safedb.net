@@ -13,10 +13,10 @@ RUN gem install gem-release cucumber aruba yard reek
 # ---> orchestrate and validate command line behaviour.
 # --->
 
-RUN adduser --home /home/safeci --shell /bin/bash --gecos 'Safe TTY Test User' safeci && \
-  install -d -m 755 -o safeci -g safeci /home/safeci
+# --------------------------> RUN adduser --home /home/safeci --shell /bin/bash --gecos 'Safe TTY Test User' safeci && \
+# -------------------------->   install -d -m 755 -o safeci -g safeci /home/safeci
 
-RUN chown -R safeci:safeci /home/safeci
+# --------------------------> RUN chown -R safeci:safeci /home/safeci
 
 # --->
 # ---> 
@@ -24,8 +24,9 @@ RUN chown -R safeci:safeci /home/safeci
 # ---> find and execute all cucumber (*.feature) files under lib.
 # --->
 
-USER safeci
-WORKDIR /home/safeci/code
+# --------------------------> USER safeci
+# --------------------------> WORKDIR /home/safeci/code
+
 
 
 

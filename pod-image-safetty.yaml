@@ -10,10 +10,6 @@ spec:
     -   name: safettytests
         image: devops4me/safetty:latest
         imagePullPolicy: Always
-        securityContext:
-            privileged: true
-            runAsGroup: 0
-            runAsUser: 0
         command:
         -   cat
         tty: true
