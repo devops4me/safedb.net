@@ -29,7 +29,6 @@ COPY . /home/safeci/code/
 # --->
 
 RUN chown -R safeci:safeci /home/safeci && \
-      chmod u+x /home/safeci/code/cucumber-test.sh && \
         cd /home/safeci/code && \
 	  rake install
 
