@@ -52,7 +52,11 @@ pipeline
                 container('safettytests')
                 {
                     checkout scm
+                    sh 'ls -lah'
+                    sh 'ls -lah lib'
+/*
                     sh 'chown -R safeci:safeci /home/safeci'
+*/
                     sh 'rake install'
                     sh 'export SAFE_TTY_TOKEN=$(safe token) ; cucumber lib'
                     sh 'git status'

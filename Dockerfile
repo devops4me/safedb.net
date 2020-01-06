@@ -16,6 +16,19 @@ RUN gem install gem-release cucumber aruba yard reek
 RUN adduser --home /home/safeci --shell /bin/bash --gecos 'Safe TTY Test User' safeci && \
   install -d -m 755 -o safeci -g safeci /home/safeci
 
+RUN chown -R safeci:safeci /home/safeci
+
+# --->
+# ---> 
+# ---> As the safeci user employ cucumber and aruba to recursively
+# ---> find and execute all cucumber (*.feature) files under lib.
+# --->
+
+USER safeci
+WORKDIR /home/safeci/code
+
+
+
 
 # ----------------->
 # ----------------->
@@ -41,11 +54,3 @@ RUN adduser --home /home/safeci --shell /bin/bash --gecos 'Safe TTY Test User' s
 # -----------------> 	  rake install
 
 
-# --->
-# ---> 
-# ---> As the safeci user employ cucumber and aruba to recursively
-# ---> find and execute all cucumber (*.feature) files under lib.
-# --->
-
-USER safeci
-WORKDIR /home/safeci/code
