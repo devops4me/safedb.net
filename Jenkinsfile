@@ -61,7 +61,6 @@ pipeline
 
                     sh 'rake install'
                     sh 'export SAFE_TTY_TOKEN=$(safe token) ; cucumber lib'
-                    sh 'git status'
                 }
             }
         }
@@ -82,9 +81,7 @@ pipeline
                     checkout scm
                     sh 'git status'
                     sh 'git remote -v'
-                    sh 'safe version'
                     sh 'gem bump minor --tag --push --release --file=$PWD/lib/version.rb'
-                    sh 'safe version'
                 }
             }
         }
