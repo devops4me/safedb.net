@@ -3,7 +3,6 @@ pipeline
     agent none
     stages
     {
-/*
         stage('Build Safe Docker Image')
         {
             agent
@@ -20,6 +19,7 @@ pipeline
                 sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --destination devops4me/safetty:latest --cleanup'
             }
         }
+/*
         stage('Reek Static Code Analysis')
         {
             agent
@@ -37,6 +37,7 @@ pipeline
                 }
             }
         }
+*/
         stage('Cucumber Aruba Tests')
         {
             agent
@@ -50,12 +51,12 @@ pipeline
             {
                 container('safettytests')
                 {
+                    checkout scm
                     sh 'export SAFE_TTY_TOKEN=$(safe token) ; cucumber lib'
                     sh 'git status'
                 }
             }
         }
-*/
         stage('Release to RubyGems.org')
         {
             agent
@@ -70,6 +71,9 @@ pipeline
             {
                 container('safedeploy')
                 {
+                    checkout scm
+                    sh 'git status'
+                    sh 'git remote -v'
                     sh 'safe version'
                     sh 'gem bump minor --tag --push --release --file=$PWD/lib/version.rb'
                     sh 'safe version'

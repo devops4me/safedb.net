@@ -21,16 +21,16 @@ RUN adduser --home /home/safeci --shell /bin/bash --gecos 'Safe TTY Test User' s
 # ---> Copy the project assets into the docker image.
 # --->
 
-COPY . /home/safeci/code/
+# -----------------> COPY . /home/safeci/code/
 
 
 # --->
 # ---> Use rake to Copy the project assets into the docker image.
 # --->
 
-RUN chown -R safeci:safeci /home/safeci && \
-        cd /home/safeci/code && \
-	  rake install
+# -----------------> RUN chown -R safeci:safeci /home/safeci && \
+# ----------------->         cd /home/safeci/code && \
+# -----------------> 	  rake install
 
 
 # --->
