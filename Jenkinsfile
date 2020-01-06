@@ -54,6 +54,7 @@ pipeline
                 container('safettytests')
                 {
                     sh 'export SAFE_TTY_TOKEN=$(safe token) ; cucumber lib'
+                    sh 'git status'
                 }
             }
         }
@@ -66,7 +67,7 @@ pipeline
                     yamlFile 'pod-image-release.yaml'
                 }
             }
-            when { branch "master" }
+            when { branch 'master' }
             steps
             {
                 container('safedeploy')
