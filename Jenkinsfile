@@ -52,6 +52,7 @@ pipeline
                 container('safettytests')
                 {
                     checkout scm
+                    sh 'rake install'
                     sh 'export SAFE_TTY_TOKEN=$(safe token) ; cucumber lib'
                     sh 'git status'
                 }
