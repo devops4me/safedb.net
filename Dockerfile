@@ -17,6 +17,14 @@ RUN adduser --home /home/safeci --shell /bin/bash --gecos 'Safe TTY Test User' s
   install -d -m 755 -o safeci -g safeci /home/safeci
 
 
+# ----------------->
+# ----------------->
+# -----------------> The plan is to replace above safeci wity rubyist (chemist, scientist, dentist)
+# -----------------> and let Dockerhub build the image as it is now global to ruby projects.
+# ----------------->
+# ----------------->
+# ----------------->
+
 # --->
 # ---> Copy the project assets into the docker image.
 # --->
