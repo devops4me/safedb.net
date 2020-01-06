@@ -67,7 +67,7 @@ pipeline
                     yamlFile 'pod-image-release.yaml'
                 }
             }
-            when { branch 'master' }
+            when { env.GIT_BRANCH == "origin/master" }
             steps
             {
                 container('safedeploy')
