@@ -3,6 +3,7 @@ pipeline
     agent none
     stages
     {
+/*
         stage('Build Safe Docker Image')
         {
             agent
@@ -15,10 +16,6 @@ pipeline
             }
             steps
             {
-               /*
-                * Checkout the git repository again as we are running
-                * in the kaniko pod which has not got the codebase.
-                */
                 checkout scm
                 sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --destination devops4me/safetty:latest --cleanup'
             }
@@ -58,6 +55,7 @@ pipeline
                 }
             }
         }
+*/
         stage('Release to RubyGems.org')
         {
             agent
@@ -67,7 +65,7 @@ pipeline
                     yamlFile 'pod-image-release.yaml'
                 }
             }
-            when { env.GIT_BRANCH == "origin/master" }
+            when {  environment name: 'GIT_BRANCH', value: 'origin/master' }
             steps
             {
                 container('safedeploy')
