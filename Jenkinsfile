@@ -81,6 +81,8 @@ pipeline
                     checkout scm
                     sh 'git status'
                     sh 'git remote -v'
+                    sh 'git config --global user.email apolloakora@gmail.com'
+                    sh 'git config --global user.name "Apollo Akora"'
                     sh 'gem bump minor --tag --push --release --file=$PWD/lib/version.rb'
                 }
             }
