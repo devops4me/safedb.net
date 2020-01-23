@@ -10,7 +10,7 @@ pipeline
                 kubernetes
                 {
                     defaultContainer 'kaniko'
-                    yamlFile 'pod-image-builder.yaml'
+                    yamlFile 'pod-image-build.yaml'
                 }
             }
             steps
@@ -44,7 +44,7 @@ pipeline
             {
                 kubernetes
                 {
-                    yamlFile 'pod-image-safetty.yaml'
+                    yamlFile 'pod-image-test.yaml'
                 }
             }
             steps
