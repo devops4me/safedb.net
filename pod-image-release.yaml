@@ -10,9 +10,21 @@ spec:
     -   name: safehaven
         image: devops4me/haven:latest
         imagePullPolicy: Always
+        volumeMounts:
+        -   name: gitsshconfig
+            mountPath: /home/jenkins/.ssh
+        -   name: gitsshkey
+            mountPath: /home/jenkins/.ssh
         command:
         -   cat
         tty: true
         env:
         -   name: CONTAINER_ENV_VAR
             value: safehaven
+    volumes:
+        -   name: gitsshconfig
+            secret:
+                secretName: safegitsshconfig
+        -   name: gitsshkey
+            secret:
+                secretName: safegitsshkey

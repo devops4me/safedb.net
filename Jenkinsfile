@@ -49,7 +49,7 @@ pipeline
             }
             steps
             {
-                container('safettytests')
+                container('safehaven')
                 {
                     checkout scm
                     sh 'ls -lah'
@@ -81,6 +81,10 @@ pipeline
                     checkout scm
                     sh 'git status'
                     sh 'git remote -v'
+                    sh 'pwd'
+                    sh 'ls -lah'
+                    sh 'ls -lah $HOME/.ssh'
+                    sh 'ls -lah /home/jenkins/.ssh'
                     sh 'git config --global user.email apolloakora@gmail.com'
                     sh 'git config --global user.name "Apollo Akora"'
                     sh 'gem bump minor --tag --push --release --file=$PWD/lib/version.rb'
