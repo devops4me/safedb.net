@@ -82,7 +82,7 @@ pipeline
                     sh 'mkdir -p $HOME/.ssh && cp $HOME/gitsshconfig/config $HOME/.ssh/config'
                     sh 'git config --global user.email apolloakora@gmail.com'
                     sh 'git config --global user.name "Apollo Akora"'
-                    sh 'ssh -i $HOME/gitsshkey/safedb.code.private.key.pem -vT git@safedb.code'
+                    sh 'ssh -i $HOME/gitsshkey/safedb.code.private.key.pem -vT git@safedb.code || true'
                     sh 'git remote set-url --push origin git@safedb.code:devops4me/safedb.net.git'
                     sh 'gem bump minor --tag --push --release --file=$PWD/lib/version.rb'
                 }
