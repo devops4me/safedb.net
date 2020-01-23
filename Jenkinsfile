@@ -86,7 +86,7 @@ pipeline
                     sh 'ls -lah $HOME/.ssh'
                     sh 'ls -lah $HOME/gitsshkey'
                     sh 'cat $HOME/.ssh/config'
-                    sh 'cat $HOME/gitsshkey/safedb.code.private.key.pem'
+                    sh 'chmod 600 $HOME/gitsshkey/safedb.code.private.key.pem'
                     sh 'git config --global user.email apolloakora@gmail.com'
                     sh 'git config --global user.name "Apollo Akora"'
                     sh 'ssh -i $HOME/gitsshkey/safedb.code.private.key.pem -vT git@safedb.code'
