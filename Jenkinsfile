@@ -84,6 +84,7 @@ pipeline
                     sh 'git config --global user.name "Apollo Akora"'
                     sh 'ssh -i $HOME/gitsshkey/safedb.code.private.key.pem -vT git@safedb.code || true'
                     sh 'git remote set-url --push origin git@safedb.code:devops4me/safedb.net.git'
+                    sh 'git branch && git checkout master'
                     sh 'gem bump minor --tag --push --release --file=$PWD/lib/version.rb'
                 }
             }
