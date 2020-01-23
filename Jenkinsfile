@@ -16,7 +16,7 @@ pipeline
             steps
             {
                 checkout scm
-                sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --destination devops4me/safetty:latest --cleanup'
+                sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --destination devops4me/haven:latest --cleanup'
             }
         }
 /*
@@ -76,7 +76,7 @@ pipeline
             when {  environment name: 'GIT_BRANCH', value: 'origin/master' }
             steps
             {
-                container('safedeploy')
+                container('safehaven')
                 {
                     checkout scm
                     sh 'git status'
