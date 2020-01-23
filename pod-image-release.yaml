@@ -12,9 +12,9 @@ spec:
         imagePullPolicy: Always
         volumeMounts:
         -   name: gitsshconfig
-            mountPath: /home/jenkins/.ssh
+            mountPath: /root/.ssh
         -   name: gitsshkey
-            mountPath: /home/jenkins/gitsshkey
+            mountPath: /root/gitsshkey
         command:
         -   cat
         tty: true
