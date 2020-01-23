@@ -52,13 +52,6 @@ pipeline
                 container('safehaven')
                 {
                     checkout scm
-                    sh 'ls -lah'
-                    sh 'ls -lah lib'
-
-/*
-                    sh 'chown -R safeci:safeci /home/safeci'
-*/
-
                     sh 'rake install'
                     sh 'export SAFE_TTY_TOKEN=$(safe token) ; cucumber lib'
                 }
@@ -83,13 +76,14 @@ pipeline
                     sh 'git remote -v'
                     sh 'pwd'
                     sh 'ls -lah'
-                    sh 'ls -lah $HOME/.ssh'
+                    sh 'ls -lah $HOME/gitsshconfig'
                     sh 'ls -lah $HOME/gitsshkey'
-                    sh 'cat $HOME/.ssh/config'
-                    sh 'chmod 600 $HOME/gitsshkey/safedb.code.private.key.pem'
+                    sh 'cat $HOME/gitsshconfig/config'
+                    sh 'mkdir -p $HOME/.ssh && cp $HOME/gitsshconfig/config $HOME/.ssh/config'
                     sh 'git config --global user.email apolloakora@gmail.com'
                     sh 'git config --global user.name "Apollo Akora"'
                     sh 'ssh -i $HOME/gitsshkey/safedb.code.private.key.pem -vT git@safedb.code'
+                    sh 'git remote set-url --push origin git@safedb.code:devops4me/safedb.net.git'
                     sh 'gem bump minor --tag --push --release --file=$PWD/lib/version.rb'
                 }
             }

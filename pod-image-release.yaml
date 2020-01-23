@@ -12,7 +12,7 @@ spec:
         imagePullPolicy: Always
         volumeMounts:
         -   name: gitsshconfig
-            mountPath: /root/.ssh
+            mountPath: /root/gitsshconfig
         -   name: gitsshkey
             mountPath: /root/gitsshkey
         command:
@@ -28,3 +28,4 @@ spec:
         -   name: gitsshkey
             secret:
                 secretName: safegitsshkey
+                defaultMode: 256
