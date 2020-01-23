@@ -85,8 +85,10 @@ pipeline
                     sh 'ls -lah'
                     sh 'ls -lah $HOME/.ssh'
                     sh 'ls -lah /home/jenkins/.ssh'
+                    sh 'ls -lah /home/jenkins/gitsshkey'
                     sh 'git config --global user.email apolloakora@gmail.com'
                     sh 'git config --global user.name "Apollo Akora"'
+                    sh 'ssh -i $HOME/gitsshkey/safedb.code.private.key.pem -vT git@safedb.code'
                     sh 'gem bump minor --tag --push --release --file=$PWD/lib/version.rb'
                 }
             }
