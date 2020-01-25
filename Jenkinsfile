@@ -11,7 +11,6 @@ pipeline
                 scmSkip(deleteBuild: true)
             }
         }
-
         stage('Build Safe Docker Image')
         {
             agent
