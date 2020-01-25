@@ -8,7 +8,7 @@ pipeline
             agent any
             steps
             {
-                scmSkip(deleteBuild: true)
+                scmSkip(deleteBuild: false)
             }
         }
         stage('Build Safe Docker Image')
