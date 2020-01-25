@@ -187,6 +187,7 @@ The continuous integration pipeline runs on top of a dockerized **Jenkins and Ku
 
 The pipeline steps defined in the Jenkinsfile are to
 
+- skip the build if the commit message has skip ci in it from version number update
 - use [Google Kaniko] to build this Dockerfile from this wiki base image
 - push the Dockerfile with the latest tag to this Dockerhub repository
 - create another pod to run the just-built devopswiki.co.uk image
