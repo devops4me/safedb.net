@@ -5,6 +5,7 @@ pipeline
     {
         stage('Maybe Skip Build')
         {
+            agent any
             steps
             {
                 scmSkip(deleteBuild: true)
