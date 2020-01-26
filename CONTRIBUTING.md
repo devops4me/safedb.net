@@ -108,6 +108,8 @@ Now when releasing we eject the file back into **`~/.gem/credentials`**, secure 
 
 ### `gem bump patch --tag --push --release --file=$PWD/lib/version.rb`
 
+### `gem bump patch --tag --push --file=$PWD/lib/version.rb`
+
 The gem bump (and release) command bumps up the patch (or major or minor) version, tags the repository, pushes the changes and releases to rubygems.org
 
 ## Common Development Commands
