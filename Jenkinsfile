@@ -3,6 +3,7 @@ pipeline
     agent none
     stages
     {
+/*
         stage('Maybe Skip Build')
         {
             agent any
@@ -12,6 +13,7 @@ pipeline
             }
 
         }
+*/
 /*
         stage('Build Safe Docker Image')
         {
@@ -96,7 +98,7 @@ pipeline
                     sh 'ssh -i $HOME/gitsshkey/safedb.code.private.key.pem -vT git@safedb.code || true'
                     sh 'git remote set-url --push origin git@safedb.code:devops4me/safedb.net.git'
                     sh 'git branch && git checkout master'
-                    sh 'gem bump minor --skip-ci --tag --push --release --file=$PWD/lib/version.rb'
+                    sh 'gem bump minor --skip-ci --tag --push --release --branch --file=$PWD/lib/version.rb'
                 }
             }
         }
