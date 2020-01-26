@@ -15,6 +15,8 @@ spec:
             mountPath: /root/gitsshconfig
         -   name: gitsshkey
             mountPath: /root/gitsshkey
+        -   name: gemcreds
+            mountPath: /root/gemcredentials
         command:
         -   cat
         tty: true
@@ -29,3 +31,6 @@ spec:
             secret:
                 secretName: safegitsshkey
                 defaultMode: 256
+        -   name: gemcreds
+            secret:
+                secretName: saferubygemscreds

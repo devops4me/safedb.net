@@ -93,6 +93,7 @@ pipeline
                     sh 'ls -lah $HOME/gitsshkey'
                     sh 'cat $HOME/gitsshconfig/config'
                     sh 'mkdir -p $HOME/.ssh && cp $HOME/gitsshconfig/config $HOME/.ssh/config'
+                    sh 'mkdir -p $HOME/.gem && cp $HOME/gemcredentials/credentials $HOME/.gem/credentials'
                     sh 'git config --global user.email apolloakora@gmail.com'
                     sh 'git config --global user.name "Apollo Akora"'
                     sh 'ssh -i $HOME/gitsshkey/safedb.code.private.key.pem -vT git@safedb.code || true'
