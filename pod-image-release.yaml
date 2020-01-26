@@ -8,7 +8,7 @@ spec:
         -   name: CONTAINER_ENV_VAR
             value: jnlp
     -   name: safehaven
-        image: devops4me/haven:latest
+        image: devops4me/rubygem:latest
         imagePullPolicy: Always
         volumeMounts:
         -   name: gitsshconfig

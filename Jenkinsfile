@@ -10,7 +10,9 @@ pipeline
             {
                 scmSkip(deleteBuild: false)
             }
+
         }
+/*
         stage('Build Safe Docker Image')
         {
             agent
@@ -27,6 +29,7 @@ pipeline
                 sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --destination devops4me/haven:latest --cleanup'
             }
         }
+*/
 /*
         stage('Reek Static Code Analysis')
         {
