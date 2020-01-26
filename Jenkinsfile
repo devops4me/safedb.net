@@ -8,7 +8,7 @@ pipeline
             agent any
             steps
             {
-                scmSkip(deleteBuild: false)
+                scmSkip(deleteBuild: false, skipPattern:'.*\[skip ci\].*')
             }
 
         }
