@@ -9,7 +9,7 @@ pipeline
             {
                 kubernetes
                 {
-                    yamlFile 'pod-image-test.yaml'
+                    yamlFile 'pod-image-validate.yaml'
                 }
             }
             steps
@@ -26,7 +26,7 @@ pipeline
             {
                 kubernetes
                 {
-                    yamlFile 'pod-image-test.yaml'
+                    yamlFile 'pod-image-validate.yaml'
                 }
             }
             steps
@@ -48,21 +48,24 @@ pipeline
                     yamlFile 'pod-image-release.yaml'
                 }
             }
-            when {  environment name: 'GIT_BRANCH', value: 'origin/master' }
+            when {  environment name: 'GIT_BRANCH', value: 'origin/release' }
             steps
             {
                 container('safehaven')
                 {
                     checkout scm
-                    sh 'mkdir -p $HOME/.ssh && cp $HOME/gitsshconfig/config $HOME/.ssh/config'
                     sh 'mkdir -p $HOME/.gem && cp $HOME/gemcredentials/credentials $HOME/.gem/credentials'
                     sh 'chmod 0600 $HOME/.gem/credentials'
+/*
+                    sh 'mkdir -p $HOME/.ssh && cp $HOME/gitsshconfig/config $HOME/.ssh/config'
                     sh 'git config --global user.email apolloakora@gmail.com'
                     sh 'git config --global user.name "Apollo Akora"'
                     sh 'ssh -i $HOME/gitsshkey/safedb.code.private.key.pem -vT git@safedb.code || true'
                     sh 'git remote set-url --push origin git@safedb.code:devops4me/safedb.net.git'
                     sh 'git branch && git checkout master'
                     sh 'gem bump minor --release --file=$PWD/lib/version.rb'
+*/
+                    sh 'rake release'
                 }
             }
         }
