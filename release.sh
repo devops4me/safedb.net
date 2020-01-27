@@ -8,7 +8,12 @@ gem bump patch --tag --push --file=$PWD/lib/version.rb
 
 # pull in release and bring it up to date with master
 git fetch origin
-git checkout -b release origin/release
+
+# checkoug fails if branch not available locally
+# git checkout -b release origin/release
+git checkout release
+
+# pull in latest changes to the release branch
 git pull origin release
 git merge master
 
