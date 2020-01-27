@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# to release we bump the version and push to master
-gem bump patch --tag --push --file=$PWD/lib/version.rb
-
 # bring in any changes made to the master branch
 git pull origin master
+
+# to release we bump the version and push to master
+gem bump patch --tag --push --file=$PWD/lib/version.rb
 
 # pull in release and bring it up to date with master
 git fetch origin
