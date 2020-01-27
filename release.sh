@@ -22,4 +22,3 @@ git push origin release
 
 # return the local repository to the master line
 git checkout master
-git pull origin master

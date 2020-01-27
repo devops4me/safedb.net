@@ -48,7 +48,7 @@ pipeline
                     yamlFile 'pod-image-release.yaml'
                 }
             }
-            when {  environment name: 'GIT_BRANCH', value: 'origin/release' }
+            when { not { environment name: 'GIT_BRANCH', value: 'origin/master' } }
             steps
             {
                 container('safehaven')
