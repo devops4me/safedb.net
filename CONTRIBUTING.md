@@ -195,3 +195,13 @@ The [Jenkinsfile] pipeline definition ensures that succesful builds, quality ins
 - use rake release to push the [latest version](lib/version.rb) of the safe gem
 
 When Kubernetes mounts a secret it makes the entire space read only which can disrupt any software legitimately writing to the mounted path. This is why the secret is not directly mounted into the **`~/.gem/`** directory.
+
+### The Git Release Script
+
+The [git-release.sh] script is run when a human being feels the software state is worth publishing. If so the steps are to
+
+- commit and push to master
+- change [lib/version.rb] to increment the **major** or **minor** versions
+- run **`./git-release.sh`**
+
+The git release script bumps up the patch version and forwards the origin/release branch to bring it up to date with master and pushes thus triggering the pipeline which in turn goes the extra mile to **[release the safe to Rubygems.org](https://rubygems.org/gems/safedb)**.
