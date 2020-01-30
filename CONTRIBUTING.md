@@ -178,25 +178,20 @@ safedb.net has Dockerfiles through which the Cucumber/Aruba BDD (behaviour drive
 - **RedHat Enterprise Linux (RHEL)**
 - CoreOS containers
 
+
+### Pipeline Pre-Conditions
+
+The pipeline runs on a Kubernetes platform. The deploy phase depends on the **[Rubygems.org credentials file mounted as a kubernetes secret](https://github.com/devops4me/kubernetes-pipeline)**.
+
+
 ### CI/CD Pipeline from Git to RubyGems.org
 
-The Jenkinsfile template used is in the RubyGem category so succesful builds, quality inspection and tests result in a new version of the software being released to RubyGems.org
+The [Jenkinsfile] pipeline definition ensures that succesful builds, quality inspection and tests result in a new version of the software being released to RubyGems.org. In the main the steps are
 
+- use the [rubygem build image in Dockerhub](https://hub.docker.com/repository/docker/devops4me/rubygem) to run reek static code analysis
+- use the same image to run Cucumber / Aruba command line system tests
+- pipeline ends **unless the branch is origin/release** (current implementation incorrectly specifies NOT origin/master)
+- copy mounted credentials to **`~/.gem/credentials`** and lock down the file permissions
+- use rake release to push the [latest version](lib/version.rb) of the safe gem
 
-## Wiki Continuous Integration Pipeline
-
-The continuous integration pipeline runs on top of a dockerized **Jenkins and Kubernetes platform** and if successful is deployed into a cloud production Kubernetes platform.
-
-The pipeline steps defined in the Jenkinsfile are to
-
-- skip the build if the commit message has skip ci in it from version number update
-- use [Google Kaniko] to build this Dockerfile from this wiki base image
-- push the Dockerfile with the latest tag to this Dockerhub repository
-- create another pod to run the just-built devopswiki.co.uk image
-- configure the container with a readiness probe so it does not receive traffic too early
-- run a linkcheck activity using this Dockerhub linkcheck image (from this Github repo)
-- if the linkchecking produces errors the pipeline fails and stops
-- on success the devopswiki image is tagged with build number, Git commit ref and timestamp
-- a kubectl rollout is issued based on the newly tagged devopswiki image
-- change the standing start Kubernetes deployment configs to reflect the new tag
-
+When Kubernetes mounts a secret it makes the entire space read only which can disrupt any software legitimately writing to the mounted path. This is why the secret is not directly mounted into the **`~/.gem/`** directory.
