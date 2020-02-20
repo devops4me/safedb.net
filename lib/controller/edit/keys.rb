@@ -37,7 +37,7 @@ module SafeDb
     # them within the open chapter and verse.
     def edit_verse()
 
-      keypair = Keypair.new()
+      keypair = KeypairEC.new()
 
       keyname_postfix = "" unless @keypair_name
       keyname_postfix = ".#{@keypair_name}" if @keypair_name

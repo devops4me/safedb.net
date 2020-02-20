@@ -6,7 +6,7 @@ module SafeDb
   # This class creates and represents an Elliptic Curve cryptographic key.
   # The generated key can then be comsumed via its various aspects like its
   # ssh formatted public key and/or the pem formatted private key.
-  class Keypair
+  class KeypairEC
 
 ######## ################################################################## #####################
 ######## ################################################################## #####################
