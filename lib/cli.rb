@@ -455,21 +455,21 @@ class CLI < Thor
 
 
 
-  # Description of the generate command.
-  desc "generate <line>", "generate a string password that conforms to configured properties"
+  # Description of the crypt command.
+  desc "crypt <line>", "generate a string password that conforms to configured properties"
 
-  # The <b>generate use case</b> generates a random string credential that abides by
+  # The <b>crypt use case</b> generates a random string credential that abides by
   # the laws set out by configured and/or default parameter properties. These properties
   # include the character superset to which all credential characters belong, the median
   # length of the credential and the (give or take) span denoting the shortest and
   # longest possible credentials.
   #
   # @param line [String] name of line the credential is stored against. Defaults to @password
-  def generate( line = "@password" )
+  def crypt( line = "@password" )
     log.info(x) { "generate a string credential and store it against line [#{line}]." }
-    generate_uc = SafeDb::Generate.new()
-    generate_uc.line = line
-    generate_uc.flow()
+    crypt_uc = SafeDb::Crypt.new()
+    crypt_uc.line = line
+    crypt_uc.flow()
   end
 
 

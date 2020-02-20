@@ -11,7 +11,7 @@ module SafeDb
   # If the parameter line already exists in the verse, it is backed up by appending
   # it with a timestamp to prevent overwriting (and losing) the old value forever. This
   # no clobber behaviour can be switched off by passing the --overwrite flag.
-  class Generate < EditVerse
+  class Crypt < EditVerse
 
     # This is the name of the key the generated randomized string will be
     # stored against within the current opened chapter and verse.
