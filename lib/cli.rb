@@ -505,18 +505,30 @@ class CLI < Thor
   end
 
 
-  # Description of the safe keys command.
-  desc "keys <name>", "create a public/private keypair against the given name."
+  # Description of the safe keygen command.
+  desc "keygen <name> --rsa", "create a public/private keypair against the given name."
 
-  # The default action of the <b>keys use case</b> is to create a private and
-  # public keypair and store them within the open chapter and verse.
+  # The <tt>--rsa</tt> option instructs the keygen use case to create a
+  # 4096 bit RSA key instead of a 384 bit elliptic curve key.
+  method_option :rsa, :type => :boolean, :aliases => "-r"
+
+
+  # The <b>keygen use case</b> creates a private/public keypair and
+  # stores them within the open chapter and verse.
+  #
+  # The --rsa option will create a 4096 bit RSA keypair. The default
+  # action if the --rsa switch is not provided is to create a 384 bit
+  # elliptic curve (ECDSA) key.
+  #
   # @param keypair_name [String] optional name of the keypair (for example gitlab)
-  def keys( keypair_name = nil )
+  def keygen( keypair_name = nil )
     log.info(x) { "Generate an elliptic curve private and public cryptographic keys." }
     log.info(x) { "The keypair name [ #{keypair_name} ] was given." } if keypair_name
-    keys_uc = SafeDb::Keys.new
-    keys_uc.keypair_name = keypair_name if keypair_name
-    keys_uc.flow()
+    keygen_uc = SafeDb::KeyGen.new
+    keygen_uc.keypair_name = keypair_name if keypair_name
+    keygen_uc.rsa = true if options[ :rsa ]
+    keygen_uc.rsa = false unless options[ :rsa ]
+    keygen_uc.flow()
   end
 
 

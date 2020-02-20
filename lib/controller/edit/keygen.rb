@@ -9,8 +9,9 @@ module SafeDb
   # the private and public key keynames. This is useful when we want to hold many
   # public/private keys within the same verse.
   #
-  # Currently the only algorithm used is the super secure EC (eliptic curve)
-  # with 384 bits.
+  # The --rsa option will create a 4096 bit RSA keypair. The default action if
+  # the --rsa switch is not provided is to create a more secure 384 bit elliptic
+  # curve (ECDSA) key.
   #
   # == Generating Public Key for Unit Test
   #
@@ -19,8 +20,12 @@ module SafeDb
   #
   #     ssh-keygen -f /path/to/private/key.pem -y
   #
-  class Keys < EditVerse
+  class KeyGen < EditVerse
 
+    # The --rsa option will create a 4096 bit RSA keypair. The default action if
+    # the --rsa switch is not provided is to create a more secure 384 bit elliptic
+    # curve (ECDSA) key.
+    attr_writer :rsa
 
     # To insert MORE THAN ONE KEY in the same verse you send the keypair_name.
     # The keypair name fashions the key name of the embodied private key file.
@@ -37,7 +42,8 @@ module SafeDb
     # them within the open chapter and verse.
     def edit_verse()
 
-      keypair = KeypairEC.new()
+      keypair = KeypairRSA.new() if @rsa
+      keypair = KeypairEC.new() unless @rsa
 
       keyname_postfix = "" unless @keypair_name
       keyname_postfix = ".#{@keypair_name}" if @keypair_name
