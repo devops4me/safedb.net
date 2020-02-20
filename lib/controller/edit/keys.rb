@@ -6,8 +6,8 @@ module SafeDb
   # public keypair and store them within the open chapter and verse.
   #
   # The optional keypair name parameter (if given) is used as a prefix to compose
-  # the private and public key keynames. The prefix and descriptors will be period
-  # separated.
+  # the private and public key keynames. This is useful when we want to hold many
+  # public/private keys within the same verse.
   #
   # Currently the only algorithm used is the super secure EC (eliptic curve)
   # with 384 bits.
