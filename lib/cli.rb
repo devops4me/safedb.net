@@ -54,6 +54,10 @@ class CLI < Thor
   # single field (at the time of writing).
   class_option :to_dir, :aliases => '-t'
 
+  # This class option allows us to optionally pass a folder to the use
+  # case. However, do not use squiggles (like ~/.ssh) in this parameter.
+  class_option :folder, :aliases => '-f'
+
 
   # Printout the version of this safedb.net command line interface.
   desc "version", "prints the safedb.net command line interface version"
@@ -551,18 +555,20 @@ class CLI < Thor
 
 
   # Description of the write command.
-  desc "write <file_key>", "write out file to current folder or use --to_dir=/path/to/dir."
+  desc "write <linekey>", "write out file to current folder or use --folder=/path/to/dir"
 
   # The <b>write use case</b> writes out a file that was previously ingested
   # and coccooned inside the safe.
   #
-  # @param file_key [String] the key name of the file to write out onto the filesystem
-  def write( file_key )
-    log.info(x) { "write out the file against key #{file_key}" }
-    log.info(x) { "output folder optionally set to #{options[:to_dir]}" } if options[:to_dir]
+  # Important - do not use squiggle (like ~/.ssh) within the --folder path.
+  #
+  # @param linekey [String] the key name of the file to write out onto the filesystem
+  def write( linekey )
+    log.info(x) { "write out the file against key #{linekey}" }
+    log.info(x) { "output folder optionally set to #{options[:folder]}" } if options[:folder]
     write_uc = SafeDb::Write.new
-    write_uc.file_key = file_key
-    write_uc.to_dir = options[:to_dir] if options[:to_dir]
+    write_uc.linekey = linekey
+    write_uc.folder = options[:folder] if options[:folder]
     write_uc.flow()
   end
 
