@@ -5,11 +5,11 @@ Feature: test safedb's version command
 
     Scenario: safedb version is printed
         When I run `safe version`
-        Then the output should contain "v0.8"
+        Then the output should contain "safedb gem version"
 
       Scenario: version with dash dash is printed
         When I run `safe --version`
-        Then the output should contain "v0.8"
+        Then the output should contain "safedb gem version"
 
     Scenario: safe writes out a file
         When I run `safe write --script`

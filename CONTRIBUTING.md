@@ -34,19 +34,42 @@ docker run           \
 ---
 
 
-## Building a Development Environment
+## Ubuntu 18.04 | 20.04 Development Environment
 
-To contribute software you'll need to setup a development environment.
+To contribute software from an Ubuntu client you'll need to setup a development environment with steps similar to these.
 
 ```
-sudo apt install --assume-yes ruby-full libicu-dev git
+sudo apt install --assume-yes ruby-full libicu-dev
 sudo chown -R $USER:$USER /var/lib/gems
 sudo chown -R $USER:$USER /usr/local/bin
 sudo chown -R $USER:$USER /usr/local/lib
-gem install bundler gem-release cucumber aruba
+gem install bundler gem-release cucumber aruba yard
 git clone https://github.com/devops4me/safedb.net.git mirror.safedb.ro
 cd mirror.safedb
 rake install
+bundle install
+cucumber
+```
+
+Now you change the software as you see fit and **send a pull request** when you are ready.
+
+## MacOS Development Environment
+
+These are the steps to contribute software from a MacBook Linux environment. See the RubyMine wiki page to help setup the environment using the RubyMine IDEA development suite.
+
+The MacOS comes with Ruby, rake and bundler pre-installed.
+
+```
+gem --version
+sudo apt install --assume-yes ruby-full libicu-dev
+sudo chown -R $USER:$USER /var/lib/gems
+sudo chown -R $USER:$USER /usr/local/bin
+sudo chown -R $USER:$USER /usr/local/lib
+sudo gem install gem-release cucumber aruba yard
+git clone https://github.com/devops4me/safedb.net.git
+cd safedb.net
+sudo rake install
+safe --version
 bundle install
 cucumber
 ```
