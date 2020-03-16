@@ -22,7 +22,7 @@ module SafeDb
       wiped_feedback()
 
     end
-    
+
     private
 
     def wiped_feedback()
