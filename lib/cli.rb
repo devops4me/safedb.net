@@ -526,7 +526,7 @@ class CLI < Thor
   #
   # @param keypair_name [String] optional name of the keypair (for example gitlab)
   def keygen( keypair_name = nil )
-    log.info(x) { "Generate an elliptic curve private and public cryptographic keys." }
+    log.info(x) { "Generate either an RSA or an elliptic curve cryptographic keypair." }
     log.info(x) { "The keypair name [ #{keypair_name} ] was given." } if keypair_name
     keygen_uc = SafeDb::KeyGen.new
     keygen_uc.keypair_name = keypair_name if keypair_name
