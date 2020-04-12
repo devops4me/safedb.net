@@ -66,7 +66,9 @@ module SafeDb
     def self.read_line()
       
       log.info(x) { "About to read and process a text line from the clipboard." }
-      xclip_command = "xclip -o"
+      log.info(x){ "Which Operating System is running? #{OpSys.get_host_os_string()}" }
+
+      xclip_command = OpSys.is_mac_os?() ? "pbpaste" : "xclip -o"
       textual_content = %x[ #{xclip_command} ]
       no_content = textual_content.nil?() || textual_content.chomp().strip().empty?()
       raise RuntimeError, "The clipboard does not contain any text." if no_content

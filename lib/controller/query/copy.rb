@@ -28,9 +28,15 @@ module SafeDb
         return
       end
 
+      log.info(x){ "Which Operating System is running? #{OpSys.get_host_os_string()}" }
+      if( OpSys.is_mac_os?() )
+        system "printf \"#{@verse[ @line ]}\" | pbcopy"
+        line_copied()
+        return
+      end
+
       system "printf \"#{@verse[ @line ]}\" | xclip"
       system "printf \"#{@verse[ @line ]}\" | xclip -selection clipbaord"
-
       line_copied()
 
     end
@@ -40,7 +46,7 @@ module SafeDb
 
       puts ""
       puts "The value for line \"#{@line}\" has been copied to the clipboard."
-      puts "You can use either Ctrl-v or a mouse middle click to paste it."
+      puts "You can use Ctrl-v (or Command v on the Mac) to paste it."
       puts ""
       puts "Wipe it from the clipboard with $ safe wipe"
       puts ""

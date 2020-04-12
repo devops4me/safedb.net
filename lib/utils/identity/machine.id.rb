@@ -144,9 +144,17 @@ module SafeDb
     # @return [String] the bootup ID hash value
     def self.get_bootup_id()
 
-      bootup_id_cmd = "cat /proc/sys/kernel/random/boot_id"
-      bootup_id_str = %x[ #{bootup_id_cmd} ]
-      return bootup_id_str.chomp
+      debian_bootupid_dir = "/proc/sys/kernel/random/boot_id"
+      if( File.directory?( debian_bootupid_dir ) )
+          bootup_id_cmd = "cat #{debian_bootupid_dir}"
+          bootup_id_str = %x[ #{bootup_id_cmd} ]
+          return bootup_id_str.chomp
+      end
+
+      the_cmd = "last reboot"
+      reboot_time_str = %x[ #{the_cmd} ]
+      significant_chars = reboot_time_str.length() > 40 ? 40 : reboot_time_str.length()
+      return reboot_time_str.chomp().to_alphanumeric()[ 0 .. (significant_chars - 1) ]
 
     end
 
