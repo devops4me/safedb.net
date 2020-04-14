@@ -16,9 +16,7 @@ Used in commands like safe delete | safe drag | safe drop | safe rename <<from>>
 
 
 
-Adding new text here.
-Adding more text here.
-And again here.
+Changing test to check commit
 
 ## safe push | safe pull
 
