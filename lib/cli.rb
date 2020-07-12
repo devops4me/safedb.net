@@ -538,7 +538,7 @@ class CLI < Thor
 
 
   # Description of the read command.
-  desc "read <file_url>", "read file into the open chapter and verse for safe keeping."
+  desc "read <line_key> <file_path>", "read file into the open chapter and verse for safe keeping."
 
   # The <b>read use case</b> pulls a file in from either an accessible filesystem.
   #
