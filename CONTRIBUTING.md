@@ -135,6 +135,13 @@ Now when releasing we eject the file back into **`~/.gem/credentials`**, secure 
 
 The gem bump (and release) command bumps up the patch (or major or minor) version, tags the repository, pushes the changes and releases to rubygems.org
 
+## Specify Safe Data Directory
+
+The safe keeps its local data by default within `$HOME/.config/safedb` and it can sync to any local or remote git repository so that credentials can be shared between machines and even users.
+
+However you can change this location during development by setting the environment variable **`SAFEDB_DATA_DIRECTORY`**
+
+
 ## Common Development Commands
 
 These commands will be used frequently while developing the safe.
