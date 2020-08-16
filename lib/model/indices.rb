@@ -19,8 +19,17 @@ module SafeDb
     # The desired length of a safe book ergonomic identifier.
     SAFE_BOOK_ID_LENGTH = 12
 
-    # The file-system location of the safe database tree
-    SAFE_DATABASE_FOLDER = File.join( File.join( Dir.home, ".config" ), SAFE_APP_NAME )
+    # Environment variable for changing the safe data directory
+    SAFE_DATA_DIRECTORY = "SAFE_DATA_DIRECTORY"
+    if ( ENV.has_key? SAFE_DATA_DIRECTORY )
+      datadir_path = ::File.absolute_path( ENV[ SAFE_DATA_DIRECTORY ] )
+      datadir_exists = File.exist?( datadir_path ) && File.directory?( datadir_path )
+      FileUtils.mkdir_p( datadir_path ) unless datadir_exists
+      SAFE_DATABASE_FOLDER = datadir_path
+    else
+      # Unless the data directory is set use this default file-system location
+      SAFE_DATABASE_FOLDER = File.join( File.join( Dir.home, ".config" ), SAFE_APP_NAME )
+    end
 
     # The fully qualified domain name of the safedb home website
     SAFE_GEM_WEBSITE = "https://www.#{SAFE_URL_NAME}"
