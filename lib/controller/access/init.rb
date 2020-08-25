@@ -57,12 +57,7 @@ module SafeDb
 
       commit_msg = "safe init artifacts for newly created (#{@book_name}) book on #{TimeStamp.readable()}."
 
-      GitFlow.init( Indices::MASTER_CRYPTS_FOLDER_PATH )
-      GitFlow.config( Indices::MASTER_CRYPTS_FOLDER_PATH, "#{ENV[ "USER" ]}@#{Socket.gethostname()}", "SafeDb User" )
-      GitFlow.stage( Indices::MASTER_CRYPTS_FOLDER_PATH )
-      GitFlow.list( Indices::MASTER_CRYPTS_FOLDER_PATH )
-      GitFlow.list( Indices::MASTER_CRYPTS_FOLDER_PATH, true )
-      GitFlow.commit( Indices::MASTER_CRYPTS_FOLDER_PATH, commit_msg )
+      setup_git_repo(commit_msg)
 
       print_success_initializing
 
@@ -70,6 +65,17 @@ module SafeDb
 
 
     private
+
+    def setup_git_repo(commit_msg)
+
+      GitFlow.init(Indices::MASTER_CRYPTS_FOLDER_PATH)
+      GitFlow.config(Indices::MASTER_CRYPTS_FOLDER_PATH, "#{ENV["USER"]}@#{Socket.gethostname()}", "SafeDb User")
+      GitFlow.stage(Indices::MASTER_CRYPTS_FOLDER_PATH)
+      GitFlow.list(Indices::MASTER_CRYPTS_FOLDER_PATH)
+      GitFlow.list(Indices::MASTER_CRYPTS_FOLDER_PATH, true)
+      GitFlow.commit(Indices::MASTER_CRYPTS_FOLDER_PATH, commit_msg)
+
+    end
 
 
     def virginal_book()

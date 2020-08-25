@@ -470,6 +470,7 @@ module SafeDb
     #    move method contents into test class
     def self.log_instance_time
 
+=begin
       log.info(x) { "activity timestamp is #{yyjjj_hhmm_sst} representing #{TimeStamp.instance.time_now.ctime}" }
 
       log.debug(x) { "[stamp] -------------- => -------------------------------- #" }
@@ -491,6 +492,7 @@ module SafeDb
       log.debug(x) { "[stamp] -------------- => -------------------------------- #" }
       log.debug(x) { "[stamp] The Time Stamp => #{yyjjj_hhmm_sst}" }
       log.debug(x) { "[stamp] -------------- => -------------------------------- #" }
+=end
 
     end
 

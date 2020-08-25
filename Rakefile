@@ -6,13 +6,13 @@ require "rake/testtask"
 # - and invoke minitest to execute all files in the
 # - test directory with names ending in "_test.rb".
 # -
-Rake::TestTask.new(:test) do |t|
-  t.libs << "test"
-  t.libs << "lib"
-  t.test_files = FileList["test/**/*_test.rb"]
-end
+# -Rake::TestTask.new(:test) do |t|
+# -t.libs << "test"
+# -  t.libs << "lib"
+# -  t.test_files = FileList["test/**/*_test.rb"]
+# -end
 
-task :default => :test
+# -task :default => :test
 
 require 'yard'
 # This configuration allows us to run "rake yard"

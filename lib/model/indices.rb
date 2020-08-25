@@ -23,8 +23,7 @@ module SafeDb
     SAFE_DATA_DIRECTORY = "SAFE_DATA_DIRECTORY"
     if ( ENV.has_key? SAFE_DATA_DIRECTORY )
       datadir_path = ::File.absolute_path( ENV[ SAFE_DATA_DIRECTORY ] )
-      datadir_exists = File.exist?( datadir_path ) && File.directory?( datadir_path )
-      FileUtils.mkdir_p( datadir_path ) unless datadir_exists
+      FileUtils.mkdir_p( datadir_path )
       SAFE_DATABASE_FOLDER = datadir_path
     else
       # Unless the data directory is set use this default file-system location

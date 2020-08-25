@@ -1,6 +1,5 @@
 #!/usr/bin/ruby
 
-
 # Reopen the core ruby String class and add the below methods to it.
 #
 # Case Sensitivity rules for [ALL] the below methods that are

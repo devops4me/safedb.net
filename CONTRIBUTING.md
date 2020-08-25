@@ -77,7 +77,7 @@ cucumber
 You change the software as you see fit and **send a pull request** when you are ready.
 
 
-## Cucumber and Aruba | Installi the right version
+## Cucumber and Aruba | Install the right version
 
 Aruba and Cucumber are **finickity** about both each others versions and the ruby version. If you see this output in the gem install command you need to act.
 
@@ -96,7 +96,15 @@ Successfully installed aruba-0.14.12
 
 ## Running Cucumber/Aruba Tests
 
-Use the simple **`cucumber`** command in the project directory to run the tests.
+After installing the gem version of your choice the simple **`cucumber`** command runs the tests.
+
+You can also run individual features and scenarios using these commands.
+
+```
+rake build
+gem install -n /usr/local/bin pkg/safedb-X.Y.Z.gem
+cucumber lib/controller/access init.feature
+```
 
 ## Reek | Ruby Code Quality
 
@@ -235,3 +243,16 @@ The [git-release.sh] script is run when a human being feels the software state i
 - run **`./git-release.sh`**
 
 The git release script bumps up the patch version and forwards the origin/release branch to bring it up to date with master and pushes thus triggering the pipeline which in turn goes the extra mile to **[release the safe to Rubygems.org](https://rubygems.org/gems/safedb)**.
+
+## Install gem locally when rake install fails
+
+I have been hit with a rake install permissions problem on the mac - rake tries to put the gem into /usr/bin and fails and I'm not sure what changed because rake install worked previously.
+
+The workaround I used for this is as follows.
+
+```
+rake build  # this puts the gen into the pkg directory
+gem install -n /usr/local/bin pkg/safedb-<VERSION_NUMBER>.gem
+```
+
+The **`gem install`** command needs editing with the correct version number. This is also a great method to roll back to earlier code versions when troubleshooting.
