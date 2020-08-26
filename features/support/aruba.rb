@@ -27,9 +27,9 @@ require "utils/git/gitflow"
 
 include LogImpl
 
-When(/^I create a new book$/) do
+When(/^I create book "(.*?)" with password "(.*?)"$/) do |book_name, book_password|
   init_uc = SafeDb::Init.new
-  init_uc.password = "abcde12345"
-  init_uc.book_name = "turkeyY"
+  init_uc.book_name = book_name
+  init_uc.password = book_password
   init_uc.flow()
 end

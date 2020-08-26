@@ -22,14 +22,21 @@ Feature: test safedb's book initialize command
         """
         Success! You can now login.
         """
-# change here
+
+    Scenario: check the test data directory is being used
+        When I run `printenv`
+        Then the output should contain:
+        """
+        SAFE_DATA_DIRECTORY
+        """
+
     Scenario: starting with step defns
-        When I create a new book
-        And I run `/usr/local/bin/safe login turkeyY --password=abcde12345`
+        When I create book "family" with password "f4m1lyp455w0rd"
+        And I run `/usr/local/bin/safe login family --password=f4m1lyp455w0rd`
         And I run `/usr/local/bin/safe view`
         Then the output should contain:
         """
-        turkeyY
+        == Book Name := family [v1kxdk-639c65]
         """
 
     Scenario: safedb book is really really initialized

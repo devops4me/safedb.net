@@ -30,10 +30,6 @@ module SafeDb
   #
   class Init < Authenticate
 
-    # Another comment
-    # Another comment
-    # Another comment
-    # Another comment
     def execute
 
       @book_id = Identifier.derive_ergonomic_identifier( @book_name, Indices::SAFE_BOOK_ID_LENGTH )
@@ -111,7 +107,7 @@ module SafeDb
 
       puts ""
       puts "Success! You can now login."
-      puts "Your book #{@book_name} with id #{@book_id} is up."
+      puts "The book #{@book_name} with id #{@book_id} has been created."
       puts "From now on you simply login like this."
       puts ""
       puts "    #{COMMANDMENT} login #{@book_name}"
