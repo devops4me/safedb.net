@@ -22,7 +22,7 @@ Feature: test safedb's book initialize command
         """
         Success! You can now login.
         """
-
+# change here
     Scenario: starting with step defns
         When I create a new book
         And I run `/usr/local/bin/safe login turkeyY --password=abcde12345`

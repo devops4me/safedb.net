@@ -30,7 +30,10 @@ module SafeDb
   #
   class Init < Authenticate
 
-
+    # Another comment
+    # Another comment
+    # Another comment
+    # Another comment
     def execute
 
       @book_id = Identifier.derive_ergonomic_identifier( @book_name, Indices::SAFE_BOOK_ID_LENGTH )
