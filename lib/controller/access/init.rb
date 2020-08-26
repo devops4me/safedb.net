@@ -66,7 +66,6 @@ module SafeDb
 
     private
 
-    # unnecessary doc
     def setup_git_repo(commit_msg)
 
       GitFlow.init(Indices::MASTER_CRYPTS_FOLDER_PATH)

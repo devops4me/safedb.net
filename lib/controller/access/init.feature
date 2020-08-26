@@ -23,15 +23,13 @@ Feature: test safedb's book initialize command
         Success! You can now login.
         """
 
-# Another commit test change again
-# Another commit test change again
     Scenario: starting with step defns
         When I create a new book
-#        And I run `/usr/local/bin/safe login turkey --password=abcde12345`
+        And I run `/usr/local/bin/safe login turkeyY --password=abcde12345`
         And I run `/usr/local/bin/safe view`
         Then the output should contain:
         """
-        turkeyX
+        turkeyY
         """
 
     Scenario: safedb book is really really initialized

@@ -244,11 +244,45 @@ The [git-release.sh] script is run when a human being feels the software state i
 
 The git release script bumps up the patch version and forwards the origin/release branch to bring it up to date with master and pushes thus triggering the pipeline which in turn goes the extra mile to **[release the safe to Rubygems.org](https://rubygems.org/gems/safedb)**.
 
-## Install gem locally when rake install fails
 
-I have been hit with a rake install permissions problem on the mac - rake tries to put the gem into /usr/bin and fails and I'm not sure what changed because rake install worked previously.
+## You don't have write permissions into the /usr/bin directory | Mac OSx
 
-The workaround I used for this is as follows.
+On the mac you may get this error when running either **`rake install`** or **`gem install`**.
+
+```
+You don't have write permissions into the /usr/bin directory
+```
+
+You can temporarily fix it by adding a -n suffix to the gem install command.
+
+```
+gem install -n /usr/local/bin /path/to/gem
+```
+
+The problem is that when using rake install you cannot change the gem install command it uses easily - so the better method is to add a **`.gemrc**` file in your home directory.
+
+### Contents of `~/.gemrc`
+
+```
+:gemdir:
+   - ~/.gem/ruby
+install: -n /usr/local/bin
+```
+
+### Run rake install
+
+If your rake install still fails it is probably to do with permissions. Find out the location of the gem directory. If the failure states that you are using 2.6.0 run this command.
+
+```
+sudo chown -R $(whoami):staff /Library/Ruby/Gems/2.6.0
+```
+
+Now **`rake install`** works!
+
+
+### Using `rake build` and `gem install`
+
+Another workaround for **`rake install`** issues is to run its two constituent commands separately.
 
 ```
 rake build  # this puts the gen into the pkg directory
