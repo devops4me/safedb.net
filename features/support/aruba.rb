@@ -1,4 +1,5 @@
 require 'aruba/cucumber'
+
 require "controller/abstract/controller"
 require "controller/abstract/authenticate"
 require "controller/access/init"
@@ -25,9 +26,14 @@ require "utils/kdfs/bcrypt"
 require "utils/kdfs/pbkdf2"
 require "utils/git/gitflow"
 
+require "cli"
 include LogImpl
 
 When(/^I create book "(.*?)" with password "(.*?)"$/) do |book_name, book_password|
+  CLI.start([ "init", book_name, "--password=#{book_password}" ] )
+end
+
+When(/^I login to book "(.*?)" with password "(.*?)"$/) do |book_name, book_password|
   init_uc = SafeDb::Init.new
   init_uc.book_name = book_name
   init_uc.password = book_password
