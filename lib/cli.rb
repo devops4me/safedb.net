@@ -115,7 +115,7 @@ class CLI < Thor
 
   # The <tt>--clip</tt> option says the password is to be read from the
   # clipboard. Usually one needs to just highlight the text without
-  # actually copying it with the mouse or Ctrl-c
+  # actually copying it with either the mouse, Ctrl-c or Command-c
   method_option :clip, :type => :boolean, :aliases => "-c"
 
   # Login in order to securely interact with your safe credentials.
