@@ -2,21 +2,21 @@
 Feature: test safedb's book initialize command
 
     Scenario: safe help includes help for safe init
-        When I run `/usr/local/bin/safe help`
+        When I run `safe help`
         Then the output should contain:
         """
         safe init
         """
 
     Scenario: safe help init gives custom init help
-        When I run `/usr/local/bin/safe help init`
+        When I run `safe help init`
         Then the output should contain:
         """
         initialize a new safe credentials book
         """
 
     Scenario: initialize a brand new book
-        When I run `/usr/local/bin/safe init abcddee --password=abcdd1234455`
+        When I run `safe init abcddee --password=abcdd1234455`
         Then the output should contain:
         """
         Success! You can now login.
@@ -32,7 +32,7 @@ Feature: test safedb's book initialize command
     Scenario: creating a book with safe init
         When I create book "family" with password "f4m1lyp455w0rd"
         And I login to book "family" with password "f4m1lyp455w0rd"
-        And I run `/usr/local/bin/safe view`
+        And I run `safe view`
         Then the output should contain:
         """
         == Book Name := family [v1kxdk-639c65]
