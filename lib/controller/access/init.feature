@@ -31,7 +31,7 @@ Feature: test safedb's book initialize command
 
     Scenario: creating a book with safe init
         When I create book "family" with password "f4m1lyp455w0rd"
-        And I run `/usr/local/bin/safe login family --password=f4m1lyp455w0rd`
+        And I login to book "family" with password "f4m1lyp455w0rd"
         And I run `/usr/local/bin/safe view`
         Then the output should contain:
         """
