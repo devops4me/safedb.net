@@ -1,4 +1,3 @@
-# @todo enable running the cucumber tests within the RubyMine IDE
 
 Feature: test safedb's book initialize command
 
@@ -30,7 +29,7 @@ Feature: test safedb's book initialize command
         SAFE_DATA_DIRECTORY
         """
 
-    Scenario: starting with step defns
+    Scenario: creating a book with safe init
         When I create book "family" with password "f4m1lyp455w0rd"
         And I run `/usr/local/bin/safe login family --password=f4m1lyp455w0rd`
         And I run `/usr/local/bin/safe view`
