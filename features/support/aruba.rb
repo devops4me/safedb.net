@@ -1,41 +1,10 @@
 require 'aruba/cucumber'
-
-require "controller/abstract/controller"
-require "controller/abstract/authenticate"
-require "controller/access/init"
-require "utils/identity/identifier"
-require "model/indices"
-require "utils/keys/key"
-require "utils/keys/key.64"
-require "utils/extend/string"
-require "utils/store/datamap"
-require "utils/key.error"
-require "model/state_evolve"
-require "model/file_tree"
-require "utils/logs/logger"
-require "utils/time/timestamp"
-require "utils/store/datastore"
-require "version"
-require "model/content"
-require "utils/keys/random.iv"
-require "model/text_chunk"
-require 'openssl'
-require "base64"
-require "utils/kdfs/kdf.api"
-require "utils/kdfs/bcrypt"
-require "utils/kdfs/pbkdf2"
-require "utils/git/gitflow"
-
 require "cli"
-include LogImpl
 
 When(/^I create book "(.*?)" with password "(.*?)"$/) do |book_name, book_password|
   CLI.start([ "init", book_name, "--password=#{book_password}" ] )
 end
 
 When(/^I login to book "(.*?)" with password "(.*?)"$/) do |book_name, book_password|
-  init_uc = SafeDb::Init.new
-  init_uc.book_name = book_name
-  init_uc.password = book_password
-  init_uc.flow()
+  CLI.start([ "login", book_name, "--password=#{book_password}" ] )
 end
