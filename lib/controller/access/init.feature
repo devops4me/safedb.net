@@ -2,9 +2,14 @@
 Feature: test safedb's book initialize command
 
     # @todo remove the hardcoded directory reference which will not work in the ci pipeline
-    Background: Clean previous test data
+    Background: Clean and ensure directory env var is set
         When I run `rm -fr  /Users/apollo/RubymineProjects/safedb.net/feature.tests.dir`
         Then the directory named "/Users/apollo/RubymineProjects/safedb.net/feature.tests.dir" should not exist anymore
+        When I run `printenv`
+        Then the output should contain:
+        """
+        SAFE_DATA_DIRECTORY
+        """
 
     Scenario: initialize a brand new book
         When I run `bin/safe init abcddee --password=abcdd1234455`
@@ -13,25 +18,14 @@ Feature: test safedb's book initialize command
         Success! You can now login.
         """
 
-    Scenario: check the test data directory is being used
-        When I run `printenv`
-        Then the output should contain:
-        """
-        SAFE_DATA_DIRECTORY
-        """
-
-    Scenario: creating a book with safe init
-        When I create book "family" with password "f4m1lyp455w0rd"
-        And I login to book "family" with password "f4m1lyp455w0rd"
-# @todo Then I should be logged in to book "family"
-# implement this
-        And I view the book
-#        Then the output should contain "Correct"
-#        And I run `bin/safe view`
-#        Then the output should contain:
-#        """
-#        == Book Name := family [v1kxdk-639c65]
-#        """
+    Scenario Outline: creating a book with safe init
+        When I create book "<book_name>" with password "<book_password>"
+        And I login to book "<book_name>" with password "<book_password>"
+        Then I should be logged in to book "<book_name>"
+    Examples:
+        | book_name | book_password  |
+        | friends   | fr13ndp455w0rd |
+        | family    | f4m1lyp455w0rd |
 
     Scenario: safe help includes help for safe init
         When I run `safe help`
