@@ -1,6 +1,5 @@
 require "logger"
 
-
 # [MIXIN] magic is deployed to hand out DevOps quality logging
 # features to any class that includes the logging module.
 #
@@ -24,9 +23,9 @@ require "logger"
 #
 module LogImpl
 
-  @@gem_base = File.join( File.join( Dir.home, ".config" ), "safedb" )
+  @@gem_base = File.join( File.join( Dir.home, ".config" ), "safe" )
   FileUtils.mkdir_p( @@gem_base ) unless File.exists?( @@gem_base )
-  @@log_path = File.join( @@gem_base, "safedb-cli-usage.log" )
+  @@log_path = File.join( @@gem_base, "safe-activity-journal.log" )
 
 
   # Classes that include (MIXIN) this logging module will

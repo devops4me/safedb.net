@@ -14,7 +14,7 @@ module SafeDb
     SAFE_URL_NAME = "safedb.net"
 
     # The name of the safe application and the safe gem as known by the operating system.
-    SAFE_APP_NAME = "safedb"
+    SAFE_APP_NAME = "safe"
 
     # The desired length of a safe book ergonomic identifier.
     SAFE_BOOK_ID_LENGTH = 12
