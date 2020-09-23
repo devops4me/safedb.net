@@ -19,13 +19,14 @@ module SafeDb
       return File.join( Indices::MASTER_CRYPTS_FOLDER_PATH, book_name )
     end
 
-    # RENAME AS master_book_chapter_crypts_folder as opposed to branch_book_chapter_crypts_folder
-    # RENAME AS master_book_chapter_crypts_folder as opposed to branch_book_chapter_crypts_folder
-    # RENAME AS master_book_chapter_crypts_folder as opposed to branch_book_chapter_crypts_folder
+    # RENAME AS master_book_chapters_folder as opposed to branch_book_chapters_folder
+    # RENAME AS master_book_chapters_folder as opposed to branch_book_chapters_folder
+    # RENAME AS master_book_chapters_folder as opposed to branch_book_chapters_folder
+    # RENAME AS master_book_chapters_folder as opposed to branch_book_chapters_folder
     # Get the path to the folder that holds the master crypts for the
     # book specified in the parameter.
     # @param book_name [String] the name of the book in question
-    # @return [File] path to the master crypts folder for the book
+    # @return [String] string path to the master crypts folder for the book
     def self.master_crypts_folder( book_name )
       return File.join( master_book_folder( book_name ), Indices::CHAPTER_CRYPTS_FOLDER_NAME )
     end

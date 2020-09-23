@@ -48,8 +48,9 @@ module SafeDb
 
       fetch_url = "https://github.com/#{repository_user}/#{repository_name}.git"
       push_url = "https://#{repository_user}:#{github_access_token}@github.com/#{repository_user}/#{repository_name}.git"
-      GitFlow.add_origin_url( Indices::MASTER_CRYPTS_FOLDER_PATH, fetch_url )
-      GitFlow.set_push_origin_url( Indices::MASTER_CRYPTS_FOLDER_PATH, push_url )
+      gitflow = GitFlow.new( @book.book_name )
+      gitflow.add_origin_url( fetch_url )
+      gitflow.set_push_origin_url( push_url )
 
     end
 

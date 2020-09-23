@@ -27,7 +27,7 @@ module SafeDb
             puts "Pushing safe commits to the backend repository."
             puts ""
 
-            GitFlow.push( Indices::MASTER_CRYPTS_FOLDER_PATH )
+# use the new gitflow = Gitflow.new( book_name )            GitFlow.push( Indices::MASTER_CRYPTS_FOLDER_PATH )
 
             puts ""
 

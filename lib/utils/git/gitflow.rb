@@ -2,25 +2,32 @@
 
 module SafeDb
 
-
     # Provision the git branch involved in our present working directory.
     # The [present directory] may not relate to version control at all or
     # it may relate to the master or other branch in the source mgt tool.
     class GitFlow
 
+        # Initialize the Git activities class by specifying the path to
+        # the existing or to be created git workspace.
+        #
+        # @param git_folder_path [File]
+        #    the path to the folder containing the git workspace files
+        #    and (if exists) the .git local repository folder.
+        def initialize( git_folder_path )
+            @git_folder_path = git_folder_path
+        end
+
 
         # Make the folder at the given path a git repository if it is not
         # one already. If the folder is already under git management then
         # this call has no effect.
-        #
-        # @param repo_path [String] folder path to the desired git repository
-        def self.init repo_path
+        def init
 
-            git_init_cmd = "git init #{repo_path}"
+            git_init_cmd = "git init #{@git_folder_path}"
             log.info(x) { "[git] add command => #{git_init_cmd}" }
             cmd_output = %x[#{git_init_cmd}];
 
-            log.info(x) { "[git] initializing git repository at path #{repo_path}" }
+            log.info(x) { "[git] initializing git repository at path #{@git_folder_path}" }
             log.info(x) { "[git] init command output : #{cmd_output}" }
 
         end
@@ -32,16 +39,15 @@ module SafeDb
         # to be committed into the repository. Also an files are logged that have
         # either been updated, deleted or moved.
         #
-        # @param repo_path [String] folder path to the desired git repository
         # @param by_line [Boolean]
         #     if set to true the log will list the changed lines fronted either
         #     with a plus or a minus sign. False will just list the file names
-        def self.list( repo_path, by_line=false )
+        def list( by_line=false )
 
-            path_to_dot_git = File.join( repo_path, ".git" )
+            path_to_dot_git = File.join( @git_folder_path, ".git" )
             line_by_line = by_line ? "-v" : ""
 
-            git_log_cmd = "git --git-dir=#{path_to_dot_git} --work-tree=#{repo_path} status #{line_by_line}"
+            git_log_cmd = "git --git-dir=#{path_to_dot_git} --work-tree=#{@git_folder_path} status #{line_by_line}"
             log.info(x) { "[git] status command => #{git_log_cmd}" }
             git_log_output = %x[#{git_log_cmd}]
 
@@ -63,12 +69,10 @@ module SafeDb
         # - files deleted in the working copy but not removed from the repository
         # - files renamed in the same folder or with their path changed too
         # - all the above but found recursively under the root repository path
-        #
-        # @param repo_path [String] folder path to the desired git repository
-        def self.stage repo_path
+        def stage
 
-            path_to_dot_git = File.join( repo_path, ".git" )
-            git_add_cmd = "git --git-dir=#{path_to_dot_git} --work-tree=#{repo_path} add -A"
+            path_to_dot_git = File.join( @git_folder_path, ".git" )
+            git_add_cmd = "git --git-dir=#{path_to_dot_git} --work-tree=#{@git_folder_path} add -A"
             log.info(x) { "[git] add command => #{git_add_cmd}" }
             %x[#{git_add_cmd}];
             log.info(x) { "[git] has recursively added resources to version management." }
@@ -80,13 +84,12 @@ module SafeDb
         # Commit all changes to the local git repo at the stated folder path
         # with the parameter commit message.
         #
-        # @param repo_path [String] folder path to the desired git repository
         # @param commit_msg [String] the commit message to post to the repo
-        def self.commit( repo_path, commit_msg )
+        def commit( commit_msg )
 
             log.info(x) { "[git] commit msg => #{commit_msg}" }
-            path_to_dot_git = File.join( repo_path, ".git" )
-            git_commit_cmd = "git --git-dir=#{path_to_dot_git} --work-tree=#{repo_path} commit -m \"#{commit_msg}\";"
+            path_to_dot_git = File.join( @git_folder_path, ".git" )
+            git_commit_cmd = "git --git-dir=#{path_to_dot_git} --work-tree=#{@git_folder_path} commit -m \"#{commit_msg}\";"
             log.info(x) { "[git] commit command => #{git_commit_cmd}" }
             %x[#{git_commit_cmd}];
             log.info(x) { "[git] has committed resources into the local repository." }
@@ -99,16 +102,15 @@ module SafeDb
         # to use alongside its other commands. This must always be done before a
         # git commit command is issued.
         #
-        # @param repo_path [String] folder path to the desired git repository
         # @param user_email [String] the email address of the user owning the repository
         # @param user_name [String] the full name of the user owning the repository
-        def self.config( repo_path, user_email, user_name )
+        def config( user_email, user_name )
 
             log.info(x) { "[git] local config for user.email => #{user_email}" }
             log.info(x) { "[git] local config for user.name => #{user_name}" }
-            path_to_dot_git = File.join( repo_path, ".git" )
-            git_config_email_cmd = "git --git-dir=#{path_to_dot_git} --work-tree=#{repo_path} config --local user.email \"#{user_email}\";"
-            git_config_name_cmd = "git --git-dir=#{path_to_dot_git} --work-tree=#{repo_path} config --local user.name \"#{user_name}\";"
+            path_to_dot_git = File.join( @git_folder_path, ".git" )
+            git_config_email_cmd = "git --git-dir=#{path_to_dot_git} --work-tree=#{@git_folder_path} config --local user.email \"#{user_email}\";"
+            git_config_name_cmd = "git --git-dir=#{path_to_dot_git} --work-tree=#{@git_folder_path} config --local user.name \"#{user_name}\";"
             log.info(x) { "[git] configure user.email command => #{git_config_email_cmd}" }
             log.info(x) { "[git] configure user.name command => #{git_config_name_cmd}" }
             %x[#{git_config_email_cmd}];
@@ -122,12 +124,11 @@ module SafeDb
         # Remove a specific file from git management and also delete the
         # working copy version of the file.
         #
-        # @param repo_path [String] folder path to the desired git repository
         # @param file_path [String] file to remove from the repo and working copy
-        def self.del_file( repo_path, file_path )
+        def del_file( file_path )
 
-            path_to_dot_git = File.join( repo_path, ".git" )
-            git_rm_cmd = "git --git-dir=#{path_to_dot_git} --work-tree=#{repo_path} rm #{file_path}"
+            path_to_dot_git = File.join( @git_folder_path, ".git" )
+            git_rm_cmd = "git --git-dir=#{path_to_dot_git} --work-tree=#{@git_folder_path} rm #{file_path}"
             log.info(x) { "[git] file remove command => #{git_rm_cmd}" }
             %x[#{git_rm_cmd}];
             log.info(x) { "[git] has removed #{file_path} from repo and working copy." }
@@ -140,12 +141,11 @@ module SafeDb
         # Add a specific file that exists in the working copy to the git
         # version controller.
         #
-        # @param repo_path [String] folder path to the desired git repository
         # @param file_path [String] file to add to the git version controller
-        def self.add_file( repo_path, file_path )
+        def add_file( file_path )
 
-            path_to_dot_git = File.join( repo_path, ".git" )
-            git_add_cmd = "git --git-dir=#{path_to_dot_git} --work-tree=#{repo_path} add #{file_path}"
+            path_to_dot_git = File.join( @git_folder_path, ".git" )
+            git_add_cmd = "git --git-dir=#{path_to_dot_git} --work-tree=#{@git_folder_path} add #{file_path}"
             log.info(x) { "[git] single file add command => #{git_add_cmd}" }
             %x[#{git_add_cmd}];
             log.info(x) { "[git] has added #{file_path} into the git repository." }
@@ -162,12 +162,11 @@ module SafeDb
         # Use in conjunction with set_push_origin_url to create a push url
         # that is different from the fetch url.
         #
-        # @param repo_path [String] folder path to the desired git repository
         # @param origin_url [String] the URL to the remote origin to add
-        def self.add_origin_url repo_path, origin_url
+        def add_origin_url origin_url
 
-            path_to_dot_git = File.join( repo_path, ".git" )
-            git_add_origin_loggable_cmd = "git --git-dir=#{path_to_dot_git} --work-tree=#{repo_path} remote add origin"
+            path_to_dot_git = File.join( @git_folder_path, ".git" )
+            git_add_origin_loggable_cmd = "git --git-dir=#{path_to_dot_git} --work-tree=#{@git_folder_path} remote add origin"
             git_add_origin_cmd = "#{git_add_origin_loggable_cmd} #{origin_url}"
             log.info(x) { "[git] add origin command without url => #{git_add_origin_loggable_cmd}" }
             %x[#{git_add_origin_cmd}];
@@ -184,12 +183,11 @@ module SafeDb
         # The remote origin must be set before calling this method. If no origin
         # is set this will throw a "no origin" error.
         #
-        # @param repo_path [String] folder path to the desired git repository
         # @param push_origin_url [String] the push URL of the remote origin
-        def self.set_push_origin_url repo_path, push_origin_url
+        def set_push_origin_url push_origin_url
 
-            path_to_dot_git = File.join( repo_path, ".git" )
-            git_loggable_cmd = "git --git-dir=#{path_to_dot_git} --work-tree=#{repo_path} remote set-url --push origin"
+            path_to_dot_git = File.join( @git_folder_path, ".git" )
+            git_loggable_cmd = "git --git-dir=#{path_to_dot_git} --work-tree=#{@git_folder_path} remote set-url --push origin"
             git_set_push_origin_url_cmd = "#{git_loggable_cmd} #{push_origin_url}"
             log.info(x) { "[git] set push origin url command without url => #{git_loggable_cmd}" }
             %x[#{git_set_push_origin_url_cmd}];
@@ -200,12 +198,10 @@ module SafeDb
 
 
         # Push the commit bundles to the remote git repository.
-        #
-        # @param repo_path [String] folder path to the desired git repository
-        def self.push repo_path
+        def push
 
-            path_to_dot_git = File.join( repo_path, ".git" )
-            git_push_cmd = "git --git-dir=#{path_to_dot_git} --work-tree=#{repo_path} push origin master"
+            path_to_dot_git = File.join( @git_folder_path, ".git" )
+            git_push_cmd = "git --git-dir=#{path_to_dot_git} --work-tree=#{@git_folder_path} push origin master"
             log.info(x) { "[git] push command => #{git_push_cmd}" }
             system git_push_cmd
             log.info(x) { "[git] has pushed outstanding commit bundles to the remote backend repository." }
@@ -215,9 +211,20 @@ module SafeDb
 
 
 
+        # EXCELLENT CODE BELOW FoR ANSWERING TWO QUESTIONS
+        # EXCELLENT CODE BELOW FoR ANSWERING TWO QUESTIONS
+        # EXCELLENT CODE BELOW FoR ANSWERING TWO QUESTIONS
+        # EXCELLENT CODE BELOW FoR ANSWERING TWO QUESTIONS
+        # EXCELLENT CODE BELOW FoR ANSWERING TWO QUESTIONS
 
-
-
+        #################################
+        #################################
+        #################################
+        # 1. DOES THIS LOCAL GIT REPO HAVE a REMOTE ==> git config --get remote.origin.url
+        # 2. IS THE LATEST COMMIT REF OF LOCAL AND REMOTE IN SYNC ==> git ls-remote https://github.com/apolloakora/devops-wiki.git ls-remote -b master
+        #################################
+        #################################
+        #################################
 
 
   # -- ------------------------------------------------- -- #

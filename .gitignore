@@ -10,3 +10,4 @@
 .rakeTasks
 Gemfile.lock
 pkg/safedb-*.gem
+manual.tests.dir

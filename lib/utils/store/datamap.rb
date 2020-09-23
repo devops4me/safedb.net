@@ -60,10 +60,6 @@ module SafeDb
     #    the expected location of the file-backed key-value store.
     #    If the folder and/or file do not exist the folder is created
     #    and then the file is created along with the time stamps.
-    #
-    # @param the_default_group [String]
-    #    the name of the default group. If none is presented this value
-    #    will default to the aptly named "default".
     def initialize( backing_file_path )
       @file_path = backing_file_path
       create_dir_unless_exists()

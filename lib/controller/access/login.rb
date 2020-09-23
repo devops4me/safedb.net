@@ -62,7 +62,7 @@ module SafeDb
 
       book_keys = DataMap.new( Indices::MASTER_INDICES_FILEPATH )
       book_keys.use( @book_id )
-      is_login_successful = EvolveState.login( book_keys, book_password )
+      is_login_successful = EvolveState.login( @book_name, book_keys, book_password )
       print_login_failure() unless is_login_successful
       return unless is_login_successful
 

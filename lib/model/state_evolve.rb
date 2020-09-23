@@ -33,6 +33,9 @@ module SafeDb
     # a diff or refresh operations. Also the commit operation must maintain the
     # same content encryption key for readability by validated agents.
     #
+    # @param book_name [String]
+    #    the name of the book we are attempting to login to
+    #
     # @param book_keys [DataMap]
     #    the {DataMap} contains the salts for key rederivation seeing as we have the
     #    book password and the rederived key will be able to unlock the ciphertext
@@ -57,7 +60,7 @@ module SafeDb
     # @return [Boolean]
     #    return false if failure decrypting with human password occurs.
     #    True is returned if the login logic completes naturally.
-    def self.login( book_keys, human_secret )
+    def self.login( book_name, book_keys, human_secret )
 
       the_book_id = book_keys.section()
 
@@ -81,12 +84,13 @@ module SafeDb
 
       # Remove the master chapter crypt file from the local git repository and add
       # the new master chapter crypt to the local git repository.
-      GitFlow.del_file( Indices::MASTER_CRYPTS_FOLDER_PATH, remove_crypt_path )
-      GitFlow.add_file( Indices::MASTER_CRYPTS_FOLDER_PATH, create_crypt_path )
-      GitFlow.add_file( Indices::MASTER_CRYPTS_FOLDER_PATH, Indices::MASTER_INDICES_FILEPATH )
-      GitFlow.list( Indices::MASTER_CRYPTS_FOLDER_PATH )
-      GitFlow.list( Indices::MASTER_CRYPTS_FOLDER_PATH, true )
-      GitFlow.commit( Indices::MASTER_CRYPTS_FOLDER_PATH, commit_msg )
+      gitflow = GitFlow.new( FileTree.master_book_folder( book_name ) )
+      gitflow.del_file( remove_crypt_path )
+      gitflow.add_file( create_crypt_path )
+      gitflow.add_file( Indices::MASTER_INDICES_FILEPATH )
+      gitflow.list(false )
+      gitflow.list(true )
+      gitflow.commit( commit_msg )
 
       clone_book_into_branch( the_book_id, branch_id, book_keys, the_crypt_key )
 
@@ -192,10 +196,11 @@ module SafeDb
 
       commit_msg = "safe commit for #{book.book_name()} in branch #{book.branch_id()} on #{TimeStamp.readable()}."
 
-      GitFlow.stage( Indices::MASTER_CRYPTS_FOLDER_PATH )
-      GitFlow.list( Indices::MASTER_CRYPTS_FOLDER_PATH )
-      GitFlow.list( Indices::MASTER_CRYPTS_FOLDER_PATH, true )
-      GitFlow.commit( Indices::MASTER_CRYPTS_FOLDER_PATH, commit_msg )
+      gitflow = GitFlow.new( FileTree.master_book_folder( book.book_name ) )
+      gitflow.stage()
+      gitflow.list( false )
+      gitflow.list( true )
+      gitflow.commit( commit_msg )
 
     end
 

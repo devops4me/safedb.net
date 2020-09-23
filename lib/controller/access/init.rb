@@ -27,7 +27,7 @@ module SafeDb
 
       @book_id = Identifier.derive_ergonomic_identifier( @book_name, Indices::SAFE_BOOK_ID_LENGTH )
 
-      if is_book_initialized?()
+      if is_book_initialized?
         print_already_initialized
         return
       end
@@ -60,12 +60,13 @@ module SafeDb
 
     def setup_git_repo(commit_msg)
 
-      GitFlow.init(Indices::MASTER_CRYPTS_FOLDER_PATH)
-      GitFlow.config(Indices::MASTER_CRYPTS_FOLDER_PATH, "#{ENV["USER"]}@#{Socket.gethostname()}", "SafeDb User")
-      GitFlow.stage(Indices::MASTER_CRYPTS_FOLDER_PATH)
-      GitFlow.list(Indices::MASTER_CRYPTS_FOLDER_PATH)
-      GitFlow.list(Indices::MASTER_CRYPTS_FOLDER_PATH, true)
-      GitFlow.commit(Indices::MASTER_CRYPTS_FOLDER_PATH, commit_msg)
+      gitflow = GitFlow.new( FileTree.master_book_folder( @book_name ) )
+      gitflow.init
+      gitflow.config("#{ENV["USER"]}@#{Socket.gethostname()}", "SafeDb User")
+      gitflow.stage()
+      gitflow.list(false )
+      gitflow.list(true)
+      gitflow.commit( commit_msg )
 
     end
 
