@@ -35,7 +35,7 @@ On disk, a safe book only has **crypted chapter files** in **`chapter-crypts`** 
 
 the safe writes its logs to a file in `~/.config/safe/safe-activity-journal.log`
 
-
+## safe directories view
 
 ```
 ~/.config/safe

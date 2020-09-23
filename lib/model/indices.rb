@@ -37,18 +37,43 @@ module SafeDb
     SAFE_GITHUB_URL = "https://github.com/devops4me/#{SAFE_URL_NAME}"
 
 
-    ### #################################### ###
-    ### paths to the master crypts resources ###
-    ### #################################### ###
+    ### ##################################### ###
+    ### paths to the master and branch assets ###
+    ### ##################################### ###
 
     # The name of the master crypts folder.
-    MASTER_CRYPTS_FOLDER_NAME = "safedb-master-crypts"
+    MASTER_BOOKS_FOLDER_NAME = "safe-master-books"
+
+    # The name of the branch crypts folder.
+    BRANCH_BOOKS_FOLDER_NAME = "safe-branch-books"
 
     # The path to the master crypts folder.
-    MASTER_CRYPTS_FOLDER_PATH = File.join( SAFE_DATABASE_FOLDER, MASTER_CRYPTS_FOLDER_NAME )
+    MASTER_CRYPTS_FOLDER_PATH = File.join(SAFE_DATABASE_FOLDER, MASTER_BOOKS_FOLDER_NAME )
+
+    # The path to the branch crypts folder.
+    BRANCH_CRYPTS_FOLDER_PATH = File.join(SAFE_DATABASE_FOLDER, BRANCH_BOOKS_FOLDER_NAME )
+
+
+    # The filename of the index file for a book within master
+    BOOK_MASTER_INDEX_FILENAME = "book-master-index.ini"
+
+    # The filename of the index file for a book within a branch
+    BOOK_BRANCH_INDEX_FILENAME = "book-branch-index.ini"
+
+
+
+    # The simple name of the folder that holds the book chapter crypts
+    CHAPTER_CRYPTS_FOLDER_NAME = "chapter-crypts"
+
+    # The string prefix of every chapter filename
+    CHAPTER_FILENAME_PREFIX = "safe.chapter"
+
+    # The string prefix of safe book branch folders
+    BRANCH_BOOKS_FOLDER_PREFIX = "branch"
 
     # The path to the master crypts .git directory.
     MASTER_CRYPTS_GIT_PATH = File.join( MASTER_CRYPTS_FOLDER_PATH, ".git" )
+
 
     # The master indices file name
     MASTER_INDICES_FILE_NAME = "safedb-master-keys.ini"
@@ -72,12 +97,6 @@ module SafeDb
 
     # The path to the branch indices folder.
     BRANCH_INDICES_FOLDER_PATH = File.join( SAFE_DATABASE_FOLDER, BRANCH_INDICES_FOLDER_NAME )
-
-    # The name of the branch crypts folder.
-    BRANCH_CRYPTS_FOLDER_NAME = "safedb-branch-crypts"
-
-    # The path to the branch crypts folder.
-    BRANCH_CRYPTS_FOLDER_PATH = File.join( SAFE_DATABASE_FOLDER, BRANCH_CRYPTS_FOLDER_NAME )
 
     # The path to the remote storage configuration INI file
     MACHINE_CONFIG_FILEPATH = File.join( SAFE_DATABASE_FOLDER, "safedb-remote-storage.ini" )

@@ -37,8 +37,6 @@ module SafeDb
     # The content ciphertext derived from encrypting the body is stored
     # in a file underneath the provided content header.
     #
-    # Finally 
-    #
     # @param book_id [String] used to determine the book's master crypt folder
     # @param crypt_key [Key] the key used to (symmetrically) encrypt the content provided
     # @param data_store [DataMap] either DataMap or DataStore containing the content id and random iv

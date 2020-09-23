@@ -111,7 +111,6 @@ module SafeDb
     end
 
 
-
     # During initialization or login we recycle keys produced by key derivation
     # functions (BCrypt. SCrypt and/or PBKDF2) from human sourced secrets.
     #

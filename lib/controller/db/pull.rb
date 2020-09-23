@@ -17,20 +17,20 @@ module SafeDb
             puts ""
 
       removable_drive_path = xxx # ~~~~ read this from the --to variable
-      removable_drive_file = File.join( removable_drive_path, Indices::MASTER_INDICES_FILE_NAME )
+      removable_drive_file = File.join( removable_drive_path, "Indices-MASTER_INDICES_FILE_NAME" )
       removable_drive_file_exists = File.exist?( removable_drive_file ) && File.file?( removable_drive_file )
 
       puts "Removable Drive Location => #{removable_drive_path}"
       puts "Removable Drive Filepath => #{removable_drive_file}"
 
       if removable_drive_file_exists
-        drive_filename = TimeStamp.yyjjj_hhmm_sst() + "-" + Indices::MASTER_INDICES_FILE_NAME
+        drive_filename = TimeStamp.yyjjj_hhmm_sst() + "-" + "Indices-MASTER_INDICES_FILE_NAME"
         drive_backup_filepath = File.join( removable_drive_path, drive_filename )
         File.write( drive_backup_filepath, File.read( removable_drive_file ) )
         puts "Backup of Clobbered File => #{drive_backup_filepath}"
       end
 
-      clobbered_crypts_name = TimeStamp.yyjjj_hhmm_sst() + "-" + Indices::MASTER_CRYPTS_FOLDER_NAME
+      clobbered_crypts_name = TimeStamp.yyjjj_hhmm_sst() + "-" + "Indices-MASTER_CRYPTS_FOLDER_NAME"
       clobbered_crypts_path = File.join( Indices::SAFE_DATABASE_FOLDER, clobbered_crypts_name )
 
       FileUtils.mkdir_p( clobbered_crypts_path )
