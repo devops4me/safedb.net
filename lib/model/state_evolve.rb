@@ -87,7 +87,7 @@ module SafeDb
       gitflow = GitFlow.new( FileTree.master_book_folder( book_name ) )
       gitflow.del_file( remove_crypt_path )
       gitflow.add_file( create_crypt_path )
-      gitflow.add_file( Indices::MASTER_INDICES_FILEPATH )
+      gitflow.add_file( FileTree.master_book_indices_filepath(book_name ) )
       gitflow.list(false )
       gitflow.list(true )
       gitflow.commit( commit_msg )
@@ -174,18 +174,19 @@ module SafeDb
     # - <tt>either subsequent logins</tt>
     # - <tt>or a branch refresh</tt>
     #
+    # @param book [Book] the book whose data we want to commit
     def self.commit( book )
 
 # @todo => If mismatch in commit IDs then print message instructing to first do safe refresh
 
-      FileUtils.remove_entry( FileTree.master_crypts_folder( book.book_id() ) )
-      FileUtils.mkdir_p( FileTree.master_crypts_folder( book.book_id() ) )
-      FileUtils.copy_entry( FileTree.branch_crypts_folder( book.book_id(), book.branch_id() ), FileTree.master_crypts_folder( book.book_id() ) )
+      FileUtils.remove_entry( FileTree.master_crypts_folder( book.book_name() ) )
+      FileUtils.mkdir_p( FileTree.master_crypts_folder( book.book_name() ) )
+      FileUtils.copy_entry( FileTree.branch_crypts_folder( book.book_name(), book.branch_id() ), FileTree.master_crypts_folder( book.book_name() ) )
 
-      master_keys = DataMap.new( Indices::MASTER_INDICES_FILEPATH )
-      master_keys.use( book.book_id() )
+      master_keys = DataMap.new( FileTree.master_book_indices_filepath(book.book_name() ) )
+      master_keys.use( book.book_name() )
       branch_keys = DataMap.new( FileTree.branch_indices_filepath( book.branch_id() ) )
-      branch_keys.use( book.book_id() )
+      branch_keys.use( book.book_name() )
 
       commit_id = Identifier.get_random_identifier( 16 )
       branch_keys.set( Indices::COMMIT_IDENTIFIER, commit_id )
@@ -237,10 +238,10 @@ module SafeDb
     # @param book [Book] the book whose commit IDs will be manipulated
     def self.copy_commit_id_to_branch( book )
 
-      master_keys = DataMap.new( Indices::MASTER_INDICES_FILEPATH )
-      master_keys.use( book.book_id() )
+      master_keys = DataMap.new( FileTree.master_book_indices_filepath( book.book_name() ) )
+      master_keys.use( book.book_name() )
       branch_keys = DataMap.new( FileTree.branch_indices_filepath( book.branch_id() ) )
-      branch_keys.use( book.book_id() )
+      branch_keys.use( book.book_name() )
 
       master_commit_id = master_keys.get( Indices::COMMIT_IDENTIFIER )
       branch_keys.set( Indices::COMMIT_IDENTIFIER, master_commit_id )
@@ -270,12 +271,12 @@ module SafeDb
     # Create the book within the master indices file and set its book identifier
     # along with the initialize time and a fresh commit identifier.
     #
-    # @param book_identifier [String] the identifier of the book to create
-    def self.create_book( book_identifier )
-      FileUtils.mkdir_p( FileTree.master_crypts_folder( book_identifier ) )
+    # @param book_name [String] the name of the book to create
+    def self.create_book( book_name )
+      FileUtils.mkdir_p( FileTree.master_crypts_folder( book_name ) )
 
-      keypairs = DataMap.new( Indices::MASTER_INDICES_FILEPATH )
-      keypairs.use( book_identifier )
+      keypairs = DataMap.new( FileTree.master_book_indices_filepath(book_name ) )
+      keypairs.use( book_name )
       keypairs.set( Indices::SAFE_BOOK_INITIALIZE_TIME, TimeStamp.readable() )
       keypairs.set( Indices::COMMIT_IDENTIFIER, Identifier.get_random_identifier( 16 ) )
     end
@@ -285,14 +286,14 @@ module SafeDb
     # is specified in the parameter. Only call method if we are definitely
     # in a logged in state.
     #
-    # @param book_id [String] book identifier that login request is against
-    def self.use_book( book_id )
+    # @param book_name [String] book name that login request is against
+    def self.use_book( book_name )
       branch_id = Identifier.derive_branch_id( Branch.to_token() )
       branch_keys = DataMap.new( FileTree.branch_indices_filepath( branch_id ) )
       branch_keys.use( Indices::BRANCH_DATA )
       current_book_id = branch_keys.get( Indices::CURRENT_BRANCH_BOOK_ID )
-      log.info(x) { "Current book is #{current_book_id} and the instruction is to use #{book_id}" }
-      branch_keys.set( Indices::CURRENT_BRANCH_BOOK_ID, book_id )
+      log.info(x) { "Current book is #{current_book_id} and the instruction is to use #{book_name}" }
+      branch_keys.set( Indices::CURRENT_BRANCH_BOOK_ID, book_name )
     end
 
 
@@ -303,7 +304,7 @@ module SafeDb
     # To clone a book into a branch we
     #
     # - create a branch crypts folder and copy all master crypts into it
-    # - we create branch indices under general and book_id sections
+    # - we create branch indices under general and book name sections
     # - we copy the commit reference and content identifier from the master
     # - lock the content crypt key with the branch key and save the ciphertext
     #
@@ -314,16 +315,16 @@ module SafeDb
     # the master and branch indices. Like git's push/pull, this prevents a sync when
     # the master has moved forward by one or more commits.
     #
-    # @param book_id [String] the book identifier this branch is about
+    # @param book_name [String] the book identifier this branch is about
     # @param branch_id [String] the identifier pertaining to this branch
     # @param master_keys [DataMap] keys from the book's master line
     # @param crypt_key [Key] symmetric branch content encryption key
     #
-    def self.clone_book_into_branch( book_id, branch_id, master_keys, crypt_key )
+    def self.clone_book_into_branch( book_name, branch_id, master_keys, crypt_key )
 
-      FileUtils.mkdir_p( FileTree.branch_crypts_folder( book_id, branch_id ) )
-      FileUtils.copy_entry( FileTree.master_crypts_folder( book_id ), FileTree.branch_crypts_folder( book_id, branch_id ) )
-      branch_keys = create_branch_indices( book_id, branch_id )
+      FileUtils.mkdir_p( FileTree.branch_crypts_folder( book_name, branch_id ) )
+      FileUtils.copy_entry( FileTree.master_crypts_folder( book_name ), FileTree.branch_crypts_folder( book_name, branch_id ) )
+      branch_keys = create_branch_indices( book_name, branch_id )
 
       branch_keys.set( Indices::CONTENT_IDENTIFIER, master_keys.get( Indices::CONTENT_IDENTIFIER ) )
       branch_keys.set( Indices::CONTENT_RANDOM_IV,  master_keys.get( Indices::CONTENT_RANDOM_IV  ) )
@@ -339,20 +340,20 @@ module SafeDb
     # Create and return the branch indices {DataMap} pertaining to both the current
     # book and branch whose ids are given in the first and second parameters.
     #
-    # @param book_id [String] the book identifier this branch is about
+    # @param book_name [String] the book identifier this branch is about
     # @param branch_id [String] the identifier pertaining to this branch
     # @return [DataMap] return the keys pertaining to this branch and book
-    def self.create_branch_indices( book_id, branch_id )
+    def self.create_branch_indices( book_name, branch_id )
 
       branch_exists = File.exists? FileTree.branch_indices_filepath( branch_id )
       branch_keys = DataMap.new( FileTree.branch_indices_filepath( branch_id ) )
       branch_keys.use( Indices::BRANCH_DATA )
       branch_keys.set( Indices::BRANCH_INITIAL_LOGIN_TIME, TimeStamp.readable() ) unless branch_exists
       branch_keys.set( Indices::BRANCH_LAST_ACCESSED_TIME, TimeStamp.readable() )
-      branch_keys.set( Indices::CURRENT_BRANCH_BOOK_ID, book_id )
+      branch_keys.set( Indices::CURRENT_BRANCH_BOOK_ID, book_name )
 
-      logged_in = branch_keys.has_section?( book_id )
-      branch_keys.use( book_id )
+      logged_in = branch_keys.has_section?( book_name )
+      branch_keys.use( book_name )
       branch_keys.set( Indices::BOOK_BRANCH_LOGIN_TIME, TimeStamp.readable() ) unless logged_in
       branch_keys.set( Indices::BOOK_LAST_ACCESSED_TIME, TimeStamp.readable() )
 

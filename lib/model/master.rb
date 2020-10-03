@@ -11,7 +11,7 @@ module SafeDb
 
     # Initialize an instance of this safe database's master properties.
     def initialize()
-      @master = DataMap.new( Indices::MASTER_INDICES_FILEPATH )
+      @master = DataMap.new( FileTree.master_book_indices_filepath("PUT_THE_BOOK_NAME_HERE_PLEASE" ) )
     end
 
 

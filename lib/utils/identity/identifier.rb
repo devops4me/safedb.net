@@ -122,7 +122,7 @@ module SafeDb
     #
     #    The default behaviour is to split the output identifier into 2 segments
     #    separated by a hyphen.
-    def self.derive_ergonomic_identifier( source, id_length )
+    def self.derive_ergo_identifier( source, id_length )
 
       abort "The source string cannot be nil or empty." if source.nil?() or source.empty?()
       abort "The source cannot consist only of whitespace." if source.strip().empty?()

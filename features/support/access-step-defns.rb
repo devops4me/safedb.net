@@ -11,9 +11,8 @@ end
 
 When(/^I should be logged in to book "(.*?)"$/) do |book_name|
 
-  book_id = SafeDb::Identifier.derive_ergonomic_identifier( book_name, SafeDb::Indices::SAFE_BOOK_ID_LENGTH )
-  unless SafeDb::StateInspect.is_logged_in?(book_id)
-    error_message = "Expected to be logged into book #{book_name} with id #{book_id}"
+  unless SafeDb::StateInspect.is_logged_in?(book_name)
+    error_message = "Expected to be logged into book #{book_name}."
     raise RuntimeError, error_message
   end
 

@@ -75,14 +75,6 @@ module SafeDb
     MASTER_CRYPTS_GIT_PATH = File.join( MASTER_CRYPTS_FOLDER_PATH, ".git" )
 
 
-    # The master indices file name
-    MASTER_INDICES_FILE_NAME = "safedb-master-keys.ini"
-
-    # The path to the master indices file
-    MASTER_INDICES_FILEPATH = File.join( MASTER_CRYPTS_FOLDER_PATH, MASTER_INDICES_FILE_NAME )
-
-
-
     # The name of the backup master crypts folder.
     BACKUP_CRYPTS_FOLDER_NAME = "safedb-backup-crypts"
 

@@ -51,8 +51,8 @@ module SafeDb
     # Get the path to the master indices file for the given book.
     #
     # @param book_name [String] the name of the book in question
-    # @return [File] path to the master indices file for the given book
-    def self.book_master_indices_filepath( book_name )
+    # @return [String] path to the master indices file for the given book
+    def self.master_book_indices_filepath(book_name )
       return File.join( master_book_folder( book_name ), Indices::BOOK_MASTER_INDEX_FILENAME )
     end
 
@@ -75,14 +75,13 @@ module SafeDb
       return File.join( branch_folder( branch_id ), book_name )
     end
 
-    # Get the path to the branch indices file for the book and branch ID
-    # specified in the parameters.
+    # Get the path to the branch indices file which holds data for all the
+    # books that have been logged in during the branch session.
     #
-    # @param book_name [String] the name of the book in question
     # @param branch_id [String] the identifier of the branch in question
     # @return [File] path to the branch indices file for the given branch
-    def self.branch_indices_filepath( book_name, branch_id )
-      return File.join( branch_book_folder( book_name, branch_id ), Indices::BOOK_BRANCH_INDEX_FILENAME )
+    def self.branch_indices_filepath( branch_id )
+      return File.join( branch_folder( branch_id ), Indices::BOOK_BRANCH_INDEX_FILENAME )
     end
 
     # Return the path to the given book's chapter crypts within a specified branch.

@@ -73,6 +73,7 @@ module SafeDb
     #
     # After this call the @verse key/value map will contain properties
     # pertaining to the safe#s backend remote store.
+=begin
     def open_remote_backend_location
 
       verse_coordinates = Master.new().get_backend_coordinates()
@@ -97,6 +98,7 @@ module SafeDb
       @book.write_open_chapter()
 
     end
+=end
 
 
 

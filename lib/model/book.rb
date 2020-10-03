@@ -31,7 +31,7 @@ module SafeDb
       @branch_keys.use( @book_id )
       @content_id = @branch_keys.get( Indices::CONTENT_IDENTIFIER )
 
-      @master_keys = DataMap.new( Indices::MASTER_INDICES_FILEPATH )
+      @master_keys = DataMap.new( FileTree.master_book_indices_filepath( @book_id ) )
       @master_keys.use( @book_id )
 
       intra_key_ciphertext = @branch_keys.get( Indices::CRYPT_CIPHER_TEXT )

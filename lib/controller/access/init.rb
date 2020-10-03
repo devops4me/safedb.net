@@ -6,7 +6,7 @@ module SafeDb
   # book with the given name will exist within the safe's directory tree, along
   # with key derivation salts, ciphertext and other paraphernalia.
   #
-  # Within the master index file in the [<BOOK_ID>] section will be
+  # Within the master index file in the [<BOOK_NAME>] section will be
   #
   # - the book initialiize time
   # - the salts and ciphertext from the key derivation functions
@@ -25,23 +25,21 @@ module SafeDb
 
     def execute
 
-      @book_id = Identifier.derive_ergonomic_identifier( @book_name, Indices::SAFE_BOOK_ID_LENGTH )
-
       if is_book_initialized?
         print_already_initialized
         return
       end
 
-      EvolveState.create_book( @book_id )
+      EvolveState.create_book( @book_name )
 
       book_secret = KeyPass.password_from_shell( true ) if @password.nil?
       book_secret = @password unless @password.nil?
 
-      master_keys = DataMap.new( Indices::MASTER_INDICES_FILEPATH )
-      master_keys.use( @book_id )
+      master_keys = DataMap.new( FileTree.master_book_indices_filepath(@book_name ) )
+      master_keys.use( @book_name )
 
       EvolveState.recycle_both_keys(
-        @book_id,
+        @book_name,
         book_secret,
         master_keys,
         virginal_book()
@@ -101,7 +99,7 @@ module SafeDb
 
       puts ""
       puts "Success! You can now login."
-      puts "The book #{@book_name} with id #{@book_id} has been created."
+      puts "The book #{@book_name} has been created."
       puts "From now on you simply login like this."
       puts ""
       puts "    #{COMMANDMENT} login #{@book_name}"

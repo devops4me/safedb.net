@@ -30,28 +30,19 @@ module SafeDb
     # the clipboard - no need specifically to use Ctrl-c (copy).
     attr_writer :clip
 
-    # Either the @book_name or the @login_book_id may be provided. The
-    # @login_book_id takes precedence if both are provided.
-    attr_writer :login_book_id
-
     # The view of chapter and verse names within the book is not printed out
     # after a successful login if this suppress_output flag is set to true.
     attr_writer :suppress_output
 
     def execute
 
-      @book_id = @login_book_id if @login_book_id
-      @book_id = Identifier.derive_ergonomic_identifier( @book_name, Indices::SAFE_BOOK_ID_LENGTH ) unless @login_book_id
-      @book_reference = @login_book_id if @login_book_id
-      @book_reference = @book_name unless @login_book_id
-
       unless ( is_book_initialized?() )
         print_not_initialized
         return
       end
 
-      if( StateInspect.is_logged_in?( @book_id ) )
-        EvolveState.use_book( @book_id )
+      if( StateInspect.is_logged_in?( @book_name ) )
+        EvolveState.use_book( @book_name )
         View.new().flow() unless @suppress_output
         return
       end
@@ -60,8 +51,8 @@ module SafeDb
       book_password = KeyPass.password_from_shell( false ) if( @password.nil?() && !@clip )
       book_password = @password unless @password.nil?()
 
-      book_keys = DataMap.new( Indices::MASTER_INDICES_FILEPATH )
-      book_keys.use( @book_id )
+      book_keys = DataMap.new( FileTree.master_book_indices_filepath(@book_name ) )
+      book_keys.use( @book_name )
       is_login_successful = EvolveState.login( @book_name, book_keys, book_password )
       print_login_failure() unless is_login_successful
       return unless is_login_successful
@@ -77,7 +68,7 @@ module SafeDb
     def print_login_failure()
 
       puts ""
-      puts "The login into book [ #{@book_reference} ] has failed."
+      puts "The login into book [ #{@book_name} ] has failed."
       puts "Please check the book name and password combination."
       puts "Also visit login docs on how to present passwords."
       puts ""
@@ -88,10 +79,10 @@ module SafeDb
     def print_not_initialized()
 
       puts ""
-      puts "This book [ #{@book_reference} ] has not yet been initialized."
+      puts "This book [ #{@book_name} ] has not yet been initialized."
       puts "Please initialize it with this command."
       puts ""
-      puts "    #{COMMANDMENT} init #{@book_reference}"
+      puts "    #{COMMANDMENT} init #{@book_name}"
       puts ""
 
     end

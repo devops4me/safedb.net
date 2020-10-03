@@ -21,10 +21,10 @@ module SafeDb
     # at the <b>next login</b>.
     def is_book_initialized?()
 
-      return false unless File.exists?( Indices::MASTER_INDICES_FILEPATH )
-      data_map = DataMap.new( Indices::MASTER_INDICES_FILEPATH )
-      return false unless data_map.has_section?( @book_id )
-      data_map.use( @book_id )
+      return false unless File.exists?( FileTree.master_book_indices_filepath(@book_name ) )
+      data_map = DataMap.new( FileTree.master_book_indices_filepath(@book_name ) )
+      return false unless data_map.has_section?( @book_name )
+      data_map.use( @book_name )
 
       return contains_all_master_book_indices( data_map )
 
