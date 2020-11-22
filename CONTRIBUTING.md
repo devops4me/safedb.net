@@ -5,6 +5,23 @@ You can contriubute software, documentation, issues and even good ideas. Most co
 
 **Ignore these instructions if you just want to use the software.** To **use the software** **[visit the readme](README.md)**.
 
+## How to Switch to and from Dev
+
+You can easily switch your local machine from using the development to using the "live" safe.
+
+The steps to switch into development mode using my MacOSx **folder structure** and **username** are
+
+- **`safe version`** # discover current operating version
+- got to **`version.rb`** and update the patch version
+- **`ls -lah /Library/Ruby/Gems`** # check the permissions
+- **`sudo chown -R apollo:staff /Library/Ruby/Gems/*`**
+- in the RubyMine IDE use Ctrl Ctrl then type **`rake install`**
+- **`safe version`** # to double check the safe version
+
+Now to switch away from the development version you can either go to the directory of another safedb.net codebase on your machine and repeat the above tests.
+
+If using the rubygems version then a simple **`gem install safedb`** should do the trick.
+
 
 ---
 
